@@ -1,0 +1,249 @@
+/* Custom Date Picker Styles */
+.custom-datepicker-container {
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  width: 300px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  border-radius: 8px;
+  overflow: hidden;
+  background: #fff;
+  position: absolute;
+  z-index: 9999;
+  display: none; /* Hidden by default */
+}
+
+.datepicker-header {
+  background: #f3f4f6;
+  padding: 15px;
+  text-align: center;
+}
+
+.datepicker-title {
+  margin: 0;
+  font-size: 18px;
+  font-weight: 500;
+  color: #333;
+}
+
+.datepicker-nav {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 15px;
+  background: #f3f4f6;
+  border-bottom: 1px solid #eaeaea;
+}
+
+.datepicker-nav-btn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 16px;
+  color: #555;
+  padding: 5px 10px;
+  transition: background-color 0.2s;
+  border-radius: 4px;
+}
+
+.datepicker-nav-btn:hover {
+  background-color: #e3e5e8;
+}
+
+.datepicker-month-container {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
+  padding: 15px;
+}
+
+.month-item {
+  text-align: center;
+  padding: 10px 5px;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: all 0.2s;
+  font-size: 14px;
+}
+
+.month-item:hover {
+  background-color: #e5f6ff;
+}
+
+.month-item.selected {
+  background-color: #2196f3;
+  color: white;
+}
+
+.datepicker-tabs {
+  display: flex;
+  border-bottom: 1px solid #eaeaea;
+  background: #f9f9f9;
+}
+
+.datepicker-tab {
+  flex: 1;
+  text-align: center;
+  padding: 12px;
+  background: none;
+  border: none;
+  border-bottom: 3px solid transparent;
+  cursor: pointer;
+  font-weight: 500;
+  color: #555;
+  transition: all 0.2s;
+}
+
+.datepicker-tab.active {
+  border-bottom-color: #2196f3;
+  color: #2196f3;
+}
+
+.datepicker-footer {
+  padding: 15px;
+  display: flex;
+  justify-content: space-between;
+  border-top: 1px solid #eaeaea;
+}
+
+.datepicker-btn {
+  padding: 8px 16px;
+  border-radius: 4px;
+  border: none;
+  cursor: pointer;
+  font-weight: 500;
+  transition: background-color 0.2s;
+}
+
+.datepicker-btn.clear {
+  background-color: #f3f4f6;
+  color: #333;
+}
+
+.datepicker-btn.clear:hover {
+  background-color: #e3e5e8;
+}
+
+.datepicker-btn.apply {
+  background-color: #2196f3;
+  color: white;
+}
+
+.datepicker-btn.apply:hover {
+  background-color: #0d8aee;
+}
+
+.datepicker-years {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 10px;
+  padding: 0 15px;
+}
+
+.year-selector {
+  width: 100%;
+  padding: 8px;
+  border-radius: 4px;
+  border: 1px solid #ddd;
+  font-size: 14px;
+  text-align: center;
+  background-color: #f3f4f6;
+}
+
+/* Day mode styles */
+.datepicker-days-container {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 5px;
+  padding: 15px;
+}
+
+.day-name {
+  text-align: center;
+  font-size: 12px;
+  font-weight: 500;
+  color: #777;
+  padding: 5px 0;
+}
+
+.day-item {
+  text-align: center;
+  padding: 8px 0;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: all 0.2s;
+  font-size: 13px;
+}
+
+.day-item:hover {
+  background-color: #e5f6ff;
+}
+
+.day-item.other-month {
+  color: #bbb;
+}
+
+.day-item.today {
+  font-weight: bold;
+  border: 1px solid #2196f3;
+}
+
+.day-item.selected {
+  background-color: #2196f3;
+  color: white;
+}
+
+.day-item.disabled {
+  color: #ddd;
+  cursor: not-allowed;
+  background-color: transparent;
+}
+
+.day-item.saturday {
+  background-color: #e5f6ff;
+}
+
+.day-item.saturday.selected {
+  background-color: #2196f3;
+}
+
+/* Multi-select styles */
+.multi-select-info {
+  padding: 10px 15px;
+  background: #f9f9f9;
+  font-size: 14px;
+  color: #555;
+  border-bottom: 1px solid #eaeaea;
+}
+
+.selected-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  padding: 10px 15px;
+  background: #f2f7fd;
+  border-bottom: 1px solid #e5f6ff;
+}
+
+.selected-item {
+  background: #2196f3;
+  color: white;
+  padding: 5px 10px;
+  border-radius: 16px;
+  font-size: 12px;
+  display: flex;
+  align-items: center;
+}
+
+.remove-btn {
+  margin-left: 5px;
+  background: none;
+  border: none;
+  color: white;
+  font-size: 14px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  width: 16px;
+  height: 16px;
+}
