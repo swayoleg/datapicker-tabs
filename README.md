@@ -42,16 +42,38 @@ You can customize the date picker by passing an options object:
 
 ```javascript
 const picker = new DatepickerTabs('#date-input', {
-  mode: 'month',
-  multipleMonths: true,
-  dateFormat: 'DD/MM/YYYY',
-  displayType: 'tabs',
-  maxMonthSelection: 6,
-  maxDate: new Date(2026, 11, 31),
-  futureSaturdaysOnly: true,
-  onDateChange: function(date) {
-    console.log('Selected date:', date);
-  }
+    // Basic configuration
+    mode: 'month',                   // 'day' or 'month' mode
+    displayType: 'tabs',             // Display as 'tabs', 'day', or 'month'
+
+    // Selection options
+    multipleDays: false,             // Allow multiple day selection
+    multipleMonths: true,            // Allow multiple month selection
+    maxMonthSelection: 6,            // Max selectable months (when multipleMonths=true)
+
+    // Date range options
+    startDate: new Date(),           // Initial selected date
+    minDate: null,                   // Minimum selectable date
+    maxDate: new Date(2026, 11, 31), // Maximum selectable date
+    futureSaturdaysOnly: true,       // Only enable future Saturdays in day mode
+
+    // Localization
+    monthNames: ['January', 'February'],    // Custom month names
+    dayNames: ['Sun', 'Mon'],          // Custom day names
+    dateFormat: 'DD/MM/YYYY',        // Date display format
+    monthFormat: 'MMM YYYY',         // Month display format
+
+    // UI settings
+    position: 'bottom',              // 'bottom' or 'top' position
+    zIndex: 9999,                    // Picker z-index
+
+    // Persistence
+    cookieName: 'datepickerTabsMode',// Cookie name for mode storage
+
+    // Callbacks
+    onDateChange: function(date) {   // Date selection callback
+        console.log('Selected date:', date);
+    }
 });
 ```
 

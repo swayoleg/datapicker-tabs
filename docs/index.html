@@ -243,10 +243,102 @@
 
 <div class="container">
 
+    <div class="demo-section">
+        <h2>Few Months Selection Demo</h2>
+        <p>This example demonstrates the month selection mode with multiple month selection enabled and restriction to 3 month at once.</p>
+
+        <div class="demo-row">
+            <div class="demo-column">
+                <h3>Few Months Picker</h3>
+                <input type="text" id="month-input" class="demo-input" placeholder="Click to select month(s)">
+
+                <div class="result-panel">
+                    <h4>Selected Months:</h4>
+                    <div id="month-result"></div>
+                </div>
+            </div>
+
+            <div class="demo-column">
+                <h3>Code Example</h3>
+                <pre><code>//Few Months picker initialization
+const monthPicker = new DatepickerTabs('#month-input', {
+    mode: 'month',
+    multipleMonths: true,
+    maxMonthSelection: 3,
+    monthFormat: 'MMM YYYY',
+    onDateChange: function(dates) {
+        const monthResult = document.getElementById('month-result');
+        if (dates) {
+            if (Array.isArray(dates)) {
+                monthResult.textContent = dates.map(d => {
+                    const month = d.toLocaleString('default', { month: 'short' });
+                    const year = d.getFullYear();
+                    return `${month} ${year}`;
+                }).join(', ');
+            } else {
+                const month = dates.toLocaleString('default', { month: 'short' });
+                const year = dates.getFullYear();
+                monthResult.textContent = `${month} ${year}`;
+            }
+        } else {
+            monthResult.textContent = 'No months selected';
+        }
+    }
+});</code></pre>
+            </div>
+        </div>
+    </div>
 
     <div class="demo-section">
-        <h2>Basic Usage</h2>
-        <p>This demo shows the basic functionality of the custom date picker with both day and month selection modes.</p>
+        <h2>Month Mode</h2>
+        <p>This example demonstrates the one month selection mode with NO date selection.</p>
+
+        <div class="demo-row">
+            <div class="demo-column">
+                <h3>Single Month Picker Only</h3>
+                <input type="text" id="month-mode-example" class="demo-input" placeholder="Click to select month(s)">
+
+                <div class="result-panel">
+                    <h4>Selected Month:</h4>
+                    <div id="month-mode-example-result"></div>
+                </div>
+            </div>
+
+            <div class="demo-column">
+                <h3>Code Example</h3>
+                <pre><code>//Single Month mode picker only
+const monthPickerOnly = new DatepickerTabs('#month-mode-example', {
+    mode: 'month',
+    displayType: 'month',
+    multipleMonths: false,
+    monthFormat: 'MMM YYYY',
+    onDateChange: function(dates) {
+        const monthResultSingleMode = document.getElementById('month-mode-example-result');
+        if (dates) {
+            if (Array.isArray(dates)) {
+                monthResultSingleMode.textContent = dates.map(d => {
+                    const month = d.toLocaleString('default', { month: 'short' });
+                    const year = d.getFullYear();
+                    return `${month} ${year}`;
+                }).join(', ');
+            } else {
+                const month = dates.toLocaleString('default', { month: 'short' });
+                const year = dates.getFullYear();
+                monthResultSingleMode.textContent = `${month} ${year}`;
+            }
+        } else {
+            monthResultSingleMode.textContent = 'No months selected';
+        }
+    }
+});</code></pre>
+            </div>
+        </div>
+    </div>
+
+
+    <div class="demo-section">
+        <h2>Configurator</h2>
+        <p>Here you can generate code to use</p>
 
         <div class="demo-row">
             <div class="demo-column">
@@ -270,8 +362,8 @@
                     </div>
 
                     <div class="option-row">
-                        <label for="multiple-select">Multiple month Selection:</label>
-                        <input type="checkbox" id="multiple-select" checked="checked">
+                        <label for="multiple-month-select">Multiple month Selection:</label>
+                        <input type="checkbox" id="multiple-month-select" checked="checked">
                     </div>
 
                     <div class="option-row">
@@ -303,44 +395,7 @@
         </div>
     </div>
 
-    <div class="demo-section">
-        <h2>Month Selection Demo</h2>
-        <p>This example demonstrates the month selection mode with multiple month selection enabled and restriction to 3 month at once.</p>
 
-        <div class="demo-row">
-            <div class="demo-column">
-                <h3>Month Picker</h3>
-                <input type="text" id="month-input" class="demo-input" placeholder="Click to select month(s)">
-
-                <div class="result-panel">
-                    <h4>Selected Months:</h4>
-                    <div id="month-result"></div>
-                </div>
-            </div>
-
-            <div class="demo-column">
-                <h3>Code Example</h3>
-                <pre><code>const monthPicker = new DatepickerTabs('#month-input', {
-    mode: 'month',
-    multiple: true,
-    maxMonthSelection: 3,
-    onDateChange: function(dates) {
-        const resultElement = document.getElementById('month-result');
-        if (!dates) {
-            resultElement.textContent = 'No month selected';
-        } else if (Array.isArray(dates)) {
-            resultElement.textContent = 'Selected months: ' + dates.map(d => {
-                return d.toLocaleString('default', { month: 'long', year: 'numeric' });
-            }).join(', ');
-        } else {
-            resultElement.textContent = 'Selected month: ' +
-                dates.toLocaleString('default', { month: 'long', year: 'numeric' });
-        }
-    }
-});</code></pre>
-            </div>
-        </div>
-    </div>
 
     <!-- Test for bottom of page positioning -->
     <div class="bottom-demo">
@@ -483,86 +538,15 @@ datePicker.setDate(null);</code></pre>
 
 <script src="./../dist/js/custom-datepicker.min.js"></script>
 <script>
-    // Initialize date picker
-    const datePicker = new DatepickerTabs('#date-input', {
-        onDateChange: function(date) {
-            const resultElement = document.getElementById('date-result');
-            if (!date) {
-                resultElement.textContent = 'No date selected';
-            } else if (Array.isArray(date)) {
-                resultElement.textContent = 'Selected dates: ' + date.map(d => d.toLocaleDateString()).join(', ');
-            } else {
-                resultElement.textContent = 'Selected date: ' + date.toLocaleDateString();
-            }
-        }
-    });
 
-    // Initialize month picker
-    const monthPicker = new DatepickerTabs('#month-input', {
-        mode: 'month',
-        multiple: true,
-        maxMonthSelection: 3,
-        onDateChange: function(dates) {
-            const resultElement = document.getElementById('month-result');
-            if (!dates) {
-                resultElement.textContent = 'No month selected';
-            } else if (Array.isArray(dates)) {
-                resultElement.textContent = 'Selected months: ' + dates.map(d => {
-                    return d.toLocaleString('default', { month: 'long', year: 'numeric' });
-                }).join(', ');
-            } else {
-                resultElement.textContent = 'Selected month: ' +
-                    dates.toLocaleString('default', { month: 'long', year: 'numeric' });
-            }
-        }
-    });
 
-    // Set up event listeners for options
-    document.getElementById('multiple-select').addEventListener('change', function(e) {
-        datePicker.setMultiple(e.target.checked);
-    });
 
-    document.getElementById('date-format').addEventListener('change', function(e) {
-        datePicker.setDateFormat(e.target.value);
-    });
-
-    document.getElementById('min-date').addEventListener('change', function(e) {
-        const date = e.target.value ? new Date(e.target.value) : null;
-        datePicker.setMinDate(date);
-    });
-
-    document.getElementById('month-multiple').addEventListener('change', function(e) {
-        monthPicker.setMultiple(e.target.checked);
-    });
-
-    document.getElementById('max-selection').addEventListener('change', function(e) {
-        const value = parseInt(e.target.value, 10);
-        monthPicker.setMaxMonthSelection(value || null);
-    });
-</script>
-
-<script>
-    // Day picker initialization
-    const datePicker = new DatepickerTabs('#date-input', {
-        dateFormat: 'DD MMM YYYY',
-        onDateChange: function(date) {
-            const dateResult = document.getElementById('date-result');
-            if (date) {
-                if (Array.isArray(date)) {
-                    dateResult.textContent = date.map(d => d.toLocaleDateString()).join(', ');
-                } else {
-                    dateResult.textContent = date.toLocaleDateString();
-                }
-            } else {
-                dateResult.textContent = 'No date selected';
-            }
-        }
-    });
 
     // Month picker initialization
     const monthPicker = new DatepickerTabs('#month-input', {
         mode: 'month',
-        multiple: true,
+        multipleMonths: true,
+        maxMonthSelection: 3,
         monthFormat: 'MMM YYYY',
         onDateChange: function(dates) {
             const monthResult = document.getElementById('month-result');
@@ -584,6 +568,77 @@ datePicker.setDate(null);</code></pre>
         }
     });
 
+    //Single Month mode picker only
+    const monthPickerOnly = new DatepickerTabs('#month-mode-example', {
+        mode: 'month',
+        displayType: 'month',
+        multipleMonths: false,
+        monthFormat: 'MMM YYYY',
+        onDateChange: function(dates) {
+            const monthResultSingleMode = document.getElementById('month-mode-example-result');
+            if (dates) {
+                if (Array.isArray(dates)) {
+                    monthResultSingleMode.textContent = dates.map(d => {
+                        const month = d.toLocaleString('default', { month: 'short' });
+                        const year = d.getFullYear();
+                        return `${month} ${year}`;
+                    }).join(', ');
+                } else {
+                    const month = dates.toLocaleString('default', { month: 'short' });
+                    const year = dates.getFullYear();
+                    monthResultSingleMode.textContent = `${month} ${year}`;
+                }
+            } else {
+                monthResultSingleMode.textContent = 'No months selected';
+            }
+        }
+    });
+
+
+    // Initialize date picker
+    const datePicker = new DatepickerTabs('#date-input', {
+        onDateChange: function(date) {
+            const resultElement = document.getElementById('date-result');
+            if (!date) {
+                resultElement.textContent = 'No date selected';
+            } else if (Array.isArray(date)) {
+                resultElement.textContent = 'Selected dates: ' + date.map(d => d.toLocaleDateString()).join(', ');
+            } else {
+                resultElement.textContent = 'Selected date: ' + date.toLocaleDateString();
+            }
+        }
+    });
+
+
+    // Set up event listeners for options
+    document.getElementById('multiple-select').addEventListener('change', function(e) {
+        datePicker.setMultiple(e.target.checked);
+    });
+
+    document.getElementById('date-format').addEventListener('change', function(e) {
+        datePicker.setDateFormat(e.target.value);
+    });
+
+    document.getElementById('min-date').addEventListener('change', function(e) {
+        const date = e.target.value ? new Date(e.target.value) : null;
+        datePicker.setMinDate(date);
+    });
+
+    /*document.getElementById('month-multiple').addEventListener('change', function(e) {
+        monthPicker.setMultiple(e.target.checked);
+    });
+
+    document.getElementById('max-selection').addEventListener('change', function(e) {
+        const value = parseInt(e.target.value, 10);
+        monthPicker.setMaxMonthSelection(value || null);
+    });
+*/
+
+
+
+
+
+
     // Bottom picker for testing positioning
     const bottomPicker = new DatepickerTabs('#bottom-date-input', {
         position: 'top'  // Force to open upward
@@ -591,7 +646,7 @@ datePicker.setDate(null);</code></pre>
 
     // Options panel functionality
     const modeSelect = document.getElementById('mode-select');
-    const multipleSelect = document.getElementById('multiple-select');
+    const multipleMonthSelect = document.getElementById('multiple-month-select');
     const saturdaysSelect = document.getElementById('saturdays-select');
     const minDateInput = document.getElementById('min-date');
     const dateFormatSelect = document.getElementById('date-format');
@@ -600,14 +655,14 @@ datePicker.setDate(null);</code></pre>
 
     applyOptionsBtn.addEventListener('click', function() {
         const mode = modeSelect.value;
-        const multiple = multipleSelect.checked;
+        const multipleMonth = multipleMonthSelect.checked;
         const futureSaturdaysOnly = saturdaysSelect.checked;
         const minDate = minDateInput.value ? new Date(minDateInput.value) : null;
         const dateFormat = dateFormatSelect.value;
 
         // Update datepicker options
         datePicker.setMode(mode);
-        datePicker.setMultiple(multiple);
+        datePicker.setMultiple(multipleMonth);
         datePicker.options.futureSaturdaysOnly = futureSaturdaysOnly;
         datePicker.options.minDate = minDate;
         datePicker.setDateFormat(dateFormat);

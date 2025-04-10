@@ -25,7 +25,7 @@ function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e 
  *
  * FEATURES:
  * - Day and Month selection modes
- * - Single or multiple selection
+ * - Single or multiple selection for both days and months
  * - Format customization
  * - Min/Max date constraints
  * - Max month selection limit
@@ -52,7 +52,8 @@ function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e 
  * ```javascript
  * const picker = new DatepickerTabs('.date-input', {
  *   mode: 'month',
- *   multiple: true,
+ *   multipleDays: false,  // Single day selection
+ *   multipleMonths: true, // Multiple month selection
  *   dateFormat: 'DD/MM/YYYY',
  *   displayType: 'tabs', // 'tabs', 'day', or 'month'
  *   maxMonthSelection: 6, // Limit to select max 6 months
@@ -75,7 +76,13 @@ function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e 
  * // Switch mode
  * picker.setMode('month');
  *
- * // Enable/disable multiple selection
+ * // Enable/disable multiple day selection
+ * picker.setMultipleDays(true);
+ * 
+ * // Enable/disable multiple month selection
+ * picker.setMultipleMonths(true);
+ * 
+ * // Enable both multiple days and months
  * picker.setMultiple(true);
  * ```
  */
@@ -90,10 +97,12 @@ var DatepickerTabs = /*#__PURE__*/function () {
       // 'day' or 'month'
       displayType: 'tabs',
       // 'tabs', 'day', or 'month' - controls if tabs should be shown
-      multiple: false,
-      // Allow multiple date/month selection
+      multipleDays: false,
+      // Allow multiple day selection
+      multipleMonths: false,
+      // Allow multiple month selection
       maxMonthSelection: null,
-      // Maximum number of months that can be selected (when multiple is true)
+      // Maximum number of months that can be selected (when multipleMonths is true)
       startDate: new Date(),
       minDate: null,
       maxDate: null,
@@ -368,7 +377,7 @@ var DatepickerTabs = /*#__PURE__*/function () {
       if (this.options.mode === 'day') {
         if (this.selectedDates.length === 0) {
           this.inputElement.value = '';
-        } else if (this.options.multiple) {
+        } else if (this.options.multipleDays) {
           var formattedDates = this.selectedDates.map(function (d) {
             return _this4.formatDate(d, _this4.options.dateFormat);
           });
@@ -379,7 +388,7 @@ var DatepickerTabs = /*#__PURE__*/function () {
       } else {
         if (this.selectedMonths.length === 0) {
           this.inputElement.value = '';
-        } else if (this.options.multiple) {
+        } else if (this.options.multipleMonths) {
           var formattedMonths = this.selectedMonths.map(function (m) {
             return _this4.formatDate(new Date(m.year, m.month, 1), _this4.options.monthFormat);
           });
@@ -698,8 +707,8 @@ var DatepickerTabs = /*#__PURE__*/function () {
       // Combine all parts
       var html = yearsHtml + navHtml + daysHeaderHtml + daysHtml;
 
-      // If multiple selection is enabled, add the selection info
-      if (this.options.multiple && this.selectedDates.length > 0) {
+      // If multiple day selection is enabled, add the selection info
+      if (this.options.multipleDays && this.selectedDates.length > 0) {
         html += this.renderSelectedDates();
       }
       return html;
@@ -729,8 +738,8 @@ var DatepickerTabs = /*#__PURE__*/function () {
       // Combine all parts
       var html = yearsHtml + monthsHtml;
 
-      // If multiple selection is enabled, add the selection info
-      if (this.options.multiple && this.selectedMonths.length > 0) {
+      // If multiple month selection is enabled, add the selection info
+      if (this.options.multipleMonths && this.selectedMonths.length > 0) {
         html += this.renderSelectedMonths();
       }
       return html;
@@ -906,8 +915,8 @@ var DatepickerTabs = /*#__PURE__*/function () {
                 month = _dateStr$split$map2[1],
                 date = _dateStr$split$map2[2];
               var selectedDate = new Date(year, month - 1, date);
-              if (_this8.options.multiple) {
-                // If multiple selection is enabled
+              if (_this8.options.multipleDays) {
+                // If multiple day selection is enabled
                 var index = _this8.selectedDates.findIndex(function (d) {
                   return d.getDate() === selectedDate.getDate() && d.getMonth() === selectedDate.getMonth() && d.getFullYear() === selectedDate.getFullYear();
                 });
@@ -958,8 +967,8 @@ var DatepickerTabs = /*#__PURE__*/function () {
             e.stopPropagation(); // Prevent event bubbling
             var month = parseInt(item.getAttribute('data-month'), 10);
             var year = parseInt(item.getAttribute('data-year'), 10);
-            if (_this8.options.multiple) {
-              // If multiple selection is enabled
+            if (_this8.options.multipleMonths) {
+              // If multiple month selection is enabled
               var index = _this8.selectedMonths.findIndex(function (m) {
                 return m.month === month && m.year === year;
               });
@@ -988,12 +997,32 @@ var DatepickerTabs = /*#__PURE__*/function () {
 
               // Also update selected dates to first day of month
               _this8.selectedDates = [new Date(year, month, 1)];
+
+              // If single month selection, apply immediately and close
+              // Create an event to notify that a month has been selected and applied
+              var event = new CustomEvent('datepickerApply', {
+                detail: {
+                  mode: 'month',
+                  selectedDates: _this8.selectedDates,
+                  selectedMonths: _this8.selectedMonths
+                }
+              });
+              _this8.element.dispatchEvent(event);
+
+              // Update input value if available
+              _this8.updateInputValue();
+
+              // Hide the picker
+              _this8.hide();
+
+              // Call callback if provided
+              if (_this8.options.onDateChange) {
+                _this8.options.onDateChange(_this8.selectedDates[0]);
+              }
+              return;
             }
             _this8.render();
             _this8.attachEvents();
-
-            // In month mode, we don't trigger the onDateChange callback
-            // until the Apply button is clicked - we just highlight the selection
           });
         });
       }
@@ -1215,24 +1244,51 @@ var DatepickerTabs = /*#__PURE__*/function () {
     key: "getDate",
     value: function getDate() {
       if (this.options.mode === 'day') {
-        return this.selectedDates.length === 0 ? null : this.options.multiple ? this.selectedDates : this.selectedDates[0];
+        return this.selectedDates.length === 0 ? null : this.options.multipleDays ? this.selectedDates : this.selectedDates[0];
       } else {
         // Convert month selections to dates (1st of each month)
         var dates = this.selectedMonths.map(function (m) {
           return new Date(m.year, m.month, 1);
         });
-        return dates.length === 0 ? null : this.options.multiple ? dates : dates[0];
+        return dates.length === 0 ? null : this.options.multipleMonths ? dates : dates[0];
       }
     }
 
     /**
-     * Enable/disable multiple selection
+     * Enable/disable multiple days selection
+     * @param {boolean} enable - Whether to enable multiple day selection
+     */
+  }, {
+    key: "setMultipleDays",
+    value: function setMultipleDays(enable) {
+      this.options.multipleDays = !!enable;
+      this.render();
+      this.attachEvents();
+      return this;
+    }
+
+    /**
+     * Enable/disable multiple months selection
+     * @param {boolean} enable - Whether to enable multiple month selection
+     */
+  }, {
+    key: "setMultipleMonths",
+    value: function setMultipleMonths(enable) {
+      this.options.multipleMonths = !!enable;
+      this.render();
+      this.attachEvents();
+      return this;
+    }
+
+    /**
+     * Enable/disable multiple selection (both days and months)
      * @param {boolean} enable - Whether to enable multiple selection
      */
   }, {
     key: "setMultiple",
     value: function setMultiple(enable) {
-      this.options.multiple = !!enable;
+      this.options.multipleDays = !!enable;
+      this.options.multipleMonths = !!enable;
       this.render();
       this.attachEvents();
       return this;
