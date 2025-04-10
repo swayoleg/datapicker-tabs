@@ -43,7 +43,7 @@ You can customize the date picker by passing an options object:
 ```javascript
 const picker = new DatepickerTabs('#date-input', {
   mode: 'month',
-  multiple: true,
+  multipleMonths: true,
   dateFormat: 'DD/MM/YYYY',
   displayType: 'tabs',
   maxMonthSelection: 6,
