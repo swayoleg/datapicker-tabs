@@ -57,24 +57,25 @@ const picker = new DatepickerTabs('#date-input', {
 
 ### Available Options
 
-| Option | Type | Default | Description |
-|--------|------|---------|-------------|
-| `mode` | string | 'day' | Mode of operation: 'day' or 'month' |
-| `displayType` | string | 'tabs' | Display type: 'tabs', 'day', or 'month' |
-| `multiple` | boolean | false | Allow multiple date/month selection |
-| `maxMonthSelection` | number | null | Maximum number of months that can be selected (when multiple is true) |
-| `startDate` | Date | new Date() | Initial selected date |
-| `minDate` | Date | null | Minimum selectable date |
-| `maxDate` | Date | null | Maximum selectable date |
-| `futureSaturdaysOnly` | boolean | false | Option for day mode to only enable Saturdays in the future |
-| `monthNames` | array | ['January', ...] | Array of month names |
-| `dayNames` | array | ['Sun', ...] | Array of day names |
-| `cookieName` | string | 'datepickerTabsMode' | Cookie name for mode persistence |
-| `dateFormat` | string | 'DD MMM YYYY' | Format for displaying dates |
-| `monthFormat` | string | 'MMM YYYY' | Format for displaying months |
-| `position` | string | 'bottom' | Position of the picker: 'bottom' or 'top' |
-| `zIndex` | number | 9999 | z-index for the picker container |
-| `onDateChange` | function | null | Callback function when date(s) change |
+| Option | Type | Default | Description                                                           |
+|--------|------|---------|-----------------------------------------------------------------------|
+| `mode` | string | 'day' | Mode of operation: 'day' or 'month'                                   |
+| `displayType` | string | 'tabs' | Display type: 'tabs', 'day', or 'month'                               |
+| `multipleDays` | boolean | false | Allow multiple date selection                                         |
+| `multipleMonths` | boolean | false | Allow multiple month selection                                        |
+| `maxMonthSelection` | number | null | Maximum number of months that can be selected (when multipleMonths is true) |
+| `startDate` | Date | new Date() | Initial selected date                                                 |
+| `minDate` | Date | null | Minimum selectable date                                               |
+| `maxDate` | Date | null | Maximum selectable date                                               |
+| `futureSaturdaysOnly` | boolean | false | Option for day mode to only enable Saturdays in the future            |
+| `monthNames` | array | ['January', ...] | Array of month names                                                  |
+| `dayNames` | array | ['Sun', ...] | Array of day names                                                    |
+| `cookieName` | string | 'datepickerTabsMode' | Cookie name for mode persistence                                      |
+| `dateFormat` | string | 'DD MMM YYYY' | Format for displaying dates                                           |
+| `monthFormat` | string | 'MMM YYYY' | Format for displaying months                                          |
+| `position` | string | 'bottom' | Position of the picker: 'bottom' or 'top'                             |
+| `zIndex` | number | 9999 | z-index for the picker container                                      |
+| `onDateChange` | function | null | Callback function when date(s) change                                 |
 
 ## Date Formatting
 
@@ -100,6 +101,7 @@ Sets the selected date(s).
 picker.setDate(new Date());
 
 // Set multiple dates
+picker.setMultipleDays(true);
 picker.setDate([new Date(2023, 0, 1), new Date(2023, 1, 1)]);
 
 // Clear selection
@@ -122,9 +124,13 @@ Sets the picker mode ('day' or 'month').
 picker.setMode('month');
 ```
 
-### setMultiple(enable)
+### setMultipleDays(enable)
 
-Enables or disables multiple selection.
+Enables or disables multiple days selection.
+
+### setMultipleMonths(enable)
+
+Enables or disables multiple months selection.
 
 ```javascript
 picker.setMultiple(true);
@@ -228,12 +234,12 @@ document.getElementById('date-input').addEventListener('datepickerApply', functi
 const datePicker = new DatepickerTabs('#date-input');
 ```
 
-### Month Picker with Multiple Selection
+### Month Picker with Multiple Selection and maximum 3 months
 
 ```javascript
 const monthPicker = new DatepickerTabs('#month-input', {
-  mode: 'month',
-  multiple: true,
+  mode: 'month', 
+  multipleMonths: true,
   maxMonthSelection: 3
 });
 ```
@@ -277,8 +283,6 @@ npm install --save-dev gulp gulp-sass sass gulp-postcss autoprefixer cssnano gul
 ```angular2html
 src/assets/scss/custom-datepicker.scss
 ```
-
-
 
 
 ### Rebuilding Styles
