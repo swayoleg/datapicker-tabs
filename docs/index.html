@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DatepickerTabs Demo</title>
+    <link rel="stylesheet" href="dist/css/custom-datepicker.min.css">
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 20px;
+            color: #333;
+            line-height: 1.6;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        h1 {
+            color: #2196f3;
+        }
+
+        .demo-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 30px;
+        }
+
+        .demo-section {
+            flex: 1;
+            min-width: 300px;
+            padding: 20px;
+            border: 1px solid #eaeaea;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+        }
+
+        .demo-input {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 14px;
+            margin-bottom: 15px;
+        }
+
+        .result-display {
+            background-color: #f2f7fd;
+            padding: 15px;
+            border-radius: 8px;
+            min-height: 60px;
+        }
+
+        .code-block {
+            background-color: #f5f5f5;
+            padding: 15px;
+            border-radius: 4px;
+            overflow: auto;
+            font-family: monospace;
+            font-size: 14px;
+        }
+
+        footer {
+            margin-top: 50px;
+            text-align: center;
+            padding: 20px;
+            border-top: 1px solid #eaeaea;
+            font-size: 14px;
+        }
+
+        .options {
+            margin-top: 20px;
+        }
+
+        .option-row {
+            margin-bottom: 10px;
+        }
+
+        .option-row label {
+            display: inline-block;
+            width: 120px;
+        }
+    </style>
+</head>
+<body>
+<header>
+    <h1>DatepickerTabs</h1>
+    <p>A versatile date picker with day and month selection modes</p>
+    <a href="https://github.com/yourusername/datepicker-tabs" class="github-link">View on GitHub</a>
+</header>
+
+<div class="demo-container">
+    <div class="demo-section">
+        <h2>Date Mode</h2>
+        <input type="text" id="date-input" class="demo-input" placeholder="Select a date">
+        <div class="result-display" id="date-result">No date selected</div>
+
+        <div class="options">
+            <div class="option-row">
+                <label for="multiple-select">Multiple:</label>
+                <input type="checkbox" id="multiple-select">
+            </div>
+
+            <div class="option-row">
+                <label for="min-date">Min Date:</label>
+                <input type="date" id="min-date">
+            </div>
+
+            <div class="option-row">
+                <label for="date-format">Format:</label>
+                <select id="date-format">
+                    <option value="DD MMM YYYY">DD MMM YYYY</option>
+                    <option value="MM/DD/YYYY">MM/DD/YYYY</option>
+                    <option value="YYYY-MM-DD">YYYY-MM-DD</option>
+                </select>
+            </div>
+        </div>
+
+        <h3>Example Code:</h3>
+        <pre class="code-block">
+const datePicker = new DatepickerTabs('#date-input', {
+  mode: 'day',
+  multiple: false,
+  dateFormat: 'DD MMM YYYY'
+});</pre>
+    </div>
+
+    <div class="demo-section">
+        <h2>Month Mode</h2>
+        <input type="text" id="month-input" class="demo-input" placeholder="Select month(s)">
+        <div class="result-display" id="month-result">No month selected</div>
+
+        <div class="options">
+            <div class="option-row">
+                <label for="month-multiple">Multiple:</label>
+                <input type="checkbox" id="month-multiple" checked>
+            </div>
+
+            <div class="option-row">
+                <label for="max-selection">Max Selection:</label>
+                <input type="number" id="max-selection" value="3" min="1" max="12">
+            </div>
+        </div>
+
+        <h3>Example Code:</h3>
+        <pre class="code-block">
+const monthPicker = new DatepickerTabs('#month-input', {
+  mode: 'month',
+  multiple: true,
+  maxMonthSelection: 3
+});</pre>
+    </div>
+</div>
+
+<footer>
+    <p>DatepickerTabs is released under the MIT License.</p>
+    <p>&copy; 2025 Your Name</p>
+</footer>
+
+<script src="dist/js/custom-datepicker.min.js"></script>
+<script>
+    // Initialize date picker
+    const datePicker = new DatepickerTabs('#date-input', {
+        onDateChange: function(date) {
+            const resultElement = document.getElementById('date-result');
+            if (!date) {
+                resultElement.textContent = 'No date selected';
+            } else if (Array.isArray(date)) {
+                resultElement.textContent = 'Selected dates: ' + date.map(d => d.toLocaleDateString()).join(', ');
+            } else {
+                resultElement.textContent = 'Selected date: ' + date.toLocaleDateString();
+            }
+        }
+    });
+
+    // Initialize month picker
+    const monthPicker = new DatepickerTabs('#month-input', {
+        mode: 'month',
+        multiple: true,
+        maxMonthSelection: 3,
+        onDateChange: function(dates) {
+            const resultElement = document.getElementById('month-result');
+            if (!dates) {
+                resultElement.textContent = 'No month selected';
+            } else if (Array.isArray(dates)) {
+                resultElement.textContent = 'Selected months: ' + dates.map(d => {
+                    return d.toLocaleString('default', { month: 'long', year: 'numeric' });
+                }).join(', ');
+            } else {
+                resultElement.textContent = 'Selected month: ' +
+                    dates.toLocaleString('default', { month: 'long', year: 'numeric' });
+            }
+        }
+    });
+
+    // Set up event listeners for options
+    document.getElementById('multiple-select').addEventListener('change', function(e) {
+        datePicker.setMultiple(e.target.checked);
+    });
+
+    document.getElementById('date-format').addEventListener('change', function(e) {
+        datePicker.setDateFormat(e.target.value);
+    });
+
+    document.getElementById('min-date').addEventListener('change', function(e) {
+        const date = e.target.value ? new Date(e.target.value) : null;
+        datePicker.setMinDate(date);
+    });
+
+    document.getElementById('month-multiple').addEventListener('change', function(e) {
+        monthPicker.setMultiple(e.target.checked);
+    });
+
+    document.getElementById('max-selection').addEventListener('change', function(e) {
+        const value = parseInt(e.target.value, 10);
+        monthPicker.setMaxMonthSelection(value || null);
+    });
+</script>
+</body>
+</html>
