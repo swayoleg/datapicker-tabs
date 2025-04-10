@@ -135,7 +135,7 @@ class DatepickerTabs {
     
     // Set the element where the datepicker will be rendered
     this.element = this.containerElement;
-    
+
     // Add the wrapper class to the element for CSS scoping
     this.element.classList.add('datepicker-tabs');
 
@@ -306,6 +306,8 @@ class DatepickerTabs {
    */
   setupInputElement() {
     // Update input with initial date if available
+    this.inputElement.classList.add('datepicker-input');
+
     this.updateInputValue();
 
     // Add click handler to show the picker
