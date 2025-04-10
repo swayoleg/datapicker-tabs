@@ -260,3 +260,68 @@ const saturdayPicker = new DatepickerTabs('#event-date', {
 ## Browser Support
 
 The date picker works in all modern browsers (Chrome, Firefox, Safari, Edge).
+
+## How to Rebuild Styles
+
+The project uses SCSS for styling and Gulp to compile it to CSS. Here's how to rebuild the styles when you make changes:
+
+### Initial Setup
+
+1. Make sure all dependencies are installed:
+```bash
+npm install --save-dev gulp gulp-sass sass gulp-postcss autoprefixer cssnano gulp-sourcemaps gulp-rename
+```
+
+2. Ensure your SCSS files are in the correct location:
+
+```angular2html
+src/assets/scss/custom-datepicker.scss
+```
+
+
+
+
+### Rebuilding Styles
+
+#### One-time Build
+
+To compile your SCSS files to CSS once:
+
+```bash
+npx gulp build
+```
+
+This will:
+- Compile your SCSS to CSS
+- Add vendor prefixes with Autoprefixer
+- Create a minified version (custom-datepicker.min.css)
+- Generate sourcemaps for debugging
+
+The compiled CSS files will be in `src/assets/css/`.
+
+#### Development Mode (Watch)
+
+To automatically rebuild styles whenever you make changes to your SCSS files:
+
+```bash
+npx gulp
+```
+
+Here's the text starting from "This starts the watch task that will:":
+This starts the watch task that will:
+- Monitor your SCSS files for changes
+- Automatically recompile when changes are detected
+- Generate both regular and minified CSS files
+
+#### Troubleshooting
+
+If you encounter build errors:
+
+1. Check for SCSS syntax errors in your files
+2. Ensure all required dependencies are installed
+3. Verify the paths in gulpfile.js match your project structure
+
+Common errors:
+- `'compileStyles' errored after X ms`: Look for syntax errors in your SCSS
+- `Cannot find module 'X'`: You need to install the missing dependency
+
