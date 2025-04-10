@@ -73,31 +73,33 @@ const picker = new DatepickerTabs('#date-input', {
     // Callbacks
     onDateChange: function(date) {   // Date selection callback
         console.log('Selected date:', date);
-    }
+    },
+    containerId: '', //Custom container ID to render calendar (if not provided, one will be generated) 
 });
 ```
 
 ### Available Options
 
-| Option | Type | Default | Description                                                           |
-|--------|------|---------|-----------------------------------------------------------------------|
-| `mode` | string | 'day' | Mode of operation: 'day' or 'month'                                   |
-| `displayType` | string | 'tabs' | Display type: 'tabs', 'day', or 'month'                               |
-| `multipleDays` | boolean | false | Allow multiple date selection                                         |
-| `multipleMonths` | boolean | false | Allow multiple month selection                                        |
-| `maxMonthSelection` | number | null | Maximum number of months that can be selected (when multipleMonths is true) |
-| `startDate` | Date | new Date() | Initial selected date                                                 |
-| `minDate` | Date | null | Minimum selectable date                                               |
-| `maxDate` | Date | null | Maximum selectable date                                               |
-| `futureSaturdaysOnly` | boolean | false | Option for day mode to only enable Saturdays in the future            |
-| `monthNames` | array | ['January', ...] | Array of month names                                                  |
-| `dayNames` | array | ['Sun', ...] | Array of day names                                                    |
-| `cookieName` | string | 'datepickerTabsMode' | Cookie name for mode persistence                                      |
-| `dateFormat` | string | 'DD MMM YYYY' | Format for displaying dates                                           |
-| `monthFormat` | string | 'MMM YYYY' | Format for displaying months                                          |
-| `position` | string | 'bottom' | Position of the picker: 'bottom' or 'top'                             |
-| `zIndex` | number | 9999 | z-index for the picker container                                      |
-| `onDateChange` | function | null | Callback function when date(s) change                                 |
+| Option | Type | Default | Description                                                                     |
+|--------|------|---------|---------------------------------------------------------------------------------|
+| `mode` | string | 'day' | Mode of operation: 'day' or 'month'                                             |
+| `displayType` | string | 'tabs' | Display type: 'tabs', 'day', or 'month'                                         |
+| `multipleDays` | boolean | false | Allow multiple date selection                                                   |
+| `multipleMonths` | boolean | false | Allow multiple month selection                                                  |
+| `maxMonthSelection` | number | null | Maximum number of months that can be selected (when multipleMonths is true)     |
+| `startDate` | Date | new Date() | Initial selected date                                                           |
+| `minDate` | Date | null | Minimum selectable date                                                         |
+| `maxDate` | Date | null | Maximum selectable date                                                         |
+| `futureSaturdaysOnly` | boolean | false | Option for day mode to only enable Saturdays in the future                      |
+| `monthNames` | array | ['January', ...] | Array of month names                                                            |
+| `dayNames` | array | ['Sun', ...] | Array of day names                                                              |
+| `cookieName` | string | 'datepickerTabsMode' | Cookie name for mode persistence                                                |
+| `dateFormat` | string | 'DD MMM YYYY' | Format for displaying dates                                                     |
+| `monthFormat` | string | 'MMM YYYY' | Format for displaying months                                                    |
+| `position` | string | 'bottom' | Position of the picker: 'bottom' or 'top'                                       |
+| `zIndex` | number | 9999 | z-index for the picker container                                                |
+| `onDateChange` | function | null | Callback function when date(s) change                                           |
+| `containerId` | string | '' | Custom container ID to render calendar (if not provided, one will be generated) |
 
 ## Date Formatting
 
