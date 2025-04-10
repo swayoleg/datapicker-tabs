@@ -1,10 +1,10 @@
 /**
- * CustomDatePicker
+ * DatepickerTabs
  *
  * A versatile date picker with day and month selection modes,
  * multiple selection support, and various formatting options.
  *
- * @version 1.1.0
+ * @version 1.2.0
  *
  * FEATURES:
  * - Day and Month selection modes
@@ -17,20 +17,23 @@
  * - Cookie-based mode persistence
  * - Tooltip overlay positioning
  * - Mobile-friendly design
+ * - Automatic container creation
+ * - Support for multiple instances with class selectors
  *
  * USAGE:
  *
  * 1. Basic initialization:
  * ```javascript
- * const picker = new CustomDatePicker('#date-container', {
- *   inputElement: '#date-input'
- * });
+ * // Initialize on a single input with ID
+ * const picker = new DatepickerTabs('#date-input');
+ * 
+ * // Initialize on multiple inputs with class
+ * const pickers = new DatepickerTabs('.date-input-class');
  * ```
  *
  * 2. With options:
  * ```javascript
- * const picker = new CustomDatePicker('#date-container', {
- *   inputElement: '#date-input',
+ * const picker = new DatepickerTabs('.date-input', {
  *   mode: 'month',
  *   multiple: true,
  *   dateFormat: 'DD/MM/YYYY',
@@ -59,8 +62,8 @@
  * picker.setMultiple(true);
  * ```
  */
-class CustomDatePicker {
-  constructor(element, options = {}) {
+class DatepickerTabs {
+  constructor(selector, options = {}) {
     // Define default options
     const defaults = {
       mode: 'day', // 'day' or 'month'
@@ -77,29 +80,64 @@ class CustomDatePicker {
         'July', 'August', 'September', 'October', 'November', 'December'
       ],
       dayNames: ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'],
-      cookieName: 'customDatePickerMode', // Store mode in cookie
+      cookieName: 'datepickerTabsMode', // Store mode in cookie
       dateFormat: 'DD MMM YYYY', // Default format for display
       monthFormat: 'MMM YYYY', // Default format for month display
-      inputElement: null, // Optional input element to update with selected date
       position: 'bottom', // 'bottom' or 'top' - default position relative to input
-      zIndex: 9999 // z-index for the picker container
+      zIndex: 9999, // z-index for the picker container
+      containerId: '', // Custom container ID (if not provided, one will be generated)
     };
 
     // Merge default options with provided options
     this.options = { ...defaults, ...options };
-
-    // Element where the datepicker will be rendered
-    this.element = typeof element === 'string' ? document.querySelector(element) : element;
-
+    
+    // Store instance references 
+    this.instances = [];
+    
+    // Check if selector refers to multiple elements
+    if (typeof selector === 'string') {
+      const elements = document.querySelectorAll(selector);
+      
+      // If multiple elements found, initialize on each one
+      if (elements.length > 1) {
+        elements.forEach((inputElement, index) => {
+          const instanceOptions = {...this.options};
+          // Create a unique container ID for each instance
+          const instanceId = `datepicker-container-${Date.now()}-${index}`;
+          this.instances.push(this._createInstance(inputElement, instanceOptions, instanceId));
+        });
+        
+        return this.instances;
+      } else if (elements.length === 1) {
+        // Single element - use it as input element
+        this.inputElement = elements[0];
+      } else {
+        console.error('DatapickerTabs: No elements found with selector:', selector);
+        return;
+      }
+    } else if (selector instanceof HTMLElement) {
+      // If an actual element is passed, use it directly
+      this.inputElement = selector;
+    } else {
+      console.error('DatapickerTabs: Invalid selector or element:', selector);
+      return;
+    }
+    
+    // Create container element for this instance
+    const containerId = this.options.containerId || `datepicker-container-${Date.now()}`;
+    this.containerId = containerId;
+    
+    // Create container element and add it to the DOM
+    this.containerElement = document.createElement('div');
+    this.containerElement.id = containerId;
+    this.containerElement.className = 'datepicker-tabs-container';
+    document.body.appendChild(this.containerElement);
+    
+    // Set the element where the datepicker will be rendered
+    this.element = this.containerElement;
+    
     // Add the wrapper class to the element for CSS scoping
     this.element.classList.add('datepicker-tabs');
-
-    // Get the input element if provided
-    if (this.options.inputElement) {
-      this.inputElement = typeof this.options.inputElement === 'string'
-          ? document.querySelector(this.options.inputElement)
-          : this.options.inputElement;
-    }
 
     // Initialize properties
     this.currentDate = new Date(this.options.startDate || new Date());
@@ -128,6 +166,18 @@ class CustomDatePicker {
 
     // Initialize the datepicker
     this.init();
+  }
+
+  /**
+   * Create a datepicker instance for a specific input element
+   * @private
+   */
+  _createInstance(inputElement, options, containerId) {
+    // Create a new options object with the input element
+    const instanceOptions = {...options, containerId};
+    
+    // Create a new instance and return it
+    return new DatapickerTabs(inputElement, instanceOptions);
   }
 
   /**
@@ -1229,7 +1279,29 @@ class CustomDatePicker {
     this.attachEvents();
     return this;
   }
+  
+  /**
+   * Destroy the datepicker instance and clean up
+   */
+  destroy() {
+    // Remove event listeners from input
+    if (this.inputElement) {
+      const newInputElement = this.inputElement.cloneNode(true);
+      this.inputElement.parentNode.replaceChild(newInputElement, this.inputElement);
+    }
+    
+    // Remove the container element from DOM
+    if (this.containerElement && this.containerElement.parentNode) {
+      this.containerElement.parentNode.removeChild(this.containerElement);
+    }
+    
+    // Clean up references
+    this.element = null;
+    this.inputElement = null;
+    this.containerElement = null;
+    this.instances = [];
+  }
 }
 
 // Create global reference
-window.CustomDatePicker = CustomDatePicker;
+window.DatepickerTabs = DatepickerTabs;
