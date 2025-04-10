@@ -22,10 +22,9 @@ A versatile date picker with day and month selection modes, multiple selection s
 Include the CSS and JavaScript files in your HTML:
 
 ```html
-<link rel="stylesheet" href="css/custom-datepicker.css">
-<script src="js/custom-datepicker.js"></script>
-```
-
+<link rel="stylesheet" href="dist/css/custom-datepicker.min.css">
+<script src="dist/js/custom-datepicker.min.js"></script>
+ 
 ## Basic Usage
 
 ```javascript
