@@ -46,6 +46,12 @@
             flex-wrap: wrap;
         }
 
+        .demo-column-1 {
+            flex: 1;
+            min-width: 100px;
+            padding: 10px;
+        }
+
         .demo-column {
             flex: 1;
             min-width: 300px;
@@ -338,47 +344,71 @@ const monthPickerOnly = new DatepickerTabs('#month-mode-example', {
 
     <div class="demo-section">
         <h2>Configurator</h2>
-        <p>Here you can generate code to use</p>
+        <p>Configure your DatepickerTabs with the options below, test it out, and generate code to use in your project.</p>
 
         <div class="demo-row">
             <div class="demo-column">
-                <h3>Date Picker</h3>
-                <input type="text" id="date-input" class="demo-input" placeholder="Click to select a date">
-                <div class="result-panel">
-                    <h4>Selected Value:</h4>
-                    <div id="date-result"></div>
-                </div>
-            </div>
-
-            <div class="demo-column">
                 <h3>Options</h3>
                 <div class="options-panel">
+                    <!-- Basic Configuration -->
+                    <h4>Basic Configuration</h4>
                     <div class="option-row">
-                        <label for="mode-select">Initial tab:</label>
-                        <select id="mode-select">
+                        <label for="config-mode">Initial Mode:</label>
+                        <select id="config-mode">
                             <option value="day">Day</option>
                             <option value="month">Month</option>
                         </select>
                     </div>
 
                     <div class="option-row">
-                        <label for="multiple-month-select">Multiple month Selection:</label>
-                        <input type="checkbox" id="multiple-month-select" checked="checked">
+                        <label for="config-display-type">Display Type:</label>
+                        <select id="config-display-type">
+                            <option value="tabs">Tabs (Show both Day & Month)</option>
+                            <option value="day">Day Only (No Tabs)</option>
+                            <option value="month">Month Only (No Tabs)</option>
+                        </select>
+                    </div>
+
+                    <!-- Selection Options -->
+                    <h4>Selection Options</h4>
+                    <div class="option-row">
+                        <label for="config-multiple-days">Multiple Day Selection:</label>
+                        <input type="checkbox" id="config-multiple-days">
                     </div>
 
                     <div class="option-row">
-                        <label for="saturdays-select">Future Saturdays Only:</label>
-                        <input type="checkbox" id="saturdays-select">
+                        <label for="config-multiple-months">Multiple Month Selection:</label>
+                        <input type="checkbox" id="config-multiple-months" checked>
                     </div>
 
                     <div class="option-row">
-                        <label for="min-date">Min Date:</label>
-                        <input type="date" id="min-date">
+                        <label for="config-max-months">Max Month Selection:</label>
+                        <input type="number" id="config-max-months" min="1" max="12" value="6">
+                        <small>(When multiple months enabled)</small>
+                    </div>
+
+                    <!-- Range Options -->
+                    <h4>Date Range</h4>
+                    <div class="option-row">
+                        <label for="config-min-date">Min Date:</label>
+                        <input type="date" id="config-min-date">
                     </div>
 
                     <div class="option-row">
-                        <label for="date-format">Format:</label>
-                        <select id="date-format">
+                        <label for="config-max-date">Max Date:</label>
+                        <input type="date" id="config-max-date">
+                    </div>
+
+                    <div class="option-row">
+                        <label for="config-saturdays">Future Saturdays Only:</label>
+                        <input type="checkbox" id="config-saturdays">
+                    </div>
+
+                    <!-- Format Options -->
+                    <h4>Format Options</h4>
+                    <div class="option-row">
+                        <label for="config-date-format">Date Format:</label>
+                        <select id="config-date-format">
                             <option value="DD MMM YYYY">DD MMM YYYY (01 Jan 2025)</option>
                             <option value="DD/MM/YYYY">DD/MM/YYYY (01/01/2025)</option>
                             <option value="MM/DD/YYYY">MM/DD/YYYY (01/01/2025)</option>
@@ -387,10 +417,56 @@ const monthPickerOnly = new DatepickerTabs('#month-mode-example', {
                     </div>
 
                     <div class="option-row">
-                        <button id="apply-options" class="btn">Apply Options</button>
-                        <button id="reset-options" class="btn btn-secondary">Reset</button>
+                        <label for="config-month-format">Month Format:</label>
+                        <select id="config-month-format">
+                            <option value="MMM YYYY">MMM YYYY (Jan 2025)</option>
+                            <option value="MMMM YYYY">MMMM YYYY (January 2025)</option>
+                            <option value="MM/YYYY">MM/YYYY (01/2025)</option>
+                            <option value="YYYY-MM">YYYY-MM (2025-01)</option>
+                        </select>
+                    </div>
+
+                    <!-- UI Settings -->
+                    <h4>UI Settings</h4>
+                    <div class="option-row">
+                        <label for="config-position">Position:</label>
+                        <select id="config-position">
+                            <option value="bottom">Bottom</option>
+                            <option value="top">Top</option>
+                        </select>
+                    </div>
+
+                    <div class="option-row">
+                        <label for="config-zindex">z-index:</label>
+                        <input type="number" id="config-zindex" value="9999">
+                    </div>
+
+                    <!-- Actions -->
+                    <div class="option-row" style="margin-top: 20px;">
+                        <button id="config-apply" class="btn">Apply & Generate Code</button>
+                        <button id="config-reset" class="btn btn-secondary">Reset to Defaults</button>
                     </div>
                 </div>
+            </div>
+        </div>
+        <div class="demo-row">
+            <div class="demo-column">
+                <h3>Preview</h3>
+                <input type="text" id="config-datepicker" class="demo-input" placeholder="Click to select a date">
+                <div class="result-panel">
+                    <h4>Selected Value(s):</h4>
+                    <div id="config-result"></div>
+                </div>
+            </div>
+
+
+        </div>
+
+        <!-- Generated Code Output -->
+        <div class="demo-row" style="margin-top: 30px;">
+            <div class="demo-column" style="flex: 1;">
+                <h3>Generated Code</h3>
+                <pre id="config-code" style="width: 100%; height: 200px; overflow: auto; background: #f5f5f5; padding: 15px; border-radius: 5px;"></pre>
             </div>
         </div>
     </div>
@@ -536,7 +612,7 @@ datePicker.setDate(null);</code></pre>
     <p>&copy; 2025 <a href="https://github.com/swayoleg/datepicker-tabs">swayoleg/datepicker-tabs</a></p>
 </footer>
 
-<script src="./../dist/js/custom-datepicker.min.js"></script>
+<script src="./../src/assets/js/custom-datepicker.js"></script>
 <script>
 
 
@@ -595,106 +671,213 @@ datePicker.setDate(null);</code></pre>
     });
 
 
-    // Initialize date picker
-    const datePicker = new DatepickerTabs('#date-input', {
-        onDateChange: function(date) {
-            const resultElement = document.getElementById('date-result');
-            if (!date) {
-                resultElement.textContent = 'No date selected';
-            } else if (Array.isArray(date)) {
-                resultElement.textContent = 'Selected dates: ' + date.map(d => d.toLocaleDateString()).join(', ');
+    // DatepickerTabs Configurator
+    document.addEventListener('DOMContentLoaded', function() {
+        // DOM Elements
+        const configResult = document.getElementById('config-result');
+        const configCode = document.getElementById('config-code');
+        const applyButton = document.getElementById('config-apply');
+        const resetButton = document.getElementById('config-reset');
+
+        // Form elements
+        const configMode = document.getElementById('config-mode');
+        const configDisplayType = document.getElementById('config-display-type');
+        const configMultipleDays = document.getElementById('config-multiple-days');
+        const configMultipleMonths = document.getElementById('config-multiple-months');
+        const configMaxMonths = document.getElementById('config-max-months');
+        const configMinDate = document.getElementById('config-min-date');
+        const configMaxDate = document.getElementById('config-max-date');
+        const configSaturdays = document.getElementById('config-saturdays');
+        const configDateFormat = document.getElementById('config-date-format');
+        const configMonthFormat = document.getElementById('config-month-format');
+        const configPosition = document.getElementById('config-position');
+        const configZIndex = document.getElementById('config-zindex');
+
+        // Datepicker instance
+        let configPicker = null;
+
+        // Get current options from form, only including non-default values
+        function getOptionsFromForm() {
+            const options = {};
+
+            // Only add non-default values
+            const mode = configMode.value;
+            if (mode !== 'day') {
+                options.mode = mode;
+            }
+
+            const displayType = configDisplayType.value;
+            if (displayType !== 'tabs') {
+                options.displayType = displayType;
+            }
+
+            // Add multiple selection options only if they differ from defaults
+            if (configMultipleDays.checked) {
+                options.multipleDays = true;
+            }
+
+            if (configMultipleMonths.checked) {
+                options.multipleMonths = true;
+            }
+
+            // Only add max month selection if multiple months is enabled and value is set
+            if (configMultipleMonths.checked && configMaxMonths.value && parseInt(configMaxMonths.value, 10) > 0) {
+                options.maxMonthSelection = parseInt(configMaxMonths.value, 10);
+            }
+
+            // Add date range options if specified
+            if (configMinDate.value) {
+                options.minDate = new Date(configMinDate.value);
+            }
+
+            if (configMaxDate.value) {
+                options.maxDate = new Date(configMaxDate.value);
+            }
+
+            // Add Saturday-only option only if checked
+            if (configSaturdays.checked) {
+                options.futureSaturdaysOnly = true;
+            }
+
+            // Add format options only if they differ from defaults
+            if (configDateFormat.value !== 'DD MMM YYYY') {
+                options.dateFormat = configDateFormat.value;
+            }
+
+            if (configMonthFormat.value !== 'MMM YYYY') {
+                options.monthFormat = configMonthFormat.value;
+            }
+
+            // Add UI options only if they differ from defaults
+            if (configPosition.value !== 'bottom') {
+                options.position = configPosition.value;
+            }
+
+            const zIndex = parseInt(configZIndex.value, 10);
+            if (zIndex !== 9999) {
+                options.zIndex = zIndex;
+            }
+
+            return options;
+        }
+
+        // Generate code based on current settings, only showing non-default options
+        function updateCodeDisplay() {
+            const options = getOptionsFromForm();
+
+            // Format JS object for display, starting with initialization
+            let codeString = `// Initialize DatepickerTabs
+const picker = new DatepickerTabs('#date-input', {
+`;
+
+            // Add each non-default option
+            let hasOptions = false;
+            for (const [key, value] of Object.entries(options)) {
+                hasOptions = true;
+                if (typeof value === 'string') {
+                    codeString += `    ${key}: '${value}',\n`;
+                } else if (value instanceof Date) {
+                    codeString += `    ${key}: new Date(${value.getFullYear()}, ${value.getMonth()}, ${value.getDate()}),\n`;
+                } else {
+                    codeString += `    ${key}: ${value},\n`;
+                }
+            }
+
+            // Always add callback function as it's typically needed
+            if (hasOptions) {
+                codeString += `    onDateChange: function(date) {\n        console.log('Selected:', date);\n        // Your code to handle date changes\n    }\n`;
             } else {
-                resultElement.textContent = 'Selected date: ' + date.toLocaleDateString();
+                codeString += `    onDateChange: function(date) {\n        console.log('Selected:', date);\n        // Your code to handle date changes\n    }\n`;
+            }
+
+            codeString += `});`;
+
+            configCode.textContent = codeString;
+        }
+
+        // Initialize with default options or specific options
+        function initPicker(options = {}) {
+            if (configPicker) {
+                configPicker.destroy();
+            }
+
+            // Always add the callback
+            options.onDateChange = updateResult;
+
+            // Create new picker with provided options
+            configPicker = new DatepickerTabs('#config-datepicker', options);
+
+            // Update code display
+            updateCodeDisplay();
+        }
+
+        // Update result display
+        function updateResult(date) {
+
+            if (!date) {
+                configResult.textContent = 'No date selected';
+            } else if (Array.isArray(date)) {
+                configResult.textContent = date.map(d => d.toLocaleDateString()).join(', ');
+            } else {
+                configResult.textContent = date.toLocaleDateString();
             }
         }
-    });
 
+        // Apply options from form by creating a new datepicker instance
+        function applyOptions() {
+            // Get options from form
+            const options = getOptionsFromForm();
 
-    // Set up event listeners for options
-    document.getElementById('multiple-select').addEventListener('change', function(e) {
-        datePicker.setMultiple(e.target.checked);
-    });
+            // Reinitialize the picker with new options
+            initPicker(options);
+        }
 
-    document.getElementById('date-format').addEventListener('change', function(e) {
-        datePicker.setDateFormat(e.target.value);
-    });
+        // Reset form to default values
+        function resetForm() {
+            configMode.value = 'day';
+            configDisplayType.value = 'tabs';
+            configMultipleDays.checked = false;
+            configMultipleMonths.checked = false;
+            configMaxMonths.value = 6;
+            configMinDate.value = '';
+            configMaxDate.value = '';
+            configSaturdays.checked = false;
+            configDateFormat.value = 'DD MMM YYYY';
+            configMonthFormat.value = 'MMM YYYY';
+            configPosition.value = 'bottom';
+            configZIndex.value = 9999;
 
-    document.getElementById('min-date').addEventListener('change', function(e) {
-        const date = e.target.value ? new Date(e.target.value) : null;
-        datePicker.setMinDate(date);
-    });
+            // Reinitialize with default options
+            initPicker();
+        }
 
-    /*document.getElementById('month-multiple').addEventListener('change', function(e) {
-        monthPicker.setMultiple(e.target.checked);
-    });
+        // Event listeners
+        applyButton.addEventListener('click', applyOptions);
+        resetButton.addEventListener('click', resetForm);
 
-    document.getElementById('max-selection').addEventListener('change', function(e) {
-        const value = parseInt(e.target.value, 10);
-        monthPicker.setMaxMonthSelection(value || null);
-    });
-*/
+        // Add support for setMultipleDays and setMultipleMonths if not present in the DatepickerTabs class
+        if (typeof DatepickerTabs.prototype.setMultipleDays !== 'function') {
+            DatepickerTabs.prototype.setMultipleDays = function(enable) {
+                this.options.multipleDays = !!enable;
+                if (this.options.mode === 'day') {
+                    this.options.multiple = !!enable;
+                }
+                return this;
+            };
+        }
 
+        if (typeof DatepickerTabs.prototype.setMultipleMonths !== 'function') {
+            DatepickerTabs.prototype.setMultipleMonths = function(enable) {
+                this.options.multipleMonths = !!enable;
+                if (this.options.mode === 'month') {
+                    this.options.multiple = !!enable;
+                }
+                return this;
+            };
+        }
 
-
-
-
-
-    // Bottom picker for testing positioning
-    const bottomPicker = new DatepickerTabs('#bottom-date-input', {
-        position: 'top'  // Force to open upward
-    });
-
-    // Options panel functionality
-    const modeSelect = document.getElementById('mode-select');
-    const multipleMonthSelect = document.getElementById('multiple-month-select');
-    const saturdaysSelect = document.getElementById('saturdays-select');
-    const minDateInput = document.getElementById('min-date');
-    const dateFormatSelect = document.getElementById('date-format');
-    const applyOptionsBtn = document.getElementById('apply-options');
-    const resetOptionsBtn = document.getElementById('reset-options');
-
-    applyOptionsBtn.addEventListener('click', function() {
-        const mode = modeSelect.value;
-        const multipleMonth = multipleMonthSelect.checked;
-        const futureSaturdaysOnly = saturdaysSelect.checked;
-        const minDate = minDateInput.value ? new Date(minDateInput.value) : null;
-        const dateFormat = dateFormatSelect.value;
-
-        // Update datepicker options
-        datePicker.setMode(mode);
-        datePicker.setMultiple(multipleMonth);
-        datePicker.options.futureSaturdaysOnly = futureSaturdaysOnly;
-        datePicker.options.minDate = minDate;
-        datePicker.setDateFormat(dateFormat);
-
-        // Reset selected dates
-        datePicker.setDate(null);
-
-        // Re-render datepicker
-        datePicker.render();
-        datePicker.attachEvents();
-    });
-
-    resetOptionsBtn.addEventListener('click', function() {
-        modeSelect.value = 'day';
-        multipleSelect.checked = false;
-        saturdaysSelect.checked = false;
-        minDateInput.value = '';
-        dateFormatSelect.value = 'DD MMM YYYY';
-
-        // Reset datepicker options
-        datePicker.setMode('day');
-        datePicker.setMultiple(false);
-        datePicker.options.futureSaturdaysOnly = false;
-        datePicker.options.minDate = null;
-        datePicker.setDateFormat('DD MMM YYYY');
-
-        // Reset selected dates
-        datePicker.setDate(null);
-
-        // Re-render datepicker
-        datePicker.render();
-        datePicker.attachEvents();
+        // Initialize on page load with default options
+        initPicker();
     });
 </script>
 </body>

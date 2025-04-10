@@ -74,6 +74,14 @@
       background-color: #2196f3;
       color: white;
     }
+    
+    &.this-month {
+      background-color: rgba(33, 150, 243, 0.2);
+      &.selected {
+        background-color: #2196f3;
+        color: white;
+      }
+    }
 
     &.disabled {
       color: #ddd;
@@ -191,8 +199,14 @@
     }
 
     &.today {
-      font-weight: bold;
-      border: 1px solid #2196f3;
+      background-color: rgba(33, 150, 243, 0.15);
+      border: 1px solid rgba(33, 150, 243, 0.5);
+      
+      &.selected {
+        background-color: #2196f3;
+        color: white;
+        border: 1px solid #2196f3;
+      }
     }
 
     &.selected {
