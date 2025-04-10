@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Custom Date Picker Demo</title>
+    <link rel="stylesheet" href="./../src/assets/css/custom-datepicker.css">
+    <style>
+
+        </style>
+</head>
+<body>
+    <h2>DatepickerTabs Examples</h2>
+
+    <h3>Basic Usage</h3>
+    <pre><code>// Basic initialization
+const picker = new DatepickerTabs('#date-input');</code></pre>
+
+    <h3>Month Selection with Multiple Dates</h3>
+    <pre><code>// Month picker with multiple selection
+const picker = new DatepickerTabs('#date-input', {
+    displayType: 'month',        // Only show month picker, no tabs
+    maxMonthSelection: 6,        // Limit to 6 months max
+    maxDate: new Date(2025, 11, 31), // No selections past Dec 31, 2025
+    multiple: true
+});</code></pre>
+
+    <h3>Using Methods</h3>
+    <pre><code>// Setting values programmatically
+picker.setDisplayType('tabs');      // Switch to tabbed view
+picker.setMaxMonthSelection(3);     // Reduce max selection to 3 months
+picker.setMaxDate(new Date(2026, 5, 30)); // Update max date to June 30, 2026
+picker.setMultiple(true);            // Enable multiple selection
+picker.setDate(new Date());          // Set date to today</code></pre>
+
+    <form>
+        <input type="text" id="date-input" class="datapicker-tabs" />
+    </form>
+    
+    <script src="./../src/assets/js/custom-datepicker.js"></script>
+
+    <script>
+        const picker = new DatepickerTabs('#date-input', {
+            displayType: 'month', // Only show month picker, no tabs
+            maxMonthSelection: 6, // Limit to 6 months max
+            maxDate: new Date(2025, 11, 31), // No selections past Dec 31, 2025
+            multiple: true
+        });
+
+        // Setting values programmatically
+        picker.setDisplayType('tabs'); // Switch to tabbed view
+        picker.setMaxMonthSelection(3); // Reduce max selection to 3 months
+        picker.setMaxDate(new Date(2026, 5, 30)); // Update max date to June 30, 2026
+
+    </script>
+</body>
+</html>

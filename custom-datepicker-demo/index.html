@@ -3,8 +3,8 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Custom Date Picker Demo</title>
-  <link rel="stylesheet" href="css/custom-datepicker.css">
+  <title>DatePickerTabs Demo</title>
+  <link rel="stylesheet" href="./../src/assets/css/custom-datepicker.css">
   <style>
     body {
       font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
@@ -55,7 +55,7 @@
     }
     
     .demo-input {
-      width: 100%;
+      width: 95%;
       padding: 10px;
       border: 1px solid #ddd;
       border-radius: 4px;
@@ -181,7 +181,7 @@
     
     /* For the bottom demo that tests overlap handling */
     .bottom-demo {
-      margin-top: 100vh;
+      margin-top: 100px;
       border-top: 1px solid #ccc;
       padding-top: 20px;
     }
@@ -189,7 +189,7 @@
 </head>
 <body>
   <div class="container">
-    <h1>Custom Date Picker Demo</h1>
+    <h1>DatePickerTabs Demo</h1>
     
     <div class="demo-section">
       <h2>Basic Usage</h2>
@@ -199,9 +199,7 @@
         <div class="demo-column">
           <h3>Date Picker</h3>
           <input type="text" id="date-input" class="demo-input" placeholder="Click to select a date">
-          <div id="date-container"></div>
-          
-          <div class="result-panel">
+                  <div class="result-panel">
             <h4>Selected Value:</h4>
             <div id="date-result"></div>
           </div>
@@ -260,7 +258,6 @@
         <div class="demo-column">
           <h3>Month Picker</h3>
           <input type="text" id="month-input" class="demo-input" placeholder="Click to select month(s)">
-          <div id="month-container"></div>
           
           <div class="result-panel">
             <h4>Selected Months:</h4>
@@ -270,8 +267,7 @@
         
         <div class="demo-column">
           <h3>Code Example</h3>
-          <pre><code>const monthPicker = new CustomDatePicker('#month-container', {
-  inputElement: '#month-input',
+          <pre><code>const monthPicker = new DatepickerTabs('#month-input', {
   mode: 'month',
   multiple: true,
   monthFormat: 'MMM YYYY',
@@ -287,12 +283,11 @@
     <!-- Test for bottom of page positioning -->
     <div class="bottom-demo">
       <h2>Bottom of Page Test</h2>
-      <p>This tests that the date picker correctly positions itself when near the bottom of the viewport.</p>
+      <p>This tests that the date picker correctly positions itself when near the bottom of the viewport. (scroll that way so input is in the botton of the page)</p>
       
       <div class="demo-row">
         <div class="demo-column">
           <input type="text" id="bottom-date-input" class="demo-input" placeholder="Click to select a date">
-          <div id="bottom-date-container"></div>
         </div>
       </div>
     </div>
@@ -311,11 +306,9 @@
       <p>Create a container element and an input field, then initialize the date picker:</p>
       <pre><code>// HTML
 &lt;input type="text" id="date-input" placeholder="Select a date"&gt;
-&lt;div id="date-container"&gt;&lt;/div&gt;
 
 // JavaScript
-const datePicker = new CustomDatePicker('#date-container', {
-  inputElement: '#date-input',
+const datePicker = new DatepickerTabs('#date-input', {
   dateFormat: 'DD/MM/YYYY',
   onDateChange: function(date) {
     console.log('Selected date:', date);
@@ -416,11 +409,10 @@ datePicker.setDate(null);</code></pre>
     </div>
   </div>
   
-  <script src="js/custom-datepicker.js"></script>
+  <script src="./../src/assets/js/custom-datepicker.js"></script>
   <script>
     // Day picker initialization
-    const datePicker = new CustomDatePicker('#date-container', {
-      inputElement: '#date-input',
+    const datePicker = new DatepickerTabs('#date-input', {
       dateFormat: 'DD MMM YYYY',
       onDateChange: function(date) {
         const dateResult = document.getElementById('date-result');
@@ -437,8 +429,7 @@ datePicker.setDate(null);</code></pre>
     });
     
     // Month picker initialization
-    const monthPicker = new CustomDatePicker('#month-container', {
-      inputElement: '#month-input',
+    const monthPicker = new DatepickerTabs('#month-input', {
       mode: 'month',
       multiple: true,
       monthFormat: 'MMM YYYY',
@@ -463,8 +454,7 @@ datePicker.setDate(null);</code></pre>
     });
     
     // Bottom picker for testing positioning
-    const bottomPicker = new CustomDatePicker('#bottom-date-container', {
-      inputElement: '#bottom-date-input',
+    const bottomPicker = new DatepickerTabs('#bottom-date-input', {
       position: 'top'  // Force to open upward
     });
     
