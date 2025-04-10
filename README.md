@@ -24,7 +24,8 @@ Include the CSS and JavaScript files in your HTML:
 ```html
 <link rel="stylesheet" href="dist/css/custom-datepicker.min.css">
 <script src="dist/js/custom-datepicker.min.js"></script>
- 
+```
+
 ## Basic Usage
 
 ```javascript
