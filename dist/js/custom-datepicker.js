@@ -122,7 +122,7 @@ var DatepickerTabs = /*#__PURE__*/function () {
       // 'bottom' or 'top' - default position relative to input
       zIndex: 9999,
       // z-index for the picker container
-      containerId: '' // Custom container ID (if not provided, one will be generated)
+      containerId: '' // Custom container ID to render calendar (if not provided, one will be generated)
     };
 
     // Merge default options with provided options
@@ -719,6 +719,9 @@ var DatepickerTabs = /*#__PURE__*/function () {
     key: "renderMonthMode",
     value: function renderMonthMode() {
       var year = this.currentDate.getFullYear();
+      var currentDate = new Date();
+      var currentMonth = currentDate.getMonth();
+      var currentYear = currentDate.getFullYear();
 
       // Create year selector
       var yearsHtml = this.renderYearSelector(year);
@@ -729,7 +732,9 @@ var DatepickerTabs = /*#__PURE__*/function () {
         var isSelected = this.isMonthSelected(i, year);
         // Check if month is selectable based on min/max date
         var isSelectable = this.isMonthSelectable(i, year);
-        var classes = ['month-item', isSelected ? 'selected' : '', !isSelectable ? 'disabled' : ''].filter(Boolean).join(' ');
+        // Check if this is the current month
+        var isThisMonth = i === currentMonth && year === currentYear;
+        var classes = ['month-item', isSelected ? 'selected' : '', isThisMonth ? 'this-month' : '', !isSelectable ? 'disabled' : ''].filter(Boolean).join(' ');
         var monthAttrs = isSelectable ? "data-month=\"".concat(i, "\" data-year=\"").concat(year, "\"") : '';
         monthsHtml += "<div class=\"".concat(classes, "\" ").concat(monthAttrs, ">").concat(this.options.monthNames[i], "</div>");
       }
@@ -927,11 +932,34 @@ var DatepickerTabs = /*#__PURE__*/function () {
                   // Remove from selection
                   _this8.selectedDates.splice(index, 1);
                 }
+
+                // Update the UI to reflect the new selection
+                // Remove 'selected' class from all days with data-clickable
+                dayItems.forEach(function (di) {
+                  return di.classList.remove('selected');
+                });
+
+                // Add 'selected' class to selected days
+                _this8.selectedDates.forEach(function (selected) {
+                  var dayStr = "".concat(selected.getFullYear(), "-").concat(selected.getMonth() + 1, "-").concat(selected.getDate());
+                  var selectedEl = _this8.element.querySelector(".day-item[data-date=\"".concat(dayStr, "\"]"));
+                  if (selectedEl) {
+                    selectedEl.classList.add('selected');
+                  }
+                });
                 _this8.render();
                 _this8.attachEvents();
               } else {
                 // Single selection
                 _this8.selectedDates = [selectedDate];
+
+                // Update the UI to reflect the new selection
+                // Remove 'selected' class from all days with data-clickable
+                dayItems.forEach(function (di) {
+                  return di.classList.remove('selected');
+                });
+                // Add 'selected' class to the clicked day
+                day.classList.add('selected');
 
                 // Create an event to notify that a date has been selected and applied
                 var event = new CustomEvent('datepickerApply', {
@@ -1021,6 +1049,22 @@ var DatepickerTabs = /*#__PURE__*/function () {
               }
               return;
             }
+
+            // Update the UI to reflect the new selection
+            // Remove 'selected' class from all months
+            monthItems.forEach(function (mi) {
+              return mi.classList.remove('selected');
+            });
+
+            // Add 'selected' class to selected months
+            _this8.selectedMonths.forEach(function (selected) {
+              if (selected.year === year) {
+                var selectedEl = _this8.element.querySelector(".month-item[data-month=\"".concat(selected.month, "\"][data-year=\"").concat(selected.year, "\"]"));
+                if (selectedEl) {
+                  selectedEl.classList.add('selected');
+                }
+              }
+            });
             _this8.render();
             _this8.attachEvents();
           });
