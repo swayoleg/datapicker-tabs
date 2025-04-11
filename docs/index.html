@@ -259,7 +259,7 @@
                 <input type="text" id="month-input" class="demo-input" placeholder="Click to select month(s)">
 
                 <div class="result-panel">
-                    <h4>Selected Months:</h4>
+                    <h4>Selected Values:</h4>
                     <div id="month-result"></div>
                 </div>
             </div>
@@ -267,30 +267,21 @@
             <div class="demo-column">
                 <h3>Code Example</h3>
                 <pre><code>//Few Months picker initialization
-const monthPicker = new DatepickerTabs('#month-input', {
-    mode: 'month',
-    multipleMonths: true,
-    maxMonthSelection: 3,
-    monthFormat: 'MMM YYYY',
-    onDateChange: function(dates) {
-        const monthResult = document.getElementById('month-result');
-        if (dates) {
-            if (Array.isArray(dates)) {
-                monthResult.textContent = dates.map(d => {
-                    const month = d.toLocaleString('default', { month: 'short' });
-                    const year = d.getFullYear();
-                    return `${month} ${year}`;
-                }).join(', ');
+  const monthPicker = new DatepickerTabs('#month-input', {
+        mode: 'month',
+        multipleMonths: true,
+        maxMonthSelection: 3,
+        monthFormat: 'MMM YYYY',
+        onDateChange: function(dates) {
+            const monthResult = document.getElementById('month-result');
+            if (dates) {
+                monthResult.textContent = monthPicker.getDatesAsString(dates)
             } else {
-                const month = dates.toLocaleString('default', { month: 'short' });
-                const year = dates.getFullYear();
-                monthResult.textContent = `${month} ${year}`;
+                monthResult.textContent = 'No months selected';
             }
-        } else {
-            monthResult.textContent = 'No months selected';
         }
-    }
-});</code></pre>
+    });
+</code></pre>
             </div>
         </div>
     </div>
@@ -319,22 +310,12 @@ const monthPickerOnly = new DatepickerTabs('#month-mode-example', {
     multipleMonths: false,
     monthFormat: 'MMM YYYY',
     onDateChange: function(dates) {
-        const monthResultSingleMode = document.getElementById('month-mode-example-result');
-        if (dates) {
-            if (Array.isArray(dates)) {
-                monthResultSingleMode.textContent = dates.map(d => {
-                    const month = d.toLocaleString('default', { month: 'short' });
-                    const year = d.getFullYear();
-                    return `${month} ${year}`;
-                }).join(', ');
+            const monthResultSingleMode = document.getElementById('month-mode-example-result');
+            if (dates) {
+                monthResultSingleMode.textContent = monthPickerOnly.getDatesAsString(dates)
             } else {
-                const month = dates.toLocaleString('default', { month: 'short' });
-                const year = dates.getFullYear();
-                monthResultSingleMode.textContent = `${month} ${year}`;
+                monthResultSingleMode.textContent = 'No months selected';
             }
-        } else {
-            monthResultSingleMode.textContent = 'No months selected';
-        }
     }
 });</code></pre>
             </div>
@@ -627,17 +608,7 @@ datePicker.setDate(null);</code></pre>
         onDateChange: function(dates) {
             const monthResult = document.getElementById('month-result');
             if (dates) {
-                if (Array.isArray(dates)) {
-                    monthResult.textContent = dates.map(d => {
-                        const month = d.toLocaleString('default', { month: 'short' });
-                        const year = d.getFullYear();
-                        return `${month} ${year}`;
-                    }).join(', ');
-                } else {
-                    const month = dates.toLocaleString('default', { month: 'short' });
-                    const year = dates.getFullYear();
-                    monthResult.textContent = `${month} ${year}`;
-                }
+                monthResult.textContent = monthPicker.getDatesAsString(dates)
             } else {
                 monthResult.textContent = 'No months selected';
             }
@@ -653,17 +624,7 @@ datePicker.setDate(null);</code></pre>
         onDateChange: function(dates) {
             const monthResultSingleMode = document.getElementById('month-mode-example-result');
             if (dates) {
-                if (Array.isArray(dates)) {
-                    monthResultSingleMode.textContent = dates.map(d => {
-                        const month = d.toLocaleString('default', { month: 'short' });
-                        const year = d.getFullYear();
-                        return `${month} ${year}`;
-                    }).join(', ');
-                } else {
-                    const month = dates.toLocaleString('default', { month: 'short' });
-                    const year = dates.getFullYear();
-                    monthResultSingleMode.textContent = `${month} ${year}`;
-                }
+                monthResultSingleMode.textContent = monthPickerOnly.getDatesAsString(dates)
             } else {
                 monthResultSingleMode.textContent = 'No months selected';
             }
