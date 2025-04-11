@@ -67,6 +67,13 @@
   background-color: #2196f3;
   color: white;
 }
+.datepicker-tabs .month-item.this-month {
+  background-color: rgba(33, 150, 243, 0.2);
+}
+.datepicker-tabs .month-item.this-month.selected {
+  background-color: #2196f3;
+  color: white;
+}
 .datepicker-tabs .month-item.disabled {
   color: #ddd;
   cursor: not-allowed;
@@ -165,7 +172,12 @@
   color: #bbb;
 }
 .datepicker-tabs .day-item.today {
-  font-weight: bold;
+  background-color: rgba(33, 150, 243, 0.15);
+  border: 1px solid rgba(33, 150, 243, 0.5);
+}
+.datepicker-tabs .day-item.today.selected {
+  background-color: #2196f3;
+  color: white;
   border: 1px solid #2196f3;
 }
 .datepicker-tabs .day-item.selected {

@@ -78,7 +78,7 @@ class DatepickerTabs {
       multipleDays: false, // Allow multiple day selection
       multipleMonths: false, // Allow multiple month selection
       maxMonthSelection: null, // Maximum number of months that can be selected (when multipleMonths is true)
-      startDate: new Date(),
+      startDate: null,
       minDate: null,
       maxDate: null,
       futureSaturdaysOnly: false, // Option for day mode to only enable Saturdays in the future
@@ -93,7 +93,7 @@ class DatepickerTabs {
       monthFormat: 'MMM YYYY', // Default format for month display
       position: 'bottom', // 'bottom' or 'top' - default position relative to input
       zIndex: 9999, // z-index for the picker container
-      containerId: '', // Custom container ID (if not provided, one will be generated)
+      containerId: '', // Custom container ID to render calendar (if not provided, one will be generated)
     };
 
     // Merge default options with provided options
@@ -166,6 +166,15 @@ class DatepickerTabs {
         year: startDate.getFullYear()
       });
     }
+    
+    // Initialize current date to selected month or date if available
+    if (this.selectedMonths.length > 0) {
+      const selectedMonth = this.selectedMonths[0];
+      this.currentDate = new Date(selectedMonth.year, selectedMonth.month, 1);
+    } else if (this.selectedDates.length > 0) {
+      const selectedDate = this.selectedDates[0];
+      this.currentDate = new Date(selectedDate.getFullYear(), selectedDate.getMonth(), 1);
+    }
 
     // Try to restore mode from cookie (only if displayType is 'tabs')
     if (this.options.displayType === 'tabs') {
@@ -189,35 +198,62 @@ class DatepickerTabs {
   }
 
   /**
-   * Format a date according to the specified format
-   * Supports:
-   * - DD: Day of month with leading zero
-   * - D: Day of month without leading zero
-   * - MMM: Month name short (Jan, Feb, etc.)
-   * - MMMM: Month name full (January, February, etc.)
-   * - MM: Month number with leading zero
-   * - M: Month number without leading zero
-   * - YYYY: Full year (2023)
-   * - YY: Short year (23)
+   * DatepickerTabs Format Date Fix
+   *
+   * This is a corrected formatDate method that properly handles month name formatting
+   * without issues like replacing the 'D' in 'Dec' with the day number.
    */
+
+// Replace the existing formatDate method with this one
   formatDate(date, format) {
     if (!date) return '';
 
+    // For the specific month-year format that's causing problems,
+    // use a direct approach
+    if (format === 'MMM YYYY' || format === 'MMMM YYYY') {
+      const monthIndex = date.getMonth();
+      const year = date.getFullYear();
+
+      if (format === 'MMM YYYY') {
+        // Use the first 3 characters of the month name
+        const shortMonthName = this.options.monthNames[monthIndex].substring(0, 3);
+        return `${shortMonthName} ${year}`;
+      } else {
+        // Use the full month name
+        return `${this.options.monthNames[monthIndex]} ${year}`;
+      }
+    }
+
+    // For other formats, use a direct replacement approach
+    // that avoids the issue with 'D' in month names
     const day = date.getDate();
     const month = date.getMonth();
     const year = date.getFullYear();
 
-    // Replace format tokens with actual values
-    return format
-        .replace(/DD/g, day.toString().padStart(2, '0'))
-        .replace(/D/g, day.toString())
-        .replace(/MMMM/g, this.options.monthNames[month])
-        .replace(/MMM/g, this.options.monthNames[month].substr(0, 3))
-        .replace(/MM/g, (month + 1).toString().padStart(2, '0'))
-        .replace(/M/g, (month + 1).toString())
-        .replace(/YYYY/g, year.toString())
-        .replace(/YY/g, year.toString().substr(2, 2));
+    // Create a copy of the format string
+    let result = format;
+
+    // Replace year patterns
+    result = result.replace(/YYYY/g, year.toString());
+    result = result.replace(/YY/g, year.toString().slice(-2));
+
+    // Replace month name patterns first
+    result = result.replace(/MMMM/g, this.options.monthNames[month]);
+    result = result.replace(/MMM/g, this.options.monthNames[month].substring(0, 3));
+
+    // Replace month number patterns
+    result = result.replace(/MM/g, String(month + 1).padStart(2, '0'));
+    // Use word boundary for single M to avoid replacing M in words
+    result = result.replace(/\bM\b/g, String(month + 1));
+
+    // Replace day patterns - after month patterns to avoid conflicts
+    result = result.replace(/DD/g, String(day).padStart(2, '0'));
+    // Use word boundary for single D to avoid replacing D in words
+    result = result.replace(/\bD\b/g, String(day));
+
+    return result;
   }
+
 
   /**
    * Position the datepicker relative to the input element
@@ -380,6 +416,23 @@ class DatepickerTabs {
    */
   show() {
     if (this.isVisible) return;
+
+    if (this.options.mode === 'month' && this.selectedMonths.length > 0) {
+      const selectedMonth = this.selectedMonths[0];
+      this.currentDate = new Date(selectedMonth.year, selectedMonth.month, 1);
+    } else if (this.options.mode === 'day' && this.selectedDates.length > 0) {
+      this.currentDate = new Date(this.selectedDates[0]);
+    }
+    
+    // Update currentDate to match selectedDate if one exists
+    if (this.selectedDates.length > 0) {
+      const selectedDate = this.selectedDates[0];
+      this.currentDate = new Date(selectedDate.getFullYear(), selectedDate.getMonth(), 1);
+    } else if (this.selectedMonths.length > 0) {
+      // If we have selected months but no dates, use the first selected month
+      const selectedMonth = this.selectedMonths[0];
+      this.currentDate = new Date(selectedMonth.year, selectedMonth.month, 1);
+    }
 
     // Show the container
     const container = this.element.querySelector('.custom-datepicker-container');
@@ -718,6 +771,9 @@ class DatepickerTabs {
   // Render month selection mode
   renderMonthMode() {
     const year = this.currentDate.getFullYear();
+    const currentDate = new Date();
+    const currentMonth = currentDate.getMonth();
+    const currentYear = currentDate.getFullYear();
 
     // Create year selector
     const yearsHtml = this.renderYearSelector(year);
@@ -729,10 +785,13 @@ class DatepickerTabs {
       const isSelected = this.isMonthSelected(i, year);
       // Check if month is selectable based on min/max date
       const isSelectable = this.isMonthSelectable(i, year);
+      // Check if this is the current month
+      const isThisMonth = (i === currentMonth && year === currentYear);
 
       const classes = [
         'month-item',
         isSelected ? 'selected' : '',
+        isThisMonth ? 'this-month' : '',
         !isSelectable ? 'disabled' : ''
       ].filter(Boolean).join(' ');
 
@@ -945,11 +1004,30 @@ class DatepickerTabs {
                 this.selectedDates.splice(index, 1);
               }
 
+              // Update the UI to reflect the new selection
+              // Remove 'selected' class from all days with data-clickable
+              dayItems.forEach(di => di.classList.remove('selected'));
+              
+              // Add 'selected' class to selected days
+              this.selectedDates.forEach(selected => {
+                const dayStr = `${selected.getFullYear()}-${selected.getMonth()+1}-${selected.getDate()}`;
+                const selectedEl = this.element.querySelector(`.day-item[data-date="${dayStr}"]`);
+                if (selectedEl) {
+                  selectedEl.classList.add('selected');
+                }
+              });
+
               this.render();
               this.attachEvents();
             } else {
               // Single selection
               this.selectedDates = [selectedDate];
+              
+              // Update the UI to reflect the new selection
+              // Remove 'selected' class from all days with data-clickable
+              dayItems.forEach(di => di.classList.remove('selected'));
+              // Add 'selected' class to the clicked day
+              day.classList.add('selected');
 
               // Create an event to notify that a date has been selected and applied
               const event = new CustomEvent('datepickerApply', {
@@ -978,6 +1056,10 @@ class DatepickerTabs {
     }
 
     // Month selection
+    // Month selection event handler for the DatepickerTabs class
+    // This should replace the current month selection handler in attachEvents method
+
+    // Month selection
     if (this.options.mode === 'month') {
       const monthItems = this.element.querySelectorAll('.month-item:not(.disabled)');
       monthItems.forEach(item => {
@@ -1001,9 +1083,27 @@ class DatepickerTabs {
 
               // Add to selection
               this.selectedMonths.push({ month, year });
+
+              // Also update selected dates array with all month selections
+              this.selectedDates = this.selectedMonths.map(m => new Date(m.year, m.month, 1));
             } else {
               // Remove from selection
               this.selectedMonths.splice(index, 1);
+
+              // Update selected dates array to match
+              this.selectedDates = this.selectedMonths.map(m => new Date(m.year, m.month, 1));
+            }
+
+            // Re-render to show updated selections
+            this.render();
+            this.attachEvents();
+
+            // Update input value
+            this.updateInputValue();
+
+            // Call callback with all selected dates
+            if (this.options.onDateChange) {
+              this.options.onDateChange(this.selectedDates);
             }
           } else {
             // Single selection
@@ -1011,7 +1111,10 @@ class DatepickerTabs {
 
             // Also update selected dates to first day of month
             this.selectedDates = [new Date(year, month, 1)];
-            
+
+            // Update currentDate to match the selected month
+            this.currentDate = new Date(year, month, 1);
+
             // If single month selection, apply immediately and close
             // Create an event to notify that a month has been selected and applied
             const event = new CustomEvent('datepickerApply', {
@@ -1033,12 +1136,7 @@ class DatepickerTabs {
             if (this.options.onDateChange) {
               this.options.onDateChange(this.selectedDates[0]);
             }
-            
-            return;
           }
-
-          this.render();
-          this.attachEvents();
         });
       });
     }
@@ -1098,6 +1196,10 @@ class DatepickerTabs {
     }
 
     // Apply button
+// Apply button handler for the DatepickerTabs class
+// This should replace the current Apply button handler in attachEvents method
+
+// Apply button
     const applyBtn = this.element.querySelector('.datepicker-btn.apply');
     if (applyBtn) {
       applyBtn.addEventListener('click', (e) => {
@@ -1124,7 +1226,7 @@ class DatepickerTabs {
           if (this.options.mode === 'day') {
             // In day mode, only call if we have selections
             if (this.selectedDates.length > 0) {
-              this.options.onDateChange(this.options.multiple ? this.selectedDates : this.selectedDates[0]);
+              this.options.onDateChange(this.options.multipleDays ? this.selectedDates : this.selectedDates[0]);
             } else {
               this.options.onDateChange(null);
             }
@@ -1132,7 +1234,7 @@ class DatepickerTabs {
             // In month mode, convert month selections to dates (1st of each month)
             if (this.selectedMonths.length > 0) {
               const dates = this.selectedMonths.map(m => new Date(m.year, m.month, 1));
-              this.options.onDateChange(this.options.multiple ? dates : dates[0]);
+              this.options.onDateChange(this.options.multipleMonths ? dates : dates[0]);
             } else {
               this.options.onDateChange(null);
             }
@@ -1355,7 +1457,113 @@ class DatepickerTabs {
     this.containerElement = null;
     this.instances = [];
   }
+
+  // This one used to render in demos
+  getDatesAsString(dates) {
+    const currentMode = this.options.mode;
+    if (Array.isArray(dates)) {
+      return dates.map(d => {
+        const month = d.toLocaleString('default', { month: 'short' });
+        const year = d.getFullYear();
+        const day = d.getDay();
+        if ('day' == currentMode) {
+          return `${day} ${month} ${year}`;
+        } else {
+          return `${month} ${year}`;
+        }
+      }).join(', ');
+    } else {
+      const month = dates.toLocaleString('default', { month: 'short' });
+      const year = dates.getFullYear();
+      const day = dates.getDate();
+      if ('day' == currentMode) {
+          return  `${day} ${month} ${year}`;
+      } else {
+          return `${month} ${year}`;
+      }
+    }
+  }
+
 }
+
+// Modifications needed for the DatepickerTabs class to support new API
+
+/**
+ * These functions should be added to the DatepickerTabs class to support
+ * the new multipleDays and multipleMonths options that replace the
+ * generic "multiple" option.
+ */
+
+// Add these methods to the DatepickerTabs class
+
+/**
+ * Enable/disable multiple day selection
+ * @param {boolean} enable - Whether to enable multiple day selection
+ */
+/*
+DatepickerTabs.prototype.setMultipleDays = function(enable) {
+  if (this.options.mode === 'day') {
+    this.options.multiple = !!enable;
+  }
+  this.options.multipleDays = !!enable;
+  this.render();
+  this.attachEvents();
+  return this;
+};
+*/
+
+
+/**
+ * Enable/disable multiple month selection
+ * @param {boolean} enable - Whether to enable multiple month selection
+ */
+
+/*
+DatepickerTabs.prototype.setMultipleMonths = function(enable) {
+  if (this.options.mode === 'month') {
+    this.options.multiple = !!enable;
+  }
+  this.options.multipleMonths = !!enable;
+  this.render();
+  this.attachEvents();
+  return this;
+};
+
+/**
+ * Set display type
+ * @param {string} type - 'tabs', 'day', or 'month'
+ */
+
+/*
+DatepickerTabs.prototype.setDisplayType = function(type) {
+  if (type === 'tabs' || type === 'day' || type === 'month') {
+    this.options.displayType = type;
+
+    // If not tabs, force mode to match displayType
+    if (type !== 'tabs') {
+      this.options.mode = type;
+    }
+
+    // Re-render picker
+    this.render();
+    this.attachEvents();
+  }
+  return this;
+};
+
+// When initializing, add support for new options
+// In the constructor, add this code:
+/*
+// Check if we're using the new multipleDays/multipleMonths API
+if ('multipleDays' in this.options || 'multipleMonths' in this.options) {
+  // Set the legacy 'multiple' option based on the current mode
+  if (this.options.mode === 'day') {
+    this.options.multiple = !!this.options.multipleDays;
+  } else {
+    this.options.multiple = !!this.options.multipleMonths;
+  }
+}
+*/
 
 // Create global reference
 window.DatepickerTabs = DatepickerTabs;
