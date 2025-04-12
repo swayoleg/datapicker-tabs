@@ -69,6 +69,9 @@
  * picker.setMultiple(true);
  * ```
  */
+
+
+
 class DatepickerTabs {
   constructor(selector, options = {}) {
     // Define default options
@@ -94,6 +97,8 @@ class DatepickerTabs {
       position: 'bottom', // 'bottom' or 'top' - default position relative to input
       zIndex: 9999, // z-index for the picker container
       containerId: '', // Custom container ID to render calendar (if not provided, one will be generated)
+      backwardsYearsOffset: 5, // How many year offset render backwards in years selectbox. If now 2025 it will render from 2020
+      forwardsYearsOffset: 5, // How many year offset render forwards in years selectbox. If now 2025 it will render till 2030
     };
 
     // Merge default options with provided options
@@ -120,14 +125,14 @@ class DatepickerTabs {
         // Single element - use it as input element
         this.inputElement = elements[0];
       } else {
-        console.error('DatapickerTabs: No elements found with selector:', selector);
+        console.error('DatepickerTabs: No elements found with selector:', selector);
         return;
       }
     } else if (selector instanceof HTMLElement) {
       // If an actual element is passed, use it directly
       this.inputElement = selector;
     } else {
-      console.error('DatapickerTabs: Invalid selector or element:', selector);
+      console.error('DatepickerTabs: Invalid selector or element:', selector);
       return;
     }
     
@@ -181,8 +186,216 @@ class DatepickerTabs {
       this.restoreModeFromCookie();
     }
 
+    if (this.inputElement && this.inputElement.value && !this.options.startDate) {
+      if (this.options.mode === 'day') {
+        const parsedDates = this.parseDateInput(this.inputElement.value);
+        if (parsedDates.length > 0) {
+          this.selectedDates = parsedDates;
+          this.currentDate = new Date(parsedDates[0].getFullYear(), parsedDates[0].getMonth(), 1);
+        }
+      } else if (this.options.mode === 'month') {
+        const parsedMonths = this.parseMonthInput(this.inputElement.value);
+        if (parsedMonths.length > 0) {
+          this.selectedMonths = parsedMonths;
+          this.selectedDates = parsedMonths.map(m => new Date(m.year, m.month, 1));
+          this.currentDate = new Date(parsedMonths[0].year, parsedMonths[0].month, 1);
+        }
+      }
+    }
+
     // Initialize the datepicker
     this.init();
+  }
+
+
+  /**
+   * Returns a Date object if parsing is successful, null otherwise
+   */
+  parseDate(dateStr, format) {
+    if (!dateStr || !format) return null;
+
+    // Create mapping objects for format tokens
+    const formatTokens = {
+      'DD': /(\d{2})/, // Day with leading zero
+      'D': /(\d{1,2})/, // Day without leading zero
+      'MMM': /([A-Za-z]{3})/, // Short month name
+      'MMMM': /([A-Za-z]+)/, // Full month name
+      'MM': /(\d{2})/, // Month with leading zero
+      'M': /(\d{1,2})/, // Month without leading zero
+      'YYYY': /(\d{4})/, // Four digit year
+      'YY': /(\d{2})/ // Two digit year
+    };
+
+    // Escape special regex characters in format
+    let regexFormat = format.replace(/[-\/\\^$*+?.()|[\]{}]/g, '\\$&');
+
+    // Replace format tokens with regex capture groups
+    Object.keys(formatTokens).forEach(token => {
+      regexFormat = regexFormat.replace(new RegExp(token, 'g'), formatTokens[token].source);
+    });
+
+    // Create final regex with anchors
+    const regex = new RegExp(`^${regexFormat}$`);
+    const match = dateStr.match(regex);
+
+    if (!match) return null;
+
+    // Extract date parts with a more robust approach
+    let day = 1, month = 0, year = new Date().getFullYear();
+
+    try {
+      // Process all capturing groups from the regex match
+      let groupCount = 1; // Skip first group which is the whole match
+
+      while (groupCount < match.length) {
+        const val = match[groupCount];
+
+        // Try to find which part of the date this group represents
+        // based on its format and value
+        if (/^\d{4}$/.test(val)) {
+          // Likely a 4-digit year
+          year = parseInt(val, 10);
+        } else if (/^\d{2}$/.test(val) && parseInt(val, 10) > 31) {
+          // Likely a 2-digit year
+          const twoDigitYear = parseInt(val, 10);
+          const currentYear = new Date().getFullYear();
+          const century = Math.floor(currentYear / 100) * 100;
+
+          if (twoDigitYear + century > currentYear + 50) {
+            year = twoDigitYear + (century - 100);
+          } else {
+            year = twoDigitYear + century;
+          }
+        } else if (/^\d{1,2}$/.test(val) && parseInt(val, 10) >= 1 && parseInt(val, 10) <= 12) {
+          // Could be month or day
+          // If we already have a month value and it's in the format where we'd expect a day, treat as day
+          if (format.indexOf('DD') !== -1 || format.indexOf('D') !== -1) {
+            day = parseInt(val, 10);
+          } else {
+            month = parseInt(val, 10) - 1; // 0-based month
+          }
+        } else if (/^\d{1,2}$/.test(val) && parseInt(val, 10) > 12 && parseInt(val, 10) <= 31) {
+          // Definitely a day
+          day = parseInt(val, 10);
+        } else if (/^[A-Za-z]{3,}$/.test(val)) {
+          // Likely a month name
+          const monthIndex = this.options.monthNames.findIndex(m =>
+              m.toLowerCase().startsWith(val.toLowerCase())
+          );
+
+          if (monthIndex !== -1) {
+            month = monthIndex;
+          }
+        }
+
+        groupCount++;
+      }
+
+      // Create and validate the date
+      const parsedDate = new Date(year, month, day);
+      if (isNaN(parsedDate.getTime())) return null;
+
+      return parsedDate;
+    } catch (error) {
+      console.error('Error parsing date:', error);
+      return null;
+    }
+  }
+
+  /**
+   * Check if a date is valid
+   * @param {Date} date - The date to check
+   * @returns {boolean} - Whether the date is valid
+   */
+  DPTisValidDate(date) {
+    return date && date instanceof Date && !isNaN(date.getTime());
+  }
+
+  /**
+   * Parse multiple date strings from input value
+   */
+  parseDateInput(inputValue) {
+    if (!inputValue) return [];
+
+    // Determine which format to use based on mode
+    const format = this.options.mode === 'day'
+        ? this.options.dateFormat
+        : this.options.monthFormat;
+
+    // Split by commas for multiple dates
+    const dateStrings = inputValue.split(',').map(str => str.trim());
+
+    // Parse each date string and validate
+    return dateStrings
+        .map(dateStr => {
+          const date = this.parseDate(dateStr, format);
+          return this.DPTisValidDate(date) ? date : null;
+        })
+        .filter(date => date !== null); // Filter out invalid dates
+  }
+
+  /**
+   * Enhanced version of parseMonthInput to ensure more reliable parsing
+   */
+  parseMonthInput(inputValue) {
+    if (!inputValue) return [];
+
+    // Split by commas for multiple months
+    const monthStrings = inputValue.split(',').map(str => str.trim());
+
+    // Parse each month string and convert to month objects
+    return monthStrings
+        .map(monthStr => {
+          // Try direct parsing with the configured format
+          const date = this.parseDate(monthStr, this.options.monthFormat);
+          if (date && !isNaN(date.getTime())) {
+            return {
+              month: date.getMonth(),
+              year: date.getFullYear()
+            };
+          }
+
+          // If direct parsing fails, try a more flexible approach
+          // This helps with various month formats like "Apr 2025" or "April 2025"
+          const monthYearPattern = /([A-Za-z]+)\s+(\d{4})/i;
+          const match = monthStr.match(monthYearPattern);
+
+          if (match) {
+            const monthName = match[1];
+            const year = parseInt(match[2], 10);
+
+            // Find month by name
+            const monthIndex = this.options.monthNames.findIndex(m =>
+                m.toLowerCase().startsWith(monthName.toLowerCase())
+            );
+
+            if (monthIndex !== -1 && !isNaN(year)) {
+              return {
+                month: monthIndex,
+                year: year
+              };
+            }
+          }
+
+          // Also try numeric format like "MM/YYYY"
+          const numericPattern = /(\d{1,2})[\/\-\s](\d{4})/;
+          const numMatch = monthStr.match(numericPattern);
+
+          if (numMatch) {
+            const month = parseInt(numMatch[1], 10) - 1; // Convert to 0-based
+            const year = parseInt(numMatch[2], 10);
+
+            if (month >= 0 && month <= 11 && !isNaN(year)) {
+              return {
+                month: month,
+                year: year
+              };
+            }
+          }
+
+          return null;
+        })
+        .filter(month => month !== null); // Filter out invalid months
   }
 
   /**
@@ -194,7 +407,7 @@ class DatepickerTabs {
     const instanceOptions = {...options, containerId};
     
     // Create a new instance and return it
-    return new DatapickerTabs(inputElement, instanceOptions);
+    return new DatepickerTabs(inputElement, instanceOptions);
   }
 
   /**
@@ -204,9 +417,10 @@ class DatepickerTabs {
    * without issues like replacing the 'D' in 'Dec' with the day number.
    */
 
-// Replace the existing formatDate method with this one
+
   formatDate(date, format) {
-    if (!date) return '';
+    if (!date || !(date instanceof Date) || isNaN(date.getTime())) return '';
+
 
     // For the specific month-year format that's causing problems,
     // use a direct approach
@@ -262,7 +476,7 @@ class DatepickerTabs {
   positionPicker() {
     if (!this.inputElement) return;
 
-    const container = this.element.querySelector('.custom-datepicker-container');
+    const container = this.element.querySelector('.custom-datepickertabs-container');
     if (!container) return;
 
     // Get input position and dimensions
@@ -417,11 +631,41 @@ class DatepickerTabs {
   show() {
     if (this.isVisible) return;
 
+    //console.log('show');
+
+    // Parse the input value every time before showing
+    if (this.inputElement && this.inputElement.value) {
+      if (this.options.mode === 'month') {
+        const parsedMonths = this.parseMonthInput(this.inputElement.value);
+
+        if (parsedMonths.length > 0) {
+          this.selectedMonths = parsedMonths;
+          this.selectedDates = parsedMonths.map(m => new Date(m.year, m.month, 1));
+
+          // Important: Always update the currentDate to show the view of the selected month
+          // This is the key fix for single month selection
+          const selectedMonth = parsedMonths[0];
+          this.currentDate = new Date(selectedMonth.year, selectedMonth.month, 1);
+        }
+      } else if (this.options.mode === 'day') {
+        const parsedDates = this.parseDateInput(this.inputElement.value);
+        if (parsedDates.length > 0) {
+          this.selectedDates = parsedDates;
+          // Update the view to show the month of the selected date
+          const selectedDate = parsedDates[0];
+          this.currentDate = new Date(selectedDate.getFullYear(), selectedDate.getMonth(), 1);
+        }
+      }
+    }
+
+
+    /*
     if (this.options.mode === 'month' && this.selectedMonths.length > 0) {
       const selectedMonth = this.selectedMonths[0];
       this.currentDate = new Date(selectedMonth.year, selectedMonth.month, 1);
     } else if (this.options.mode === 'day' && this.selectedDates.length > 0) {
-      this.currentDate = new Date(this.selectedDates[0]);
+      const selectedDate = this.selectedDates[0];
+      this.currentDate = new Date(selectedDate.getFullYear(), selectedDate.getMonth(), 1);
     }
     
     // Update currentDate to match selectedDate if one exists
@@ -433,9 +677,10 @@ class DatepickerTabs {
       const selectedMonth = this.selectedMonths[0];
       this.currentDate = new Date(selectedMonth.year, selectedMonth.month, 1);
     }
+    */
 
     // Show the container
-    const container = this.element.querySelector('.custom-datepicker-container');
+    const container = this.element.querySelector('.custom-datepickertabs-container');
     if (container) {
       container.style.display = 'block';
       this.isVisible = true;
@@ -464,10 +709,10 @@ class DatepickerTabs {
    * Hide the datepicker
    */
   hide() {
-    if (!this.isVisible && !this.element.querySelector('.custom-datepicker-container')) return;
+    if (!this.isVisible && !this.element.querySelector('.custom-datepickertabs-container')) return;
 
     // Hide the container
-    const container = this.element.querySelector('.custom-datepicker-container');
+    const container = this.element.querySelector('.custom-datepickertabs-container');
     if (container) {
       container.style.display = 'none';
       this.isVisible = false;
@@ -519,8 +764,8 @@ class DatepickerTabs {
    * Get years range for year selector based on min/max date constraints
    */
   getYearsRange(currentYear) {
-    let startYear = currentYear - 5;
-    let endYear = currentYear + 5;
+    let startYear = currentYear - this.options.backwardsYearsOffset;
+    let endYear = currentYear + this.options.forwardsYearsOffset;
 
     // Apply min date constraint
     if (this.options.minDate) {
@@ -569,12 +814,12 @@ class DatepickerTabs {
   // Render the datepicker UI
   render() {
     // Check if the container already exists
-    let container = this.element.querySelector('.custom-datepicker-container');
+    let container = this.element.querySelector('.custom-datepickertabs-container');
 
     if (!container) {
       // First time rendering - create the full container
       container = document.createElement('div');
-      container.className = 'custom-datepicker-container';
+      container.className = 'custom-datepickertabs-container';
 
       // Add header
       container.innerHTML = `
@@ -770,6 +1015,7 @@ class DatepickerTabs {
 
   // Render month selection mode
   renderMonthMode() {
+    //console.log('renderMonthMode')
     const year = this.currentDate.getFullYear();
     const currentDate = new Date();
     const currentMonth = currentDate.getMonth();
@@ -782,6 +1028,7 @@ class DatepickerTabs {
     let monthsHtml = '<div class="datepicker-month-container">';
 
     for (let i = 0; i < 12; i++) {
+
       const isSelected = this.isMonthSelected(i, year);
       // Check if month is selectable based on min/max date
       const isSelectable = this.isMonthSelectable(i, year);
@@ -856,13 +1103,29 @@ class DatepickerTabs {
     html += '<div class="selected-list">';
 
     this.selectedMonths.forEach((item, index) => {
-      const formatted = this.formatDate(new Date(item.year, item.month, 1), this.options.monthFormat);
-      html += `
+      // Validate the month object
+      if (!item || typeof item.month !== 'number' || typeof item.year !== 'number' ||
+          item.month < 0 || item.month > 11 || isNaN(item.year)) {
+        return; // Skip invalid months
+      }
+
+      // Create a date object and validate it
+      const dateObj = new Date(item.year, item.month, 1);
+      if (isNaN(dateObj.getTime())) {
+        return; // Skip invalid dates
+      }
+
+      const formatted = this.formatDate(dateObj, this.options.monthFormat);
+
+      // Only add to HTML if we got a valid formatted string
+      if (formatted) {
+        html += `
         <div class="selected-item" data-index="${index}">
           ${formatted}
           <button class="remove-btn" data-index="${index}">×</button>
         </div>
       `;
+      }
     });
 
     html += '</div>';
@@ -1094,6 +1357,7 @@ class DatepickerTabs {
               this.selectedDates = this.selectedMonths.map(m => new Date(m.year, m.month, 1));
             }
 
+
             // Re-render to show updated selections
             this.render();
             this.attachEvents();
@@ -1114,6 +1378,10 @@ class DatepickerTabs {
 
             // Update currentDate to match the selected month
             this.currentDate = new Date(year, month, 1);
+
+            // Re-render to show updated selections
+            this.render();
+            this.attachEvents();
 
             // If single month selection, apply immediately and close
             // Create an event to notify that a month has been selected and applied
@@ -1196,10 +1464,10 @@ class DatepickerTabs {
     }
 
     // Apply button
-// Apply button handler for the DatepickerTabs class
-// This should replace the current Apply button handler in attachEvents method
+    // Apply button handler for the DatepickerTabs class
+    // This should replace the current Apply button handler in attachEvents method
 
-// Apply button
+    // Apply button
     const applyBtn = this.element.querySelector('.datepicker-btn.apply');
     if (applyBtn) {
       applyBtn.addEventListener('click', (e) => {
@@ -1263,6 +1531,10 @@ class DatepickerTabs {
       this.updateInputValue();
     }
     return this;
+  }
+
+  getMode() {
+    return this.options.mode;
   }
 
   /**
@@ -1460,7 +1732,7 @@ class DatepickerTabs {
 
   // This one used to render in demos
   getDatesAsString(dates) {
-    const currentMode = this.options.mode;
+    const currentMode = this.getMode();
     if (Array.isArray(dates)) {
       return dates.map(d => {
         const month = d.toLocaleString('default', { month: 'short' });
@@ -1486,84 +1758,6 @@ class DatepickerTabs {
 
 }
 
-// Modifications needed for the DatepickerTabs class to support new API
-
-/**
- * These functions should be added to the DatepickerTabs class to support
- * the new multipleDays and multipleMonths options that replace the
- * generic "multiple" option.
- */
-
-// Add these methods to the DatepickerTabs class
-
-/**
- * Enable/disable multiple day selection
- * @param {boolean} enable - Whether to enable multiple day selection
- */
-/*
-DatepickerTabs.prototype.setMultipleDays = function(enable) {
-  if (this.options.mode === 'day') {
-    this.options.multiple = !!enable;
-  }
-  this.options.multipleDays = !!enable;
-  this.render();
-  this.attachEvents();
-  return this;
-};
-*/
-
-
-/**
- * Enable/disable multiple month selection
- * @param {boolean} enable - Whether to enable multiple month selection
- */
-
-/*
-DatepickerTabs.prototype.setMultipleMonths = function(enable) {
-  if (this.options.mode === 'month') {
-    this.options.multiple = !!enable;
-  }
-  this.options.multipleMonths = !!enable;
-  this.render();
-  this.attachEvents();
-  return this;
-};
-
-/**
- * Set display type
- * @param {string} type - 'tabs', 'day', or 'month'
- */
-
-/*
-DatepickerTabs.prototype.setDisplayType = function(type) {
-  if (type === 'tabs' || type === 'day' || type === 'month') {
-    this.options.displayType = type;
-
-    // If not tabs, force mode to match displayType
-    if (type !== 'tabs') {
-      this.options.mode = type;
-    }
-
-    // Re-render picker
-    this.render();
-    this.attachEvents();
-  }
-  return this;
-};
-
-// When initializing, add support for new options
-// In the constructor, add this code:
-/*
-// Check if we're using the new multipleDays/multipleMonths API
-if ('multipleDays' in this.options || 'multipleMonths' in this.options) {
-  // Set the legacy 'multiple' option based on the current mode
-  if (this.options.mode === 'day') {
-    this.options.multiple = !!this.options.multipleDays;
-  } else {
-    this.options.multiple = !!this.options.multipleMonths;
-  }
-}
-*/
 
 // Create global reference
 window.DatepickerTabs = DatepickerTabs;

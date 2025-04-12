@@ -103,7 +103,7 @@ var DatepickerTabs = /*#__PURE__*/function () {
       // Allow multiple month selection
       maxMonthSelection: null,
       // Maximum number of months that can be selected (when multipleMonths is true)
-      startDate: new Date(),
+      startDate: null,
       minDate: null,
       maxDate: null,
       futureSaturdaysOnly: false,
@@ -122,7 +122,11 @@ var DatepickerTabs = /*#__PURE__*/function () {
       // 'bottom' or 'top' - default position relative to input
       zIndex: 9999,
       // z-index for the picker container
-      containerId: '' // Custom container ID to render calendar (if not provided, one will be generated)
+      containerId: '',
+      // Custom container ID to render calendar (if not provided, one will be generated)
+      backwardsYearsOffset: 5,
+      // How many year offset render backwards in years selectbox. If now 2025 it will render from 2020
+      forwardsYearsOffset: 5 // How many year offset render forwards in years selectbox. If now 2025 it will render till 2030
     };
 
     // Merge default options with provided options
@@ -148,14 +152,14 @@ var DatepickerTabs = /*#__PURE__*/function () {
         // Single element - use it as input element
         this.inputElement = elements[0];
       } else {
-        console.error('DatapickerTabs: No elements found with selector:', selector);
+        console.error('DatepickerTabs: No elements found with selector:', selector);
         return;
       }
     } else if (selector instanceof HTMLElement) {
       // If an actual element is passed, use it directly
       this.inputElement = selector;
     } else {
-      console.error('DatapickerTabs: Invalid selector or element:', selector);
+      console.error('DatepickerTabs: Invalid selector or element:', selector);
       return;
     }
 
@@ -195,9 +199,36 @@ var DatepickerTabs = /*#__PURE__*/function () {
       });
     }
 
+    // Initialize current date to selected month or date if available
+    if (this.selectedMonths.length > 0) {
+      var selectedMonth = this.selectedMonths[0];
+      this.currentDate = new Date(selectedMonth.year, selectedMonth.month, 1);
+    } else if (this.selectedDates.length > 0) {
+      var selectedDate = this.selectedDates[0];
+      this.currentDate = new Date(selectedDate.getFullYear(), selectedDate.getMonth(), 1);
+    }
+
     // Try to restore mode from cookie (only if displayType is 'tabs')
     if (this.options.displayType === 'tabs') {
       this.restoreModeFromCookie();
+    }
+    if (this.inputElement && this.inputElement.value && !this.options.startDate) {
+      if (this.options.mode === 'day') {
+        var parsedDates = this.parseDateInput(this.inputElement.value);
+        if (parsedDates.length > 0) {
+          this.selectedDates = parsedDates;
+          this.currentDate = new Date(parsedDates[0].getFullYear(), parsedDates[0].getMonth(), 1);
+        }
+      } else if (this.options.mode === 'month') {
+        var parsedMonths = this.parseMonthInput(this.inputElement.value);
+        if (parsedMonths.length > 0) {
+          this.selectedMonths = parsedMonths;
+          this.selectedDates = parsedMonths.map(function (m) {
+            return new Date(m.year, m.month, 1);
+          });
+          this.currentDate = new Date(parsedMonths[0].year, parsedMonths[0].month, 1);
+        }
+      }
     }
 
     // Initialize the datepicker
@@ -205,10 +236,213 @@ var DatepickerTabs = /*#__PURE__*/function () {
   }
 
   /**
-   * Create a datepicker instance for a specific input element
-   * @private
+   * Returns a Date object if parsing is successful, null otherwise
    */
   return _createClass(DatepickerTabs, [{
+    key: "parseDate",
+    value: function parseDate(dateStr, format) {
+      var _this2 = this;
+      if (!dateStr || !format) return null;
+
+      // Create mapping objects for format tokens
+      var formatTokens = {
+        'DD': /(\d{2})/,
+        // Day with leading zero
+        'D': /(\d{1,2})/,
+        // Day without leading zero
+        'MMM': /([A-Za-z]{3})/,
+        // Short month name
+        'MMMM': /([A-Za-z]+)/,
+        // Full month name
+        'MM': /(\d{2})/,
+        // Month with leading zero
+        'M': /(\d{1,2})/,
+        // Month without leading zero
+        'YYYY': /(\d{4})/,
+        // Four digit year
+        'YY': /(\d{2})/ // Two digit year
+      };
+
+      // Escape special regex characters in format
+      var regexFormat = format.replace(/[-\/\\^$*+?.()|[\]{}]/g, '\\$&');
+
+      // Replace format tokens with regex capture groups
+      Object.keys(formatTokens).forEach(function (token) {
+        regexFormat = regexFormat.replace(new RegExp(token, 'g'), formatTokens[token].source);
+      });
+
+      // Create final regex with anchors
+      var regex = new RegExp("^".concat(regexFormat, "$"));
+      var match = dateStr.match(regex);
+      if (!match) return null;
+
+      // Extract date parts with a more robust approach
+      var day = 1,
+        month = 0,
+        year = new Date().getFullYear();
+      try {
+        // Process all capturing groups from the regex match
+        var groupCount = 1; // Skip first group which is the whole match
+        var _loop = function _loop() {
+          var val = match[groupCount];
+
+          // Try to find which part of the date this group represents
+          // based on its format and value
+          if (/^\d{4}$/.test(val)) {
+            // Likely a 4-digit year
+            year = parseInt(val, 10);
+          } else if (/^\d{2}$/.test(val) && parseInt(val, 10) > 31) {
+            // Likely a 2-digit year
+            var twoDigitYear = parseInt(val, 10);
+            var currentYear = new Date().getFullYear();
+            var century = Math.floor(currentYear / 100) * 100;
+            if (twoDigitYear + century > currentYear + 50) {
+              year = twoDigitYear + (century - 100);
+            } else {
+              year = twoDigitYear + century;
+            }
+          } else if (/^\d{1,2}$/.test(val) && parseInt(val, 10) >= 1 && parseInt(val, 10) <= 12) {
+            // Could be month or day
+            // If we already have a month value and it's in the format where we'd expect a day, treat as day
+            if (format.indexOf('DD') !== -1 || format.indexOf('D') !== -1) {
+              day = parseInt(val, 10);
+            } else {
+              month = parseInt(val, 10) - 1; // 0-based month
+            }
+          } else if (/^\d{1,2}$/.test(val) && parseInt(val, 10) > 12 && parseInt(val, 10) <= 31) {
+            // Definitely a day
+            day = parseInt(val, 10);
+          } else if (/^[A-Za-z]{3,}$/.test(val)) {
+            // Likely a month name
+            var monthIndex = _this2.options.monthNames.findIndex(function (m) {
+              return m.toLowerCase().startsWith(val.toLowerCase());
+            });
+            if (monthIndex !== -1) {
+              month = monthIndex;
+            }
+          }
+          groupCount++;
+        };
+        while (groupCount < match.length) {
+          _loop();
+        }
+
+        // Create and validate the date
+        var parsedDate = new Date(year, month, day);
+        if (isNaN(parsedDate.getTime())) return null;
+        return parsedDate;
+      } catch (error) {
+        console.error('Error parsing date:', error);
+        return null;
+      }
+    }
+
+    /**
+     * Check if a date is valid
+     * @param {Date} date - The date to check
+     * @returns {boolean} - Whether the date is valid
+     */
+  }, {
+    key: "DPTisValidDate",
+    value: function DPTisValidDate(date) {
+      return date && date instanceof Date && !isNaN(date.getTime());
+    }
+
+    /**
+     * Parse multiple date strings from input value
+     */
+  }, {
+    key: "parseDateInput",
+    value: function parseDateInput(inputValue) {
+      var _this3 = this;
+      if (!inputValue) return [];
+
+      // Determine which format to use based on mode
+      var format = this.options.mode === 'day' ? this.options.dateFormat : this.options.monthFormat;
+
+      // Split by commas for multiple dates
+      var dateStrings = inputValue.split(',').map(function (str) {
+        return str.trim();
+      });
+
+      // Parse each date string and validate
+      return dateStrings.map(function (dateStr) {
+        var date = _this3.parseDate(dateStr, format);
+        return _this3.DPTisValidDate(date) ? date : null;
+      }).filter(function (date) {
+        return date !== null;
+      }); // Filter out invalid dates
+    }
+
+    /**
+     * Enhanced version of parseMonthInput to ensure more reliable parsing
+     */
+  }, {
+    key: "parseMonthInput",
+    value: function parseMonthInput(inputValue) {
+      var _this4 = this;
+      if (!inputValue) return [];
+
+      // Split by commas for multiple months
+      var monthStrings = inputValue.split(',').map(function (str) {
+        return str.trim();
+      });
+
+      // Parse each month string and convert to month objects
+      return monthStrings.map(function (monthStr) {
+        // Try direct parsing with the configured format
+        var date = _this4.parseDate(monthStr, _this4.options.monthFormat);
+        if (date && !isNaN(date.getTime())) {
+          return {
+            month: date.getMonth(),
+            year: date.getFullYear()
+          };
+        }
+
+        // If direct parsing fails, try a more flexible approach
+        // This helps with various month formats like "Apr 2025" or "April 2025"
+        var monthYearPattern = /([A-Za-z]+)\s+(\d{4})/i;
+        var match = monthStr.match(monthYearPattern);
+        if (match) {
+          var monthName = match[1];
+          var year = parseInt(match[2], 10);
+
+          // Find month by name
+          var monthIndex = _this4.options.monthNames.findIndex(function (m) {
+            return m.toLowerCase().startsWith(monthName.toLowerCase());
+          });
+          if (monthIndex !== -1 && !isNaN(year)) {
+            return {
+              month: monthIndex,
+              year: year
+            };
+          }
+        }
+
+        // Also try numeric format like "MM/YYYY"
+        var numericPattern = /(\d{1,2})[\/\-\s](\d{4})/;
+        var numMatch = monthStr.match(numericPattern);
+        if (numMatch) {
+          var month = parseInt(numMatch[1], 10) - 1; // Convert to 0-based
+          var _year = parseInt(numMatch[2], 10);
+          if (month >= 0 && month <= 11 && !isNaN(_year)) {
+            return {
+              month: month,
+              year: _year
+            };
+          }
+        }
+        return null;
+      }).filter(function (month) {
+        return month !== null;
+      }); // Filter out invalid months
+    }
+
+    /**
+     * Create a datepicker instance for a specific input element
+     * @private
+     */
+  }, {
     key: "_createInstance",
     value: function _createInstance(inputElement, options, containerId) {
       // Create a new options object with the input element
@@ -217,31 +451,62 @@ var DatepickerTabs = /*#__PURE__*/function () {
       });
 
       // Create a new instance and return it
-      return new DatapickerTabs(inputElement, instanceOptions);
+      return new DatepickerTabs(inputElement, instanceOptions);
     }
 
     /**
-     * Format a date according to the specified format
-     * Supports:
-     * - DD: Day of month with leading zero
-     * - D: Day of month without leading zero
-     * - MMM: Month name short (Jan, Feb, etc.)
-     * - MMMM: Month name full (January, February, etc.)
-     * - MM: Month number with leading zero
-     * - M: Month number without leading zero
-     * - YYYY: Full year (2023)
-     * - YY: Short year (23)
+     * DatepickerTabs Format Date Fix
+     *
+     * This is a corrected formatDate method that properly handles month name formatting
+     * without issues like replacing the 'D' in 'Dec' with the day number.
      */
   }, {
     key: "formatDate",
     value: function formatDate(date, format) {
-      if (!date) return '';
+      if (!date || !(date instanceof Date) || isNaN(date.getTime())) return '';
+
+      // For the specific month-year format that's causing problems,
+      // use a direct approach
+      if (format === 'MMM YYYY' || format === 'MMMM YYYY') {
+        var monthIndex = date.getMonth();
+        var _year2 = date.getFullYear();
+        if (format === 'MMM YYYY') {
+          // Use the first 3 characters of the month name
+          var shortMonthName = this.options.monthNames[monthIndex].substring(0, 3);
+          return "".concat(shortMonthName, " ").concat(_year2);
+        } else {
+          // Use the full month name
+          return "".concat(this.options.monthNames[monthIndex], " ").concat(_year2);
+        }
+      }
+
+      // For other formats, use a direct replacement approach
+      // that avoids the issue with 'D' in month names
       var day = date.getDate();
       var month = date.getMonth();
       var year = date.getFullYear();
 
-      // Replace format tokens with actual values
-      return format.replace(/DD/g, day.toString().padStart(2, '0')).replace(/D/g, day.toString()).replace(/MMMM/g, this.options.monthNames[month]).replace(/MMM/g, this.options.monthNames[month].substr(0, 3)).replace(/MM/g, (month + 1).toString().padStart(2, '0')).replace(/M/g, (month + 1).toString()).replace(/YYYY/g, year.toString()).replace(/YY/g, year.toString().substr(2, 2));
+      // Create a copy of the format string
+      var result = format;
+
+      // Replace year patterns
+      result = result.replace(/YYYY/g, year.toString());
+      result = result.replace(/YY/g, year.toString().slice(-2));
+
+      // Replace month name patterns first
+      result = result.replace(/MMMM/g, this.options.monthNames[month]);
+      result = result.replace(/MMM/g, this.options.monthNames[month].substring(0, 3));
+
+      // Replace month number patterns
+      result = result.replace(/MM/g, String(month + 1).padStart(2, '0'));
+      // Use word boundary for single M to avoid replacing M in words
+      result = result.replace(/\bM\b/g, String(month + 1));
+
+      // Replace day patterns - after month patterns to avoid conflicts
+      result = result.replace(/DD/g, String(day).padStart(2, '0'));
+      // Use word boundary for single D to avoid replacing D in words
+      result = result.replace(/\bD\b/g, String(day));
+      return result;
     }
 
     /**
@@ -252,7 +517,7 @@ var DatepickerTabs = /*#__PURE__*/function () {
     key: "positionPicker",
     value: function positionPicker() {
       if (!this.inputElement) return;
-      var container = this.element.querySelector('.custom-datepicker-container');
+      var container = this.element.querySelector('.custom-datepickertabs-container');
       if (!container) return;
 
       // Get input position and dimensions
@@ -316,7 +581,7 @@ var DatepickerTabs = /*#__PURE__*/function () {
   }, {
     key: "init",
     value: function init() {
-      var _this2 = this;
+      var _this5 = this;
       this.render();
       this.attachEvents();
 
@@ -330,8 +595,8 @@ var DatepickerTabs = /*#__PURE__*/function () {
 
       // Add document click handler to close when clicking outside
       document.addEventListener('click', function (e) {
-        if (_this2.isVisible && !_this2.element.contains(e.target) && (!_this2.inputElement || !_this2.inputElement.contains(e.target))) {
-          _this2.hide();
+        if (_this5.isVisible && !_this5.element.contains(e.target) && (!_this5.inputElement || !_this5.inputElement.contains(e.target))) {
+          _this5.hide();
         }
       });
     }
@@ -342,7 +607,7 @@ var DatepickerTabs = /*#__PURE__*/function () {
   }, {
     key: "setupInputElement",
     value: function setupInputElement() {
-      var _this3 = this;
+      var _this6 = this;
       // Update input with initial date if available
       this.inputElement.classList.add('datepicker-input');
       this.updateInputValue();
@@ -350,10 +615,10 @@ var DatepickerTabs = /*#__PURE__*/function () {
       // Add click handler to show the picker
       this.inputElement.addEventListener('click', function (e) {
         e.stopPropagation();
-        if (_this3.isVisible) {
-          _this3.hide();
+        if (_this6.isVisible) {
+          _this6.hide();
         } else {
-          _this3.show();
+          _this6.show();
         }
       });
 
@@ -372,14 +637,14 @@ var DatepickerTabs = /*#__PURE__*/function () {
   }, {
     key: "updateInputValue",
     value: function updateInputValue() {
-      var _this4 = this;
+      var _this7 = this;
       if (!this.inputElement) return;
       if (this.options.mode === 'day') {
         if (this.selectedDates.length === 0) {
           this.inputElement.value = '';
         } else if (this.options.multipleDays) {
           var formattedDates = this.selectedDates.map(function (d) {
-            return _this4.formatDate(d, _this4.options.dateFormat);
+            return _this7.formatDate(d, _this7.options.dateFormat);
           });
           this.inputElement.value = formattedDates.join(', ');
         } else {
@@ -390,7 +655,7 @@ var DatepickerTabs = /*#__PURE__*/function () {
           this.inputElement.value = '';
         } else if (this.options.multipleMonths) {
           var formattedMonths = this.selectedMonths.map(function (m) {
-            return _this4.formatDate(new Date(m.year, m.month, 1), _this4.options.monthFormat);
+            return _this7.formatDate(new Date(m.year, m.month, 1), _this7.options.monthFormat);
           });
           this.inputElement.value = formattedMonths.join(', ');
         } else {
@@ -406,24 +671,72 @@ var DatepickerTabs = /*#__PURE__*/function () {
   }, {
     key: "show",
     value: function show() {
-      var _this5 = this;
+      var _this8 = this;
       if (this.isVisible) return;
 
+      //console.log('show');
+
+      // Parse the input value every time before showing
+      if (this.inputElement && this.inputElement.value) {
+        if (this.options.mode === 'month') {
+          var parsedMonths = this.parseMonthInput(this.inputElement.value);
+          if (parsedMonths.length > 0) {
+            this.selectedMonths = parsedMonths;
+            this.selectedDates = parsedMonths.map(function (m) {
+              return new Date(m.year, m.month, 1);
+            });
+
+            // Important: Always update the currentDate to show the view of the selected month
+            // This is the key fix for single month selection
+            var selectedMonth = parsedMonths[0];
+            this.currentDate = new Date(selectedMonth.year, selectedMonth.month, 1);
+          }
+        } else if (this.options.mode === 'day') {
+          var parsedDates = this.parseDateInput(this.inputElement.value);
+          if (parsedDates.length > 0) {
+            this.selectedDates = parsedDates;
+            // Update the view to show the month of the selected date
+            var selectedDate = parsedDates[0];
+            this.currentDate = new Date(selectedDate.getFullYear(), selectedDate.getMonth(), 1);
+          }
+        }
+      }
+
+      /*
+      if (this.options.mode === 'month' && this.selectedMonths.length > 0) {
+        const selectedMonth = this.selectedMonths[0];
+        this.currentDate = new Date(selectedMonth.year, selectedMonth.month, 1);
+      } else if (this.options.mode === 'day' && this.selectedDates.length > 0) {
+        const selectedDate = this.selectedDates[0];
+        this.currentDate = new Date(selectedDate.getFullYear(), selectedDate.getMonth(), 1);
+      }
+      
+      // Update currentDate to match selectedDate if one exists
+      if (this.selectedDates.length > 0) {
+        const selectedDate = this.selectedDates[0];
+        this.currentDate = new Date(selectedDate.getFullYear(), selectedDate.getMonth(), 1);
+      } else if (this.selectedMonths.length > 0) {
+        // If we have selected months but no dates, use the first selected month
+        const selectedMonth = this.selectedMonths[0];
+        this.currentDate = new Date(selectedMonth.year, selectedMonth.month, 1);
+      }
+      */
+
       // Show the container
-      var container = this.element.querySelector('.custom-datepicker-container');
+      var container = this.element.querySelector('.custom-datepickertabs-container');
       if (container) {
         container.style.display = 'block';
         this.isVisible = true;
 
         // Position the picker with a slight delay to ensure it's rendered
         setTimeout(function () {
-          _this5.positionPicker();
+          _this8.positionPicker();
         }, 0);
 
         // Add window resize handler (but not scroll handler)
         this.resizeHandler = function () {
-          if (_this5.isVisible) {
-            _this5.positionPicker();
+          if (_this8.isVisible) {
+            _this8.positionPicker();
           }
         };
         window.addEventListener('resize', this.resizeHandler);
@@ -440,10 +753,10 @@ var DatepickerTabs = /*#__PURE__*/function () {
   }, {
     key: "hide",
     value: function hide() {
-      if (!this.isVisible && !this.element.querySelector('.custom-datepicker-container')) return;
+      if (!this.isVisible && !this.element.querySelector('.custom-datepickertabs-container')) return;
 
       // Hide the container
-      var container = this.element.querySelector('.custom-datepicker-container');
+      var container = this.element.querySelector('.custom-datepickertabs-container');
       if (container) {
         container.style.display = 'none';
         this.isVisible = false;
@@ -502,8 +815,8 @@ var DatepickerTabs = /*#__PURE__*/function () {
   }, {
     key: "getYearsRange",
     value: function getYearsRange(currentYear) {
-      var startYear = currentYear - 5;
-      var endYear = currentYear + 5;
+      var startYear = currentYear - this.options.backwardsYearsOffset;
+      var endYear = currentYear + this.options.forwardsYearsOffset;
 
       // Apply min date constraint
       if (this.options.minDate) {
@@ -555,11 +868,11 @@ var DatepickerTabs = /*#__PURE__*/function () {
     key: "render",
     value: function render() {
       // Check if the container already exists
-      var container = this.element.querySelector('.custom-datepicker-container');
+      var container = this.element.querySelector('.custom-datepickertabs-container');
       if (!container) {
         // First time rendering - create the full container
         container = document.createElement('div');
-        container.className = 'custom-datepicker-container';
+        container.className = 'custom-datepickertabs-container';
 
         // Add header
         container.innerHTML = "\n        <div class=\"datepicker-header\">\n          <h3 class=\"datepicker-title\">Select ".concat(this.options.mode === 'day' ? 'Date' : 'Month', "</h3>\n        </div>\n      ");
@@ -718,6 +1031,7 @@ var DatepickerTabs = /*#__PURE__*/function () {
   }, {
     key: "renderMonthMode",
     value: function renderMonthMode() {
+      //console.log('renderMonthMode')
       var year = this.currentDate.getFullYear();
       var currentDate = new Date();
       var currentMonth = currentDate.getMonth();
@@ -772,11 +1086,11 @@ var DatepickerTabs = /*#__PURE__*/function () {
   }, {
     key: "renderSelectedDates",
     value: function renderSelectedDates() {
-      var _this6 = this;
+      var _this9 = this;
       var html = '<div class="multi-select-info">Selected Dates:</div>';
       html += '<div class="selected-list">';
       this.selectedDates.forEach(function (date, index) {
-        var formatted = _this6.formatDate(date, _this6.options.dateFormat);
+        var formatted = _this9.formatDate(date, _this9.options.dateFormat);
         html += "\n        <div class=\"selected-item\" data-index=\"".concat(index, "\">\n          ").concat(formatted, "\n          <button class=\"remove-btn\" data-index=\"").concat(index, "\">\xD7</button>\n        </div>\n      ");
       });
       html += '</div>';
@@ -787,12 +1101,26 @@ var DatepickerTabs = /*#__PURE__*/function () {
   }, {
     key: "renderSelectedMonths",
     value: function renderSelectedMonths() {
-      var _this7 = this;
+      var _this10 = this;
       var html = '<div class="multi-select-info">Selected Months:</div>';
       html += '<div class="selected-list">';
       this.selectedMonths.forEach(function (item, index) {
-        var formatted = _this7.formatDate(new Date(item.year, item.month, 1), _this7.options.monthFormat);
-        html += "\n        <div class=\"selected-item\" data-index=\"".concat(index, "\">\n          ").concat(formatted, "\n          <button class=\"remove-btn\" data-index=\"").concat(index, "\">\xD7</button>\n        </div>\n      ");
+        // Validate the month object
+        if (!item || typeof item.month !== 'number' || typeof item.year !== 'number' || item.month < 0 || item.month > 11 || isNaN(item.year)) {
+          return; // Skip invalid months
+        }
+
+        // Create a date object and validate it
+        var dateObj = new Date(item.year, item.month, 1);
+        if (isNaN(dateObj.getTime())) {
+          return; // Skip invalid dates
+        }
+        var formatted = _this10.formatDate(dateObj, _this10.options.monthFormat);
+
+        // Only add to HTML if we got a valid formatted string
+        if (formatted) {
+          html += "\n        <div class=\"selected-item\" data-index=\"".concat(index, "\">\n          ").concat(formatted, "\n          <button class=\"remove-btn\" data-index=\"").concat(index, "\">\xD7</button>\n        </div>\n      ");
+        }
       });
       html += '</div>';
       return html;
@@ -827,7 +1155,7 @@ var DatepickerTabs = /*#__PURE__*/function () {
   }, {
     key: "attachEvents",
     value: function attachEvents() {
-      var _this8 = this;
+      var _this11 = this;
       // Tab switching (only if displayType is 'tabs')
       if (this.options.displayType === 'tabs') {
         var tabs = this.element.querySelectorAll('.datepicker-tab');
@@ -835,10 +1163,10 @@ var DatepickerTabs = /*#__PURE__*/function () {
           tab.addEventListener('click', function (e) {
             e.stopPropagation(); // Prevent event bubbling
             var mode = tab.getAttribute('data-mode');
-            _this8.options.mode = mode;
-            _this8.setModeCookie(mode); // Save mode to cookie
-            _this8.render();
-            _this8.attachEvents();
+            _this11.options.mode = mode;
+            _this11.setModeCookie(mode); // Save mode to cookie
+            _this11.render();
+            _this11.attachEvents();
 
             // Trigger a custom event to notify of mode change
             var event = new CustomEvent('datepickerModeChange', {
@@ -846,7 +1174,7 @@ var DatepickerTabs = /*#__PURE__*/function () {
                 mode: mode
               }
             });
-            _this8.element.dispatchEvent(event);
+            _this11.element.dispatchEvent(event);
           });
         });
       }
@@ -855,9 +1183,9 @@ var DatepickerTabs = /*#__PURE__*/function () {
       var yearSelector = this.element.querySelector('.year-selector');
       if (yearSelector) {
         yearSelector.addEventListener('change', function (e) {
-          _this8.currentDate.setFullYear(parseInt(e.target.value, 10));
-          _this8.render();
-          _this8.attachEvents();
+          _this11.currentDate.setFullYear(parseInt(e.target.value, 10));
+          _this11.render();
+          _this11.attachEvents();
         });
       }
 
@@ -869,19 +1197,19 @@ var DatepickerTabs = /*#__PURE__*/function () {
           e.stopPropagation(); // Prevent event bubbling to keep the picker open
 
           // Check if going to the previous month is allowed based on min date
-          if (_this8.options.minDate) {
-            var minDate = new Date(_this8.options.minDate);
-            var currentMonth = _this8.currentDate.getMonth();
-            var currentYear = _this8.currentDate.getFullYear();
+          if (_this11.options.minDate) {
+            var minDate = new Date(_this11.options.minDate);
+            var currentMonth = _this11.currentDate.getMonth();
+            var currentYear = _this11.currentDate.getFullYear();
 
             // If we're already at the min date month and year, don't go back further
             if (currentMonth === 0 && currentYear === minDate.getFullYear() || currentMonth === minDate.getMonth() && currentYear === minDate.getFullYear()) {
               return;
             }
           }
-          _this8.currentDate.setMonth(_this8.currentDate.getMonth() - 1);
-          _this8.render();
-          _this8.attachEvents();
+          _this11.currentDate.setMonth(_this11.currentDate.getMonth() - 1);
+          _this11.render();
+          _this11.attachEvents();
         });
       }
       if (nextMonthBtn) {
@@ -889,19 +1217,19 @@ var DatepickerTabs = /*#__PURE__*/function () {
           e.stopPropagation(); // Prevent event bubbling to keep the picker open
 
           // Check if going to the next month is allowed based on max date
-          if (_this8.options.maxDate) {
-            var maxDate = new Date(_this8.options.maxDate);
-            var currentMonth = _this8.currentDate.getMonth();
-            var currentYear = _this8.currentDate.getFullYear();
+          if (_this11.options.maxDate) {
+            var maxDate = new Date(_this11.options.maxDate);
+            var currentMonth = _this11.currentDate.getMonth();
+            var currentYear = _this11.currentDate.getFullYear();
 
             // If we're already at the max date month and year, don't go forward further
             if (currentMonth === 11 && currentYear === maxDate.getFullYear() || currentMonth === maxDate.getMonth() && currentYear === maxDate.getFullYear()) {
               return;
             }
           }
-          _this8.currentDate.setMonth(_this8.currentDate.getMonth() + 1);
-          _this8.render();
-          _this8.attachEvents();
+          _this11.currentDate.setMonth(_this11.currentDate.getMonth() + 1);
+          _this11.render();
+          _this11.attachEvents();
         });
       }
 
@@ -920,17 +1248,17 @@ var DatepickerTabs = /*#__PURE__*/function () {
                 month = _dateStr$split$map2[1],
                 date = _dateStr$split$map2[2];
               var selectedDate = new Date(year, month - 1, date);
-              if (_this8.options.multipleDays) {
+              if (_this11.options.multipleDays) {
                 // If multiple day selection is enabled
-                var index = _this8.selectedDates.findIndex(function (d) {
+                var index = _this11.selectedDates.findIndex(function (d) {
                   return d.getDate() === selectedDate.getDate() && d.getMonth() === selectedDate.getMonth() && d.getFullYear() === selectedDate.getFullYear();
                 });
                 if (index === -1) {
                   // Add to selection
-                  _this8.selectedDates.push(selectedDate);
+                  _this11.selectedDates.push(selectedDate);
                 } else {
                   // Remove from selection
-                  _this8.selectedDates.splice(index, 1);
+                  _this11.selectedDates.splice(index, 1);
                 }
 
                 // Update the UI to reflect the new selection
@@ -940,18 +1268,18 @@ var DatepickerTabs = /*#__PURE__*/function () {
                 });
 
                 // Add 'selected' class to selected days
-                _this8.selectedDates.forEach(function (selected) {
+                _this11.selectedDates.forEach(function (selected) {
                   var dayStr = "".concat(selected.getFullYear(), "-").concat(selected.getMonth() + 1, "-").concat(selected.getDate());
-                  var selectedEl = _this8.element.querySelector(".day-item[data-date=\"".concat(dayStr, "\"]"));
+                  var selectedEl = _this11.element.querySelector(".day-item[data-date=\"".concat(dayStr, "\"]"));
                   if (selectedEl) {
                     selectedEl.classList.add('selected');
                   }
                 });
-                _this8.render();
-                _this8.attachEvents();
+                _this11.render();
+                _this11.attachEvents();
               } else {
                 // Single selection
-                _this8.selectedDates = [selectedDate];
+                _this11.selectedDates = [selectedDate];
 
                 // Update the UI to reflect the new selection
                 // Remove 'selected' class from all days with data-clickable
@@ -965,27 +1293,31 @@ var DatepickerTabs = /*#__PURE__*/function () {
                 var event = new CustomEvent('datepickerApply', {
                   detail: {
                     mode: 'day',
-                    selectedDates: _this8.selectedDates,
+                    selectedDates: _this11.selectedDates,
                     selectedMonths: []
                   }
                 });
-                _this8.element.dispatchEvent(event);
+                _this11.element.dispatchEvent(event);
 
                 // Update input value if available
-                _this8.updateInputValue();
+                _this11.updateInputValue();
 
                 // Hide the picker
-                _this8.hide();
+                _this11.hide();
 
                 // Call callback if provided
-                if (_this8.options.onDateChange) {
-                  _this8.options.onDateChange(_this8.selectedDates[0]);
+                if (_this11.options.onDateChange) {
+                  _this11.options.onDateChange(_this11.selectedDates[0]);
                 }
               }
             }
           });
         });
       }
+
+      // Month selection
+      // Month selection event handler for the DatepickerTabs class
+      // This should replace the current month selection handler in attachEvents method
 
       // Month selection
       if (this.options.mode === 'month') {
@@ -995,78 +1327,88 @@ var DatepickerTabs = /*#__PURE__*/function () {
             e.stopPropagation(); // Prevent event bubbling
             var month = parseInt(item.getAttribute('data-month'), 10);
             var year = parseInt(item.getAttribute('data-year'), 10);
-            if (_this8.options.multipleMonths) {
+            if (_this11.options.multipleMonths) {
               // If multiple month selection is enabled
-              var index = _this8.selectedMonths.findIndex(function (m) {
+              var index = _this11.selectedMonths.findIndex(function (m) {
                 return m.month === month && m.year === year;
               });
               if (index === -1) {
                 // Check if adding the month would exceed the maximum allowed
-                if (_this8.options.maxMonthSelection && _this8.selectedMonths.length >= _this8.options.maxMonthSelection) {
+                if (_this11.options.maxMonthSelection && _this11.selectedMonths.length >= _this11.options.maxMonthSelection) {
                   // If max reached, remove the oldest selection before adding new one
-                  _this8.selectedMonths.shift();
+                  _this11.selectedMonths.shift();
                 }
 
                 // Add to selection
-                _this8.selectedMonths.push({
+                _this11.selectedMonths.push({
                   month: month,
                   year: year
                 });
+
+                // Also update selected dates array with all month selections
+                _this11.selectedDates = _this11.selectedMonths.map(function (m) {
+                  return new Date(m.year, m.month, 1);
+                });
               } else {
                 // Remove from selection
-                _this8.selectedMonths.splice(index, 1);
+                _this11.selectedMonths.splice(index, 1);
+
+                // Update selected dates array to match
+                _this11.selectedDates = _this11.selectedMonths.map(function (m) {
+                  return new Date(m.year, m.month, 1);
+                });
+              }
+
+              // Re-render to show updated selections
+              _this11.render();
+              _this11.attachEvents();
+
+              // Update input value
+              _this11.updateInputValue();
+
+              // Call callback with all selected dates
+              if (_this11.options.onDateChange) {
+                _this11.options.onDateChange(_this11.selectedDates);
               }
             } else {
               // Single selection
-              _this8.selectedMonths = [{
+              _this11.selectedMonths = [{
                 month: month,
                 year: year
               }];
 
               // Also update selected dates to first day of month
-              _this8.selectedDates = [new Date(year, month, 1)];
+              _this11.selectedDates = [new Date(year, month, 1)];
+
+              // Update currentDate to match the selected month
+              _this11.currentDate = new Date(year, month, 1);
+
+              // Re-render to show updated selections
+              _this11.render();
+              _this11.attachEvents();
 
               // If single month selection, apply immediately and close
               // Create an event to notify that a month has been selected and applied
               var event = new CustomEvent('datepickerApply', {
                 detail: {
                   mode: 'month',
-                  selectedDates: _this8.selectedDates,
-                  selectedMonths: _this8.selectedMonths
+                  selectedDates: _this11.selectedDates,
+                  selectedMonths: _this11.selectedMonths
                 }
               });
-              _this8.element.dispatchEvent(event);
+              _this11.element.dispatchEvent(event);
 
               // Update input value if available
-              _this8.updateInputValue();
+              _this11.updateInputValue();
 
               // Hide the picker
-              _this8.hide();
+              _this11.hide();
 
               // Call callback if provided
-              if (_this8.options.onDateChange) {
-                _this8.options.onDateChange(_this8.selectedDates[0]);
+              if (_this11.options.onDateChange) {
+                _this11.options.onDateChange(_this11.selectedDates[0]);
               }
-              return;
             }
-
-            // Update the UI to reflect the new selection
-            // Remove 'selected' class from all months
-            monthItems.forEach(function (mi) {
-              return mi.classList.remove('selected');
-            });
-
-            // Add 'selected' class to selected months
-            _this8.selectedMonths.forEach(function (selected) {
-              if (selected.year === year) {
-                var selectedEl = _this8.element.querySelector(".month-item[data-month=\"".concat(selected.month, "\"][data-year=\"").concat(selected.year, "\"]"));
-                if (selectedEl) {
-                  selectedEl.classList.add('selected');
-                }
-              }
-            });
-            _this8.render();
-            _this8.attachEvents();
           });
         });
       }
@@ -1077,23 +1419,23 @@ var DatepickerTabs = /*#__PURE__*/function () {
         btn.addEventListener('click', function (e) {
           e.stopPropagation(); // Prevent bubbling to parent
           var index = parseInt(btn.getAttribute('data-index'), 10);
-          if (_this8.options.mode === 'day') {
-            _this8.selectedDates.splice(index, 1);
+          if (_this11.options.mode === 'day') {
+            _this11.selectedDates.splice(index, 1);
           } else {
-            _this8.selectedMonths.splice(index, 1);
+            _this11.selectedMonths.splice(index, 1);
           }
-          _this8.render();
-          _this8.attachEvents();
+          _this11.render();
+          _this11.attachEvents();
 
           // Call callback if provided
-          if (_this8.options.onDateChange) {
-            if (_this8.options.mode === 'day') {
-              _this8.options.onDateChange(_this8.options.multiple ? _this8.selectedDates : _this8.selectedDates[0]);
+          if (_this11.options.onDateChange) {
+            if (_this11.options.mode === 'day') {
+              _this11.options.onDateChange(_this11.options.multiple ? _this11.selectedDates : _this11.selectedDates[0]);
             } else {
-              var dates = _this8.selectedMonths.map(function (m) {
+              var dates = _this11.selectedMonths.map(function (m) {
                 return new Date(m.year, m.month, 1);
               });
-              _this8.options.onDateChange(_this8.options.multiple ? dates : dates[0]);
+              _this11.options.onDateChange(_this11.options.multiple ? dates : dates[0]);
             }
           }
         });
@@ -1104,26 +1446,30 @@ var DatepickerTabs = /*#__PURE__*/function () {
       if (clearBtn) {
         clearBtn.addEventListener('click', function (e) {
           e.stopPropagation(); // Prevent event bubbling to keep the picker open
-          _this8.selectedDates = [];
-          _this8.selectedMonths = [];
-          _this8.render();
-          _this8.attachEvents();
+          _this11.selectedDates = [];
+          _this11.selectedMonths = [];
+          _this11.render();
+          _this11.attachEvents();
 
           // Update input value if available
-          if (_this8.inputElement) {
-            _this8.inputElement.value = '';
+          if (_this11.inputElement) {
+            _this11.inputElement.value = '';
           }
 
           // Create a custom event for clearing
           var event = new CustomEvent('datepickerClear');
-          _this8.element.dispatchEvent(event);
+          _this11.element.dispatchEvent(event);
 
           // Call callback if provided
-          if (_this8.options.onDateChange) {
-            _this8.options.onDateChange(null);
+          if (_this11.options.onDateChange) {
+            _this11.options.onDateChange(null);
           }
         });
       }
+
+      // Apply button
+      // Apply button handler for the DatepickerTabs class
+      // This should replace the current Apply button handler in attachEvents method
 
       // Apply button
       var applyBtn = this.element.querySelector('.datepicker-btn.apply');
@@ -1134,37 +1480,37 @@ var DatepickerTabs = /*#__PURE__*/function () {
           // Create an event to notify that dates have been applied
           var event = new CustomEvent('datepickerApply', {
             detail: {
-              mode: _this8.options.mode,
-              selectedDates: _this8.selectedDates,
-              selectedMonths: _this8.selectedMonths
+              mode: _this11.options.mode,
+              selectedDates: _this11.selectedDates,
+              selectedMonths: _this11.selectedMonths
             }
           });
-          _this8.element.dispatchEvent(event);
+          _this11.element.dispatchEvent(event);
 
           // Update input value if available
-          _this8.updateInputValue();
+          _this11.updateInputValue();
 
           // Hide the picker
-          _this8.hide();
+          _this11.hide();
 
           // Call callback if provided
-          if (_this8.options.onDateChange) {
-            if (_this8.options.mode === 'day') {
+          if (_this11.options.onDateChange) {
+            if (_this11.options.mode === 'day') {
               // In day mode, only call if we have selections
-              if (_this8.selectedDates.length > 0) {
-                _this8.options.onDateChange(_this8.options.multiple ? _this8.selectedDates : _this8.selectedDates[0]);
+              if (_this11.selectedDates.length > 0) {
+                _this11.options.onDateChange(_this11.options.multipleDays ? _this11.selectedDates : _this11.selectedDates[0]);
               } else {
-                _this8.options.onDateChange(null);
+                _this11.options.onDateChange(null);
               }
             } else {
               // In month mode, convert month selections to dates (1st of each month)
-              if (_this8.selectedMonths.length > 0) {
-                var dates = _this8.selectedMonths.map(function (m) {
+              if (_this11.selectedMonths.length > 0) {
+                var dates = _this11.selectedMonths.map(function (m) {
                   return new Date(m.year, m.month, 1);
                 });
-                _this8.options.onDateChange(_this8.options.multiple ? dates : dates[0]);
+                _this11.options.onDateChange(_this11.options.multipleMonths ? dates : dates[0]);
               } else {
-                _this8.options.onDateChange(null);
+                _this11.options.onDateChange(null);
               }
             }
           }
@@ -1193,6 +1539,11 @@ var DatepickerTabs = /*#__PURE__*/function () {
         this.updateInputValue();
       }
       return this;
+    }
+  }, {
+    key: "getMode",
+    value: function getMode() {
+      return this.options.mode;
     }
 
     /**
@@ -1410,6 +1761,38 @@ var DatepickerTabs = /*#__PURE__*/function () {
       this.inputElement = null;
       this.containerElement = null;
       this.instances = [];
+    }
+
+    // This one used to render in demos
+  }, {
+    key: "getDatesAsString",
+    value: function getDatesAsString(dates) {
+      var currentMode = this.getMode();
+      if (Array.isArray(dates)) {
+        return dates.map(function (d) {
+          var month = d.toLocaleString('default', {
+            month: 'short'
+          });
+          var year = d.getFullYear();
+          var day = d.getDay();
+          if ('day' == currentMode) {
+            return "".concat(day, " ").concat(month, " ").concat(year);
+          } else {
+            return "".concat(month, " ").concat(year);
+          }
+        }).join(', ');
+      } else {
+        var month = dates.toLocaleString('default', {
+          month: 'short'
+        });
+        var year = dates.getFullYear();
+        var day = dates.getDate();
+        if ('day' == currentMode) {
+          return "".concat(day, " ").concat(month, " ").concat(year);
+        } else {
+          return "".concat(month, " ").concat(year);
+        }
+      }
     }
   }]);
 }(); // Create global reference

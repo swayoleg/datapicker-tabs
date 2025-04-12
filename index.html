@@ -1,0 +1,1063 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DatepickerTabs Demo</title>
+    <link rel="stylesheet" href="./dist/css/custom-datepicker.min.css">
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 20px;
+            color: #333;
+            line-height: 1.6;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        h1 {
+            color: #2196f3;
+        }
+
+        .demo-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 30px;
+        }
+
+        .demo-section {
+            flex: 1;
+            min-width: 300px;
+            padding: 20px;
+            border: 1px solid #eaeaea;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+        }
+
+        .demo-row {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+
+        .demo-column-1 {
+            flex: 1;
+            min-width: 100px;
+            padding: 10px;
+        }
+
+        .demo-column {
+            flex: 1;
+            min-width: 300px;
+            padding: 10px;
+        }
+
+        .demo-input {
+            width: 95%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 14px;
+            cursor: pointer;
+            background-color: #f9f9f9;
+        }
+
+        .options-panel {
+            background-color: #f9f9f9;
+            padding: 15px;
+            border-radius: 8px;
+            margin-top: 20px;
+        }
+
+        .option-row {
+            margin-bottom: 10px;
+        }
+
+
+        .demo-input {
+            width: 95%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 14px;
+            margin-bottom: 15px;
+        }
+
+        .result-display {
+            background-color: #f2f7fd;
+            padding: 15px;
+            border-radius: 8px;
+            min-height: 60px;
+        }
+
+        .code-block {
+            background-color: #f5f5f5;
+            padding: 15px;
+            border-radius: 4px;
+            overflow: auto;
+            font-family: monospace;
+            font-size: 14px;
+        }
+
+        footer {
+            margin-top: 50px;
+            text-align: center;
+            padding: 20px;
+            border-top: 1px solid #eaeaea;
+            font-size: 14px;
+        }
+
+        .options {
+            margin-top: 20px;
+        }
+
+        .option-row {
+            margin-bottom: 10px;
+        }
+
+        .option-row label {
+            display: inline-block;
+            width: 120px;
+        }
+
+        label {
+            display: inline-block;
+            width: 140px;
+            font-weight: 500;
+        }
+
+        .result-panel {
+            background-color: #f2f7fd;
+            padding: 15px;
+            border-radius: 8px;
+            margin-top: 20px;
+            min-height: 100px;
+        }
+
+        .btn {
+            padding: 8px 16px;
+            background-color: #2196f3;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: 500;
+            margin-right: 10px;
+            transition: background-color 0.2s;
+        }
+
+        .btn:hover {
+            background-color: #0d8aee;
+        }
+
+        .btn-secondary {
+            background-color: #f3f4f6;
+            color: #333;
+        }
+
+        .btn-secondary:hover {
+            background-color: #e3e5e8;
+        }
+
+        pre {
+            background-color: #f5f5f5;
+            padding: 15px;
+            border-radius: 4px;
+            overflow: auto;
+            font-size: 14px;
+        }
+
+        code {
+            font-family: monospace;
+        }
+
+        /* Styling for documentation */
+        .documentation {
+            padding: 20px;
+            background-color: #fff;
+            border-radius: 8px;
+            margin-top: 40px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .documentation h2 {
+            border-bottom: 1px solid #eaeaea;
+            padding-bottom: 10px;
+        }
+
+        .documentation h3 {
+            margin-top: 25px;
+            margin-bottom: 10px;
+            color: #2196f3;
+        }
+
+        .documentation ul {
+            padding-left: 20px;
+        }
+
+        .documentation .method {
+            margin-bottom: 25px;
+            padding-bottom: 15px;
+            border-bottom: 1px dashed #eaeaea;
+        }
+
+        .documentation .method:last-child {
+            border-bottom: none;
+        }
+
+        .documentation .method-name {
+            color: #333;
+            font-weight: bold;
+            font-family: monospace;
+        }
+
+        .documentation .method-description {
+            margin: 10px 0;
+        }
+
+        .documentation .parameter {
+            margin-left: 20px;
+            font-style: italic;
+        }
+
+        .code-example {
+            margin: 15px 0;
+        }
+
+        /* For the bottom demo that tests overlap handling */
+        .bottom-demo {
+            margin-top: 100px;
+            border-top: 1px solid #ccc;
+            padding-top: 20px;
+        }
+
+
+
+        .screenshot {
+            vertical-align: top;
+            margin: 10px;
+        }
+
+
+
+
+
+        /* PrismJS 1.30.0
+ https://prismjs.com/download.html#themes=prism&languages=css+clike+javascript&plugins=toolbar+copy-to-clipboard */
+        code[class*=language-],pre[class*=language-]{color:#000;background:0 0;text-shadow:0 1px #fff;font-family:Consolas,Monaco,'Andale Mono','Ubuntu Mono',monospace;font-size:1em;text-align:left;white-space:pre;word-spacing:normal;word-break:normal;word-wrap:normal;line-height:1.5;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-hyphens:none;-moz-hyphens:none;-ms-hyphens:none;hyphens:none}code[class*=language-] ::-moz-selection,code[class*=language-]::-moz-selection,pre[class*=language-] ::-moz-selection,pre[class*=language-]::-moz-selection{text-shadow:none;background:#b3d4fc}code[class*=language-] ::selection,code[class*=language-]::selection,pre[class*=language-] ::selection,pre[class*=language-]::selection{text-shadow:none;background:#b3d4fc}@media print{code[class*=language-],pre[class*=language-]{text-shadow:none}}pre[class*=language-]{padding:1em;margin:.5em 0;overflow:auto}:not(pre)>code[class*=language-],pre[class*=language-]{background:#f5f2f0}:not(pre)>code[class*=language-]{padding:.1em;border-radius:.3em;white-space:normal}.token.cdata,.token.comment,.token.doctype,.token.prolog{color:#708090}.token.punctuation{color:#999}.token.namespace{opacity:.7}.token.boolean,.token.constant,.token.deleted,.token.number,.token.property,.token.symbol,.token.tag{color:#905}.token.attr-name,.token.builtin,.token.char,.token.inserted,.token.selector,.token.string{color:#690}.language-css .token.string,.style .token.string,.token.entity,.token.operator,.token.url{color:#9a6e3a;background:hsla(0,0%,100%,.5)}.token.atrule,.token.attr-value,.token.keyword{color:#07a}.token.class-name,.token.function{color:#dd4a68}.token.important,.token.regex,.token.variable{color:#e90}.token.bold,.token.important{font-weight:700}.token.italic{font-style:italic}.token.entity{cursor:help}
+        div.code-toolbar{position:relative}div.code-toolbar>.toolbar{position:absolute;z-index:10;top:.3em;right:.2em;transition:opacity .3s ease-in-out;opacity:0}div.code-toolbar:hover>.toolbar{opacity:1}div.code-toolbar:focus-within>.toolbar{opacity:1}div.code-toolbar>.toolbar>.toolbar-item{display:inline-block}div.code-toolbar>.toolbar>.toolbar-item>a{cursor:pointer}div.code-toolbar>.toolbar>.toolbar-item>button{background:0 0;border:0;color:inherit;font:inherit;line-height:normal;overflow:visible;padding:0;-webkit-user-select:none;-moz-user-select:none;-ms-user-select:none}div.code-toolbar>.toolbar>.toolbar-item>a,div.code-toolbar>.toolbar>.toolbar-item>button,div.code-toolbar>.toolbar>.toolbar-item>span{color:#bbb;font-size:.8em;padding:0 .5em;background:#f5f2f0;background:rgba(224,224,224,.2);box-shadow:0 2px 0 0 rgba(0,0,0,.2);border-radius:.5em}div.code-toolbar>.toolbar>.toolbar-item>a:focus,div.code-toolbar>.toolbar>.toolbar-item>a:hover,div.code-toolbar>.toolbar>.toolbar-item>button:focus,div.code-toolbar>.toolbar>.toolbar-item>button:hover,div.code-toolbar>.toolbar>.toolbar-item>span:focus,div.code-toolbar>.toolbar>.toolbar-item>span:hover{color:inherit;text-decoration:none}
+
+    </style>
+
+</head>
+<body>
+<header>
+    <h1>DatepickerTabs</h1>
+    <p>A versatile date picker with day and month selection modes</p>
+    <p>Great for booking systems! If users don't have a specific date in mind, they can easily pick a few different dates, a whole month, or even several months at once (with a maximum limit)</p>
+    <a href="https://github.com/swayoleg/datepicker-tabs" class="github-link">View on GitHub</a>
+
+    <div style="margin-top: 10px;">
+        <img src="datepicker-date-with-tabs-fro-month.png" alt="DatepickerTabs Screenshot" class="screenshot"  />
+        <img src="month-datepicker.png" alt="DatepickerTabs Screenshot" class="screenshot" />
+    </div>
+
+
+    <nav class="datepicker-nav-menu">
+        <ul>
+            <li><a href="#tabs-demo">Few Months Selection or Certain Date Demo</a></li>
+            <li><a href="#month-mode">Month Only Mode</a></li>
+            <li><a href="#day-mode">Day Only Mode</a></li>
+            <li><a href="#configurator">Configurator</a></li>
+            <li><a href="#bottom-test">Bottom of Page Test</a></li>
+            <li><a href="#documentation">Custom Date Picker Documentation</a></li>
+        </ul>
+    </nav>
+
+
+</header>
+
+<div class="container">
+
+    <div class="demo-section" id="tabs-demo">
+        <h2>Few Months Selection or certain date Demo with tabs</h2>
+        <p>This example demonstrates the month selection mode with multiple month selection enabled and restriction to 3 month at once, and possibility to select certain date in other tab, with the initialization of preselected values and the month tab active by default.</p>
+
+        <div class="demo-row">
+            <div class="demo-column">
+                <h3>Few Months Picker or date picker in both mode:</h3>
+                <input type="text" value="May 2025, Jun 2025, Jul 2025" id="month-input" class="demo-input" placeholder="Click to select month(s)">
+
+                <div class="result-panel">
+                    <h4>Selected Values:</h4>
+                    <div id="month-result"></div>
+                </div>
+            </div>
+
+            <div class="demo-column">
+                <h3>Code Example:</h3>
+                <pre><code class="language-js" data-prismjs-copy="Copy code!">//Few Months picker initialization
+const monthPicker = new DatepickerTabs('#month-input', {
+    mode: 'month',
+    multipleMonths: true,
+    maxMonthSelection: 3,
+    monthFormat: 'MMM YYYY'
+});
+</code></pre>
+            </div>
+        </div>
+
+        <div>
+            <p>To show selected value in the "Selected Values:" section here in this example - use this "onDateChange" parameter to constructor.</p>
+            <pre><code  class="language-js">
+// This code below is used to show selection in "Selected Values:" section, so you probably won't need it
+onDateChange: function(dates) {
+    const monthResult = document.getElementById('month-result');
+    if (dates) {
+        monthResult.textContent = monthPicker.getDatesAsString(dates)
+    } else {
+        monthResult.textContent = 'No months selected';
+    }
+}</code></pre>
+        </div>
+    </div>
+
+    <div class="demo-section" id="month-mode">
+        <h2>Month only Mode</h2>
+        <p>This example demonstrates the one month selection mode with NO date selection.</p>
+
+        <div class="demo-row">
+            <div class="demo-column">
+                <h3>Single Month Picker Only</h3>
+                <input type="text"  value="May 2025"  id="month-mode-example" class="demo-input" placeholder="Click to select month(s)">
+
+                <div class="result-panel">
+                    <h4>Selected Month:</h4>
+                    <div id="month-mode-example-result"></div>
+                </div>
+            </div>
+
+            <div class="demo-column">
+                <h3>Code Example</h3>
+                <pre><code class="language-js" data-prismjs-copy="Copy code!">//Single Month mode picker only
+const monthPickerOnly = new DatepickerTabs('#month-mode-example', {
+    mode: 'month',
+    displayType: 'month',
+    multipleMonths: false,
+    monthFormat: 'MMM YYYY',
+});</code></pre>
+            </div>
+        </div>
+    </div>
+
+    <div class="demo-section" id="day-mode">
+        <h2>Day only Mode</h2>
+        <p>This example demonstrates the one month selection mode with NO date selection.</p>
+
+        <div class="demo-row">
+            <div class="demo-column">
+                <h3>Single Month Picker Only</h3>
+                <input type="text"  value="25 Apr 2025"  id="day-mode-example" class="demo-input" placeholder="Click to select month(s)">
+
+                <div class="result-panel">
+                    <h4>Selected Month:</h4>
+                    <div id="day-mode-example-result"></div>
+                </div>
+            </div>
+
+            <div class="demo-column">
+                <h3>Code Example</h3>
+                <pre><code class="language-js" data-prismjs-copy="Copy code!">//Single day mode picker only
+const dayPickerOnly = new DatepickerTabs('#day-mode-example', {
+    displayType: 'day',
+    dayFormat: 'DD MMM YYYY',
+    multipleMonths: false,
+});</code></pre>
+            </div>
+        </div>
+    </div>
+
+
+    <div class="demo-section" id="configurator">
+        <h2>Configurator</h2>
+        <p>Configure your DatepickerTabs with the options below, test it out, and generate code to use in your project.</p>
+
+        <div class="demo-row">
+            <div class="demo-column">
+                <h3>Options</h3>
+                <div class="options-panel">
+                    <!-- Basic Configuration -->
+                    <h4>Basic Configuration</h4>
+                    <div class="option-group">
+                        <div class="option-item">
+                            <label for="config-mode">Initial Mode:</label>
+                            <select id="config-mode">
+                                <option value="day">Day</option>
+                                <option value="month">Month</option>
+                            </select>
+                        </div>
+                        <div class="option-item">
+                            <label for="config-display-type">Display Type:</label>
+                            <select id="config-display-type">
+                                <option value="tabs">Tabs (Day & Month)</option>
+                                <option value="day">Day Only</option>
+                                <option value="month">Month Only</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <!-- Selection Options -->
+                    <h4>Selection Options</h4>
+                    <div class="option-group">
+                        <div class="option-item">
+                            <label for="config-multiple-days">Multiple Day:</label>
+                            <input type="checkbox" id="config-multiple-days">
+                        </div>
+                        <div class="option-item">
+                            <label for="config-multiple-months">Multiple Month:</label>
+                            <input type="checkbox" id="config-multiple-months" checked>
+                        </div>
+                        <div class="option-item">
+                            <label for="config-max-months">Max Months:</label>
+                            <input type="number" id="config-max-months" min="1" max="12" value="6" style="width:60px">
+                        </div>
+                    </div>
+
+                    <!-- Date Range -->
+                    <h4>Date Range</h4>
+                    <div class="option-group">
+                        <div class="option-item">
+                            <label for="config-min-date">Min Date:</label>
+                            <input type="date" id="config-min-date">
+                        </div>
+                        <div class="option-item">
+                            <label for="config-max-date">Max Date:</label>
+                            <input type="date" id="config-max-date">
+                        </div>
+                        <div class="option-item">
+                            <label for="config-saturdays">Saturdays Only:</label>
+                            <input type="checkbox" id="config-saturdays">
+                        </div>
+                    </div>
+
+                    <!-- Format Options -->
+                    <h4>Format Options</h4>
+                    <div class="option-group">
+                        <div class="option-item">
+                            <label for="config-date-format">Date Format:</label>
+                            <select id="config-date-format">
+                                <option value="DD MMM YYYY">DD MMM YYYY</option>
+                                <option value="DD/MM/YYYY">DD/MM/YYYY</option>
+                                <option value="MM/DD/YYYY">MM/DD/YYYY</option>
+                                <option value="YYYY-MM-DD">YYYY-MM-DD</option>
+                            </select>
+                        </div>
+                        <div class="option-item">
+                            <label for="config-month-format">Month Format:</label>
+                            <select id="config-month-format">
+                                <option value="MMM YYYY">MMM YYYY</option>
+                                <option value="MMMM YYYY">MMMM YYYY</option>
+                                <option value="MM/YYYY">MM/YYYY</option>
+                                <option value="YYYY-MM">YYYY-MM</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <!-- UI Settings -->
+                    <h4>UI Settings</h4>
+                    <div class="option-group">
+
+                        <div class="option-item">
+                            <label for="config-zindex">z-index:</label>
+                            <input type="number" id="config-zindex" value="9999" style="width:80px">
+                        </div>
+                    </div>
+
+                    <!-- Actions -->
+                    <div class="actions">
+                        <button id="config-apply" class="btn">Apply & Generate Code</button>
+                        <button id="config-reset" class="btn btn-secondary">Reset</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="demo-row" id="bottom-test">
+            <div class="demo-column">
+                <h3>Preview</h3>
+                <input type="text" id="config-datepicker" class="demo-input" placeholder="Click to select a date">
+                <div class="result-panel">
+                    <h4>Selected Value(s):</h4>
+                    <div id="config-result"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Generated Code Output -->
+        <div class="demo-row" style="margin-top: 20px;">
+            <div class="demo-column" style="flex: 1;">
+                <h3>Generated Code</h3>
+                <pre style="width: 100%; height: 180px; overflow: auto; background: #f5f5f5; padding: 15px; border-radius: 5px;"><code class="language-js" id="config-code"></code>
+                </pre>
+            </div>
+        </div>
+    </div>
+
+    <style>
+        .options-panel {
+            background-color: #f9f9f9;
+            padding: 12px;
+            border-radius: 6px;
+        }
+
+        .options-panel h4 {
+            margin-top: 12px;
+            margin-bottom: 6px;
+            font-size: 15px;
+            color: #333;
+            border-bottom: 1px solid #eaeaea;
+            padding-bottom: 4px;
+        }
+
+        .option-group {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-bottom: 8px;
+        }
+
+        .option-item {
+            display: inline-flex;
+            align-items: center;
+            margin-right: 15px;
+        }
+
+        .option-item label {
+            display: inline-block;
+            width: auto;
+            min-width: 80px;
+            margin-right: 6px;
+            font-weight: 500;
+            font-size: 14px;
+        }
+
+        .option-item select,
+        .option-item input[type="date"],
+        .option-item input[type="number"] {
+            padding: 4px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 14px;
+        }
+
+        .actions {
+            margin-top: 15px;
+            display: flex;
+            gap: 8px;
+        }
+
+        .btn {
+            padding: 6px 12px;
+            font-size: 14px;
+        }
+
+        /* Reduce pre height for smaller footprint */
+        pre#config-code {
+            margin-top: 8px;
+        }
+
+        .datepicker-nav-menu {
+            background: #f8f9fa;
+            border-radius: 8px;
+            margin: 20px 0;
+            padding: 10px 15px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        }
+
+        .datepicker-nav-menu ul {
+            list-style-type: none;
+            padding: 0;
+            margin: 0;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px 20px;
+        }
+
+        .datepicker-nav-menu li {
+            margin: 5px 0;
+        }
+
+        .datepicker-nav-menu a {
+            color: #2196f3;
+            text-decoration: none;
+            padding: 5px 0;
+            font-weight: 500;
+            display: inline-block;
+            position: relative;
+            transition: color 0.2s;
+        }
+
+        .datepicker-nav-menu a:hover {
+            color: #0d8aee;
+        }
+
+        .datepicker-nav-menu a:after {
+            content: '';
+            position: absolute;
+            width: 100%;
+            transform: scaleX(0);
+            height: 2px;
+            bottom: 0;
+            left: 0;
+            background-color: #0d8aee;
+            transform-origin: bottom right;
+            transition: transform 0.3s ease-out;
+        }
+
+        .datepicker-nav-menu a:hover:after {
+            transform: scaleX(1);
+            transform-origin: bottom left;
+        }
+
+        @media (max-width: 768px) {
+            .datepicker-nav-menu ul {
+                flex-direction: column;
+                gap: 8px;
+            }
+
+            .datepicker-nav-menu li {
+                margin: 0;
+            }
+        }
+
+    </style>
+
+
+
+    <!-- Test for bottom of page positioning -->
+    <div class="bottom-demo">
+        <h2>Bottom of Page Test</h2>
+        <p>This tests that the date picker correctly positions itself when near the bottom of the viewport. (scroll that way so input is in the botton of the page)</p>
+
+        <div class="demo-row">
+            <div class="demo-column">
+                <input type="text" id="bottom-date-input" class="demo-input" placeholder="Click to select a date">
+            </div>
+        </div>
+    </div>
+
+    <!-- Documentation Section -->
+    <div class="documentation" id="documentation">
+        <h2>Custom Date Picker Documentation</h2>
+        <p>
+            A versatile date picker with day and month selection modes, designed for use with form inputs.
+            It doesnt pretend to be a pest datepicker and main reason of creation was - there is no datepicker where you can select multiply month (with limit) in one tab and same time
+        </p>
+
+        <h3>Installation</h3>
+        <p>Include the CSS and JavaScript files in your HTML:</p>
+        <pre><code>&lt;link rel="stylesheet" href="css/custom-datepicker.css"&gt;
+&lt;script src="js/custom-datepicker.js"&gt;&lt;/script&gt;</code></pre>
+
+        <h3>Basic Usage</h3>
+        <p>Create a container element and an input field, then initialize the date picker:</p>
+        <pre><code>// HTML
+&lt;input type="text" id="date-input" placeholder="Select a date"&gt;
+
+// JavaScript
+const datePicker = new DatepickerTabs('#date-input', {
+  dateFormat: 'DD/MM/YYYY',
+  onDateChange: function(date) {
+    console.log('Selected date:', date);
+  }
+});</code></pre>
+
+        <h3>Options</h3>
+        <ul>
+            <li><code>mode</code>: 'day' or 'month' (default: 'day')</li>
+            <li><code>multiple</code>: Allow multiple selection (default: false)</li>
+            <li><code>startDate</code>: Initial selected date (default: today)</li>
+            <li><code>minDate</code>: Minimum selectable date (default: null)</li>
+            <li><code>maxDate</code>: Maximum selectable date (default: null)</li>
+            <li><code>futureSaturdaysOnly</code>: Only enable future Saturdays (default: false)</li>
+            <li><code>dateFormat</code>: Format for day mode (default: 'DD MMM YYYY')</li>
+            <li><code>monthFormat</code>: Format for month mode (default: 'MMM YYYY')</li>
+
+            <li><code>onDateChange</code>: Callback function when date(s) are selected</li>
+        </ul>
+
+        <h3>Methods</h3>
+
+        <div class="method">
+            <div class="method-name">setDate(date)</div>
+            <div class="method-description">Sets the selected date(s)</div>
+            <div class="parameter">date: Date object, array of Date objects, or null</div>
+            <div class="code-example">
+          <pre><code>// Set a single date
+datePicker.setDate(new Date());
+
+// Set multiple dates
+datePicker.setDate([new Date(2023, 0, 1), new Date(2023, 1, 1)]);
+
+// Clear selection
+datePicker.setDate(null);</code></pre>
+            </div>
+        </div>
+
+        <div class="method">
+            <div class="method-name">getDate()</div>
+            <div class="method-description">Gets the currently selected date(s)</div>
+            <div class="code-example">
+                <pre><code>const selectedDate = datePicker.getDate();</code></pre>
+            </div>
+        </div>
+
+        <div class="method">
+            <div class="method-name">setMode(mode)</div>
+            <div class="method-description">Sets the picker mode</div>
+            <div class="parameter">mode: 'day' or 'month'</div>
+            <div class="code-example">
+                <pre><code>datePicker.setMode('month');</code></pre>
+            </div>
+        </div>
+
+        <div class="method">
+            <div class="method-name">setMultiple(enable)</div>
+            <div class="method-description">Enables or disables multiple selection</div>
+            <div class="parameter">enable: boolean</div>
+            <div class="code-example">
+                <pre><code>datePicker.setMultiple(true);</code></pre>
+            </div>
+        </div>
+
+        <div class="method">
+            <div class="method-name">setDateFormat(format)</div>
+            <div class="method-description">Sets the date format for day mode</div>
+            <div class="parameter">format: string (e.g., 'DD/MM/YYYY')</div>
+            <div class="code-example">
+                <pre><code>datePicker.setDateFormat('YYYY-MM-DD');</code></pre>
+            </div>
+        </div>
+
+        <div class="method">
+            <div class="method-name">setMonthFormat(format)</div>
+            <div class="method-description">Sets the date format for month mode</div>
+            <div class="parameter">format: string (e.g., 'MMM YYYY')</div>
+            <div class="code-example">
+                <pre><code>datePicker.setMonthFormat('MM/YYYY');</code></pre>
+            </div>
+        </div>
+
+        <div class="method">
+            <div class="method-name">show()</div>
+            <div class="method-description">Shows the date picker</div>
+            <div class="code-example">
+                <pre><code>datePicker.show();</code></pre>
+            </div>
+        </div>
+
+        <div class="method">
+            <div class="method-name">hide()</div>
+            <div class="method-description">Hides the date picker</div>
+            <div class="code-example">
+                <pre><code>datePicker.hide();</code></pre>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+<footer>
+    <p>DatepickerTabs is released under the MIT License.</p>
+    <p>&copy; 2025 <a href="https://github.com/swayoleg/datepicker-tabs">swayoleg/datepicker-tabs</a></p>
+</footer>
+
+<script src="./src/assets/js/custom-datepicker.js"></script>
+<script>
+
+
+
+    const ButtomDatePicker = new DatepickerTabs('#bottom-date-input', {
+        onDateChange: function(date) {
+            console.log('Selected date:', date);
+        }
+    });
+
+    // Month picker initialization
+    const monthPicker = new DatepickerTabs('#month-input', {
+        mode: 'month',
+        multipleMonths: true,
+        maxMonthSelection: 3,
+        monthFormat: 'MMM YYYY',
+        onDateChange: function(dates) {
+            const monthResult = document.getElementById('month-result');
+            if (dates) {
+                monthResult.textContent = monthPicker.getDatesAsString(dates)
+            } else {
+                monthResult.textContent = 'No months selected';
+            }
+        }
+    });
+
+    //Single Month mode picker only
+    const monthPickerOnly = new DatepickerTabs('#month-mode-example', {
+        mode: 'month',
+        displayType: 'month',
+        multipleMonths: false,
+        monthFormat: 'MMM YYYY',
+        onDateChange: function(dates) {
+            const monthResultSingleMode = document.getElementById('month-mode-example-result');
+            if (dates) {
+                monthResultSingleMode.textContent = monthPickerOnly.getDatesAsString(dates)
+            } else {
+                monthResultSingleMode.textContent = 'No months selected';
+            }
+        }
+    });
+
+    const dayPickerOnly = new DatepickerTabs('#day-mode-example', {
+        displayType: 'day',
+        dayFormat: 'DD MMM YYYY',
+        multipleMonths: false,
+        onDateChange: function(dates) {
+            const monthResultSingleMode = document.getElementById('day-mode-example-result');
+            if (dates) {
+                monthResultSingleMode.textContent = dayPickerOnly.getDatesAsString(dates)
+            } else {
+                monthResultSingleMode.textContent = 'No months selected';
+            }
+        }
+    });
+
+
+    // DatepickerTabs Configurator
+    document.addEventListener('DOMContentLoaded', function() {
+        // DOM Elements
+        const configResult = document.getElementById('config-result');
+        const configCode = document.getElementById('config-code');
+        const applyButton = document.getElementById('config-apply');
+        const resetButton = document.getElementById('config-reset');
+
+        // Form elements
+        const configMode = document.getElementById('config-mode');
+        const configDisplayType = document.getElementById('config-display-type');
+        const configMultipleDays = document.getElementById('config-multiple-days');
+        const configMultipleMonths = document.getElementById('config-multiple-months');
+        const configMaxMonths = document.getElementById('config-max-months');
+        const configMinDate = document.getElementById('config-min-date');
+        const configMaxDate = document.getElementById('config-max-date');
+        const configSaturdays = document.getElementById('config-saturdays');
+        const configDateFormat = document.getElementById('config-date-format');
+        const configMonthFormat = document.getElementById('config-month-format');
+
+        const configZIndex = document.getElementById('config-zindex');
+
+        // Datepicker instance
+        let configPicker = null;
+
+        // Get current options from form, only including non-default values
+        function getOptionsFromForm() {
+            const options = {};
+
+            // Only add non-default values
+            const mode = configMode.value;
+            if (mode !== 'day') {
+                options.mode = mode;
+            }
+
+            const displayType = configDisplayType.value;
+            if (displayType !== 'tabs') {
+                options.displayType = displayType;
+            }
+
+            // Add multiple selection options only if they differ from defaults
+            if (configMultipleDays.checked) {
+                options.multipleDays = true;
+            }
+
+            if (configMultipleMonths.checked) {
+                options.multipleMonths = true;
+            }
+
+            // Only add max month selection if multiple months is enabled and value is set
+            if (configMultipleMonths.checked && configMaxMonths.value && parseInt(configMaxMonths.value, 10) > 0) {
+                options.maxMonthSelection = parseInt(configMaxMonths.value, 10);
+            }
+
+            // Add date range options if specified
+            if (configMinDate.value) {
+                options.minDate = new Date(configMinDate.value);
+            }
+
+            if (configMaxDate.value) {
+                options.maxDate = new Date(configMaxDate.value);
+            }
+
+            // Add Saturday-only option only if checked
+            if (configSaturdays.checked) {
+                options.futureSaturdaysOnly = true;
+            }
+
+            // Add format options only if they differ from defaults
+            if (configDateFormat.value !== 'DD MMM YYYY') {
+                options.dateFormat = configDateFormat.value;
+            }
+
+            if (configMonthFormat.value !== 'MMM YYYY') {
+                options.monthFormat = configMonthFormat.value;
+            }
+
+
+
+            const zIndex = parseInt(configZIndex.value, 10);
+            if (zIndex !== 9999) {
+                options.zIndex = zIndex;
+            }
+
+            return options;
+        }
+
+        // Generate code based on current settings, only showing non-default options
+        function updateCodeDisplay() {
+            const options = getOptionsFromForm();
+
+            // Format JS object for display, starting with initialization
+            let codeString = `// Initialize DatepickerTabs
+const picker = new DatepickerTabs('#date-input', {
+`;
+
+            // Add each non-default option
+            let hasOptions = false;
+            for (const [key, value] of Object.entries(options)) {
+                hasOptions = true;
+                if (typeof value === 'string') {
+                    codeString += `    ${key}: '${value}',\n`;
+                } else if (value instanceof Date) {
+                    codeString += `    ${key}: new Date(${value.getFullYear()}, ${value.getMonth()}, ${value.getDate()}),\n`;
+                } else {
+                    codeString += `    ${key}: ${value},\n`;
+                }
+            }
+
+            // Always add callback function as it's typically needed
+            if (hasOptions) {
+                codeString += `    onDateChange: function(date) {\n        console.log('Selected:', date);\n        // Your code to handle date changes\n    }\n`;
+            } else {
+                codeString += `    onDateChange: function(date) {\n        console.log('Selected:', date);\n        // Your code to handle date changes\n    }\n`;
+            }
+
+            codeString += `});`;
+
+            configCode.textContent = codeString;
+
+
+            Prism.highlightElement(configCode);
+        }
+
+        // Initialize with default options or specific options
+        function initPicker(options = {}) {
+            if (configPicker) {
+                configPicker.destroy();
+            }
+
+            // Always add the callback
+            options.onDateChange = updateResult;
+
+            // Create new picker with provided options
+            configPicker = new DatepickerTabs('#config-datepicker', options);
+
+            // Update code display
+            updateCodeDisplay();
+        }
+
+        // Update result display
+        function updateResult(date) {
+
+            if (!date) {
+                configResult.textContent = 'No date selected';
+            } else if (Array.isArray(date)) {
+                configResult.textContent = date.map(d => d.toLocaleDateString()).join(', ');
+            } else {
+                configResult.textContent = date.toLocaleDateString();
+            }
+        }
+
+        // Apply options from form by creating a new datepicker instance
+        function applyOptions() {
+            // Get options from form
+            const options = getOptionsFromForm();
+
+            // Reinitialize the picker with new options
+            initPicker(options);
+        }
+
+        // Reset form to default values
+        function resetForm() {
+            configMode.value = 'day';
+            configDisplayType.value = 'tabs';
+            configMultipleDays.checked = false;
+            configMultipleMonths.checked = false;
+            configMaxMonths.value = 6;
+            configMinDate.value = '';
+            configMaxDate.value = '';
+            configSaturdays.checked = false;
+            configDateFormat.value = 'DD MMM YYYY';
+            configMonthFormat.value = 'MMM YYYY';
+
+            configZIndex.value = 9999;
+
+            // Reinitialize with default options
+            initPicker();
+        }
+
+        // Event listeners
+        applyButton.addEventListener('click', applyOptions);
+        resetButton.addEventListener('click', resetForm);
+
+        // Add support for setMultipleDays and setMultipleMonths if not present in the DatepickerTabs class
+        if (typeof DatepickerTabs.prototype.setMultipleDays !== 'function') {
+            DatepickerTabs.prototype.setMultipleDays = function(enable) {
+                this.options.multipleDays = !!enable;
+                if (this.options.mode === 'day') {
+                    this.options.multiple = !!enable;
+                }
+                return this;
+            };
+        }
+
+        if (typeof DatepickerTabs.prototype.setMultipleMonths !== 'function') {
+            DatepickerTabs.prototype.setMultipleMonths = function(enable) {
+                this.options.multipleMonths = !!enable;
+                if (this.options.mode === 'month') {
+                    this.options.multiple = !!enable;
+                }
+                return this;
+            };
+        }
+
+        // Initialize on page load with default options
+        initPicker();
+    });
+</script>
+
+
+ <script>
+     /* PrismJS 1.30.0
+https://prismjs.com/download.html#themes=prism&languages=css+clike+javascript&plugins=toolbar+copy-to-clipboard */
+     var _self="undefined"!=typeof window?window:"undefined"!=typeof WorkerGlobalScope&&self instanceof WorkerGlobalScope?self:{},Prism=function(e){var n=/(?:^|\s)lang(?:uage)?-([\w-]+)(?=\s|$)/i,t=0,r={},a={manual:e.Prism&&e.Prism.manual,disableWorkerMessageHandler:e.Prism&&e.Prism.disableWorkerMessageHandler,util:{encode:function e(n){return n instanceof i?new i(n.type,e(n.content),n.alias):Array.isArray(n)?n.map(e):n.replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/\u00a0/g," ")},type:function(e){return Object.prototype.toString.call(e).slice(8,-1)},objId:function(e){return e.__id||Object.defineProperty(e,"__id",{value:++t}),e.__id},clone:function e(n,t){var r,i;switch(t=t||{},a.util.type(n)){case"Object":if(i=a.util.objId(n),t[i])return t[i];for(var l in r={},t[i]=r,n)n.hasOwnProperty(l)&&(r[l]=e(n[l],t));return r;case"Array":return i=a.util.objId(n),t[i]?t[i]:(r=[],t[i]=r,n.forEach((function(n,a){r[a]=e(n,t)})),r);default:return n}},getLanguage:function(e){for(;e;){var t=n.exec(e.className);if(t)return t[1].toLowerCase();e=e.parentElement}return"none"},setLanguage:function(e,t){e.className=e.className.replace(RegExp(n,"gi"),""),e.classList.add("language-"+t)},currentScript:function(){if("undefined"==typeof document)return null;if(document.currentScript&&"SCRIPT"===document.currentScript.tagName)return document.currentScript;try{throw new Error}catch(r){var e=(/at [^(\r\n]*\((.*):[^:]+:[^:]+\)$/i.exec(r.stack)||[])[1];if(e){var n=document.getElementsByTagName("script");for(var t in n)if(n[t].src==e)return n[t]}return null}},isActive:function(e,n,t){for(var r="no-"+n;e;){var a=e.classList;if(a.contains(n))return!0;if(a.contains(r))return!1;e=e.parentElement}return!!t}},languages:{plain:r,plaintext:r,text:r,txt:r,extend:function(e,n){var t=a.util.clone(a.languages[e]);for(var r in n)t[r]=n[r];return t},insertBefore:function(e,n,t,r){var i=(r=r||a.languages)[e],l={};for(var o in i)if(i.hasOwnProperty(o)){if(o==n)for(var s in t)t.hasOwnProperty(s)&&(l[s]=t[s]);t.hasOwnProperty(o)||(l[o]=i[o])}var u=r[e];return r[e]=l,a.languages.DFS(a.languages,(function(n,t){t===u&&n!=e&&(this[n]=l)})),l},DFS:function e(n,t,r,i){i=i||{};var l=a.util.objId;for(var o in n)if(n.hasOwnProperty(o)){t.call(n,o,n[o],r||o);var s=n[o],u=a.util.type(s);"Object"!==u||i[l(s)]?"Array"!==u||i[l(s)]||(i[l(s)]=!0,e(s,t,o,i)):(i[l(s)]=!0,e(s,t,null,i))}}},plugins:{},highlightAll:function(e,n){a.highlightAllUnder(document,e,n)},highlightAllUnder:function(e,n,t){var r={callback:t,container:e,selector:'code[class*="language-"], [class*="language-"] code, code[class*="lang-"], [class*="lang-"] code'};a.hooks.run("before-highlightall",r),r.elements=Array.prototype.slice.apply(r.container.querySelectorAll(r.selector)),a.hooks.run("before-all-elements-highlight",r);for(var i,l=0;i=r.elements[l++];)a.highlightElement(i,!0===n,r.callback)},highlightElement:function(n,t,r){var i=a.util.getLanguage(n),l=a.languages[i];a.util.setLanguage(n,i);var o=n.parentElement;o&&"pre"===o.nodeName.toLowerCase()&&a.util.setLanguage(o,i);var s={element:n,language:i,grammar:l,code:n.textContent};function u(e){s.highlightedCode=e,a.hooks.run("before-insert",s),s.element.innerHTML=s.highlightedCode,a.hooks.run("after-highlight",s),a.hooks.run("complete",s),r&&r.call(s.element)}if(a.hooks.run("before-sanity-check",s),(o=s.element.parentElement)&&"pre"===o.nodeName.toLowerCase()&&!o.hasAttribute("tabindex")&&o.setAttribute("tabindex","0"),!s.code)return a.hooks.run("complete",s),void(r&&r.call(s.element));if(a.hooks.run("before-highlight",s),s.grammar)if(t&&e.Worker){var c=new Worker(a.filename);c.onmessage=function(e){u(e.data)},c.postMessage(JSON.stringify({language:s.language,code:s.code,immediateClose:!0}))}else u(a.highlight(s.code,s.grammar,s.language));else u(a.util.encode(s.code))},highlight:function(e,n,t){var r={code:e,grammar:n,language:t};if(a.hooks.run("before-tokenize",r),!r.grammar)throw new Error('The language "'+r.language+'" has no grammar.');return r.tokens=a.tokenize(r.code,r.grammar),a.hooks.run("after-tokenize",r),i.stringify(a.util.encode(r.tokens),r.language)},tokenize:function(e,n){var t=n.rest;if(t){for(var r in t)n[r]=t[r];delete n.rest}var a=new s;return u(a,a.head,e),o(e,a,n,a.head,0),function(e){for(var n=[],t=e.head.next;t!==e.tail;)n.push(t.value),t=t.next;return n}(a)},hooks:{all:{},add:function(e,n){var t=a.hooks.all;t[e]=t[e]||[],t[e].push(n)},run:function(e,n){var t=a.hooks.all[e];if(t&&t.length)for(var r,i=0;r=t[i++];)r(n)}},Token:i};function i(e,n,t,r){this.type=e,this.content=n,this.alias=t,this.length=0|(r||"").length}function l(e,n,t,r){e.lastIndex=n;var a=e.exec(t);if(a&&r&&a[1]){var i=a[1].length;a.index+=i,a[0]=a[0].slice(i)}return a}function o(e,n,t,r,s,g){for(var f in t)if(t.hasOwnProperty(f)&&t[f]){var h=t[f];h=Array.isArray(h)?h:[h];for(var d=0;d<h.length;++d){if(g&&g.cause==f+","+d)return;var v=h[d],p=v.inside,m=!!v.lookbehind,y=!!v.greedy,k=v.alias;if(y&&!v.pattern.global){var x=v.pattern.toString().match(/[imsuy]*$/)[0];v.pattern=RegExp(v.pattern.source,x+"g")}for(var b=v.pattern||v,w=r.next,A=s;w!==n.tail&&!(g&&A>=g.reach);A+=w.value.length,w=w.next){var P=w.value;if(n.length>e.length)return;if(!(P instanceof i)){var E,S=1;if(y){if(!(E=l(b,A,e,m))||E.index>=e.length)break;var L=E.index,O=E.index+E[0].length,C=A;for(C+=w.value.length;L>=C;)C+=(w=w.next).value.length;if(A=C-=w.value.length,w.value instanceof i)continue;for(var j=w;j!==n.tail&&(C<O||"string"==typeof j.value);j=j.next)S++,C+=j.value.length;S--,P=e.slice(A,C),E.index-=A}else if(!(E=l(b,0,P,m)))continue;L=E.index;var N=E[0],_=P.slice(0,L),M=P.slice(L+N.length),W=A+P.length;g&&W>g.reach&&(g.reach=W);var I=w.prev;if(_&&(I=u(n,I,_),A+=_.length),c(n,I,S),w=u(n,I,new i(f,p?a.tokenize(N,p):N,k,N)),M&&u(n,w,M),S>1){var T={cause:f+","+d,reach:W};o(e,n,t,w.prev,A,T),g&&T.reach>g.reach&&(g.reach=T.reach)}}}}}}function s(){var e={value:null,prev:null,next:null},n={value:null,prev:e,next:null};e.next=n,this.head=e,this.tail=n,this.length=0}function u(e,n,t){var r=n.next,a={value:t,prev:n,next:r};return n.next=a,r.prev=a,e.length++,a}function c(e,n,t){for(var r=n.next,a=0;a<t&&r!==e.tail;a++)r=r.next;n.next=r,r.prev=n,e.length-=a}if(e.Prism=a,i.stringify=function e(n,t){if("string"==typeof n)return n;if(Array.isArray(n)){var r="";return n.forEach((function(n){r+=e(n,t)})),r}var i={type:n.type,content:e(n.content,t),tag:"span",classes:["token",n.type],attributes:{},language:t},l=n.alias;l&&(Array.isArray(l)?Array.prototype.push.apply(i.classes,l):i.classes.push(l)),a.hooks.run("wrap",i);var o="";for(var s in i.attributes)o+=" "+s+'="'+(i.attributes[s]||"").replace(/"/g,"&quot;")+'"';return"<"+i.tag+' class="'+i.classes.join(" ")+'"'+o+">"+i.content+"</"+i.tag+">"},!e.document)return e.addEventListener?(a.disableWorkerMessageHandler||e.addEventListener("message",(function(n){var t=JSON.parse(n.data),r=t.language,i=t.code,l=t.immediateClose;e.postMessage(a.highlight(i,a.languages[r],r)),l&&e.close()}),!1),a):a;var g=a.util.currentScript();function f(){a.manual||a.highlightAll()}if(g&&(a.filename=g.src,g.hasAttribute("data-manual")&&(a.manual=!0)),!a.manual){var h=document.readyState;"loading"===h||"interactive"===h&&g&&g.defer?document.addEventListener("DOMContentLoaded",f):window.requestAnimationFrame?window.requestAnimationFrame(f):window.setTimeout(f,16)}return a}(_self);"undefined"!=typeof module&&module.exports&&(module.exports=Prism),"undefined"!=typeof global&&(global.Prism=Prism);
+     !function(s){var e=/(?:"(?:\\(?:\r\n|[\s\S])|[^"\\\r\n])*"|'(?:\\(?:\r\n|[\s\S])|[^'\\\r\n])*')/;s.languages.css={comment:/\/\*[\s\S]*?\*\//,atrule:{pattern:RegExp("@[\\w-](?:[^;{\\s\"']|\\s+(?!\\s)|"+e.source+")*?(?:;|(?=\\s*\\{))"),inside:{rule:/^@[\w-]+/,"selector-function-argument":{pattern:/(\bselector\s*\(\s*(?![\s)]))(?:[^()\s]|\s+(?![\s)])|\((?:[^()]|\([^()]*\))*\))+(?=\s*\))/,lookbehind:!0,alias:"selector"},keyword:{pattern:/(^|[^\w-])(?:and|not|only|or)(?![\w-])/,lookbehind:!0}}},url:{pattern:RegExp("\\burl\\((?:"+e.source+"|(?:[^\\\\\r\n()\"']|\\\\[^])*)\\)","i"),greedy:!0,inside:{function:/^url/i,punctuation:/^\(|\)$/,string:{pattern:RegExp("^"+e.source+"$"),alias:"url"}}},selector:{pattern:RegExp("(^|[{}\\s])[^{}\\s](?:[^{};\"'\\s]|\\s+(?![\\s{])|"+e.source+")*(?=\\s*\\{)"),lookbehind:!0},string:{pattern:e,greedy:!0},property:{pattern:/(^|[^-\w\xA0-\uFFFF])(?!\s)[-_a-z\xA0-\uFFFF](?:(?!\s)[-\w\xA0-\uFFFF])*(?=\s*:)/i,lookbehind:!0},important:/!important\b/i,function:{pattern:/(^|[^-a-z0-9])[-a-z0-9]+(?=\()/i,lookbehind:!0},punctuation:/[(){};:,]/},s.languages.css.atrule.inside.rest=s.languages.css;var t=s.languages.markup;t&&(t.tag.addInlined("style","css"),t.tag.addAttribute("style","css"))}(Prism);
+     Prism.languages.clike={comment:[{pattern:/(^|[^\\])\/\*[\s\S]*?(?:\*\/|$)/,lookbehind:!0,greedy:!0},{pattern:/(^|[^\\:])\/\/.*/,lookbehind:!0,greedy:!0}],string:{pattern:/(["'])(?:\\(?:\r\n|[\s\S])|(?!\1)[^\\\r\n])*\1/,greedy:!0},"class-name":{pattern:/(\b(?:class|extends|implements|instanceof|interface|new|trait)\s+|\bcatch\s+\()[\w.\\]+/i,lookbehind:!0,inside:{punctuation:/[.\\]/}},keyword:/\b(?:break|catch|continue|do|else|finally|for|function|if|in|instanceof|new|null|return|throw|try|while)\b/,boolean:/\b(?:false|true)\b/,function:/\b\w+(?=\()/,number:/\b0x[\da-f]+\b|(?:\b\d+(?:\.\d*)?|\B\.\d+)(?:e[+-]?\d+)?/i,operator:/[<>]=?|[!=]=?=?|--?|\+\+?|&&?|\|\|?|[?*/~^%]/,punctuation:/[{}[\];(),.:]/};
+     Prism.languages.javascript=Prism.languages.extend("clike",{"class-name":[Prism.languages.clike["class-name"],{pattern:/(^|[^$\w\xA0-\uFFFF])(?!\s)[_$A-Z\xA0-\uFFFF](?:(?!\s)[$\w\xA0-\uFFFF])*(?=\.(?:constructor|prototype))/,lookbehind:!0}],keyword:[{pattern:/((?:^|\})\s*)catch\b/,lookbehind:!0},{pattern:/(^|[^.]|\.\.\.\s*)\b(?:as|assert(?=\s*\{)|async(?=\s*(?:function\b|\(|[$\w\xA0-\uFFFF]|$))|await|break|case|class|const|continue|debugger|default|delete|do|else|enum|export|extends|finally(?=\s*(?:\{|$))|for|from(?=\s*(?:['"]|$))|function|(?:get|set)(?=\s*(?:[#\[$\w\xA0-\uFFFF]|$))|if|implements|import|in|instanceof|interface|let|new|null|of|package|private|protected|public|return|static|super|switch|this|throw|try|typeof|undefined|var|void|while|with|yield)\b/,lookbehind:!0}],function:/#?(?!\s)[_$a-zA-Z\xA0-\uFFFF](?:(?!\s)[$\w\xA0-\uFFFF])*(?=\s*(?:\.\s*(?:apply|bind|call)\s*)?\()/,number:{pattern:RegExp("(^|[^\\w$])(?:NaN|Infinity|0[bB][01]+(?:_[01]+)*n?|0[oO][0-7]+(?:_[0-7]+)*n?|0[xX][\\dA-Fa-f]+(?:_[\\dA-Fa-f]+)*n?|\\d+(?:_\\d+)*n|(?:\\d+(?:_\\d+)*(?:\\.(?:\\d+(?:_\\d+)*)?)?|\\.\\d+(?:_\\d+)*)(?:[Ee][+-]?\\d+(?:_\\d+)*)?)(?![\\w$])"),lookbehind:!0},operator:/--|\+\+|\*\*=?|=>|&&=?|\|\|=?|[!=]==|<<=?|>>>?=?|[-+*/%&|^!=<>]=?|\.{3}|\?\?=?|\?\.?|[~:]/}),Prism.languages.javascript["class-name"][0].pattern=/(\b(?:class|extends|implements|instanceof|interface|new)\s+)[\w.\\]+/,Prism.languages.insertBefore("javascript","keyword",{regex:{pattern:RegExp("((?:^|[^$\\w\\xA0-\\uFFFF.\"'\\])\\s]|\\b(?:return|yield))\\s*)/(?:(?:\\[(?:[^\\]\\\\\r\n]|\\\\.)*\\]|\\\\.|[^/\\\\\\[\r\n])+/[dgimyus]{0,7}|(?:\\[(?:[^[\\]\\\\\r\n]|\\\\.|\\[(?:[^[\\]\\\\\r\n]|\\\\.|\\[(?:[^[\\]\\\\\r\n]|\\\\.)*\\])*\\])*\\]|\\\\.|[^/\\\\\\[\r\n])+/[dgimyus]{0,7}v[dgimyus]{0,7})(?=(?:\\s|/\\*(?:[^*]|\\*(?!/))*\\*/)*(?:$|[\r\n,.;:})\\]]|//))"),lookbehind:!0,greedy:!0,inside:{"regex-source":{pattern:/^(\/)[\s\S]+(?=\/[a-z]*$)/,lookbehind:!0,alias:"language-regex",inside:Prism.languages.regex},"regex-delimiter":/^\/|\/$/,"regex-flags":/^[a-z]+$/}},"function-variable":{pattern:/#?(?!\s)[_$a-zA-Z\xA0-\uFFFF](?:(?!\s)[$\w\xA0-\uFFFF])*(?=\s*[=:]\s*(?:async\s*)?(?:\bfunction\b|(?:\((?:[^()]|\([^()]*\))*\)|(?!\s)[_$a-zA-Z\xA0-\uFFFF](?:(?!\s)[$\w\xA0-\uFFFF])*)\s*=>))/,alias:"function"},parameter:[{pattern:/(function(?:\s+(?!\s)[_$a-zA-Z\xA0-\uFFFF](?:(?!\s)[$\w\xA0-\uFFFF])*)?\s*\(\s*)(?!\s)(?:[^()\s]|\s+(?![\s)])|\([^()]*\))+(?=\s*\))/,lookbehind:!0,inside:Prism.languages.javascript},{pattern:/(^|[^$\w\xA0-\uFFFF])(?!\s)[_$a-z\xA0-\uFFFF](?:(?!\s)[$\w\xA0-\uFFFF])*(?=\s*=>)/i,lookbehind:!0,inside:Prism.languages.javascript},{pattern:/(\(\s*)(?!\s)(?:[^()\s]|\s+(?![\s)])|\([^()]*\))+(?=\s*\)\s*=>)/,lookbehind:!0,inside:Prism.languages.javascript},{pattern:/((?:\b|\s|^)(?!(?:as|async|await|break|case|catch|class|const|continue|debugger|default|delete|do|else|enum|export|extends|finally|for|from|function|get|if|implements|import|in|instanceof|interface|let|new|null|of|package|private|protected|public|return|set|static|super|switch|this|throw|try|typeof|undefined|var|void|while|with|yield)(?![$\w\xA0-\uFFFF]))(?:(?!\s)[_$a-zA-Z\xA0-\uFFFF](?:(?!\s)[$\w\xA0-\uFFFF])*\s*)\(\s*|\]\s*\(\s*)(?!\s)(?:[^()\s]|\s+(?![\s)])|\([^()]*\))+(?=\s*\)\s*\{)/,lookbehind:!0,inside:Prism.languages.javascript}],constant:/\b[A-Z](?:[A-Z_]|\dx?)*\b/}),Prism.languages.insertBefore("javascript","string",{hashbang:{pattern:/^#!.*/,greedy:!0,alias:"comment"},"template-string":{pattern:/`(?:\\[\s\S]|\$\{(?:[^{}]|\{(?:[^{}]|\{[^}]*\})*\})+\}|(?!\$\{)[^\\`])*`/,greedy:!0,inside:{"template-punctuation":{pattern:/^`|`$/,alias:"string"},interpolation:{pattern:/((?:^|[^\\])(?:\\{2})*)\$\{(?:[^{}]|\{(?:[^{}]|\{[^}]*\})*\})+\}/,lookbehind:!0,inside:{"interpolation-punctuation":{pattern:/^\$\{|\}$/,alias:"punctuation"},rest:Prism.languages.javascript}},string:/[\s\S]+/}},"string-property":{pattern:/((?:^|[,{])[ \t]*)(["'])(?:\\(?:\r\n|[\s\S])|(?!\2)[^\\\r\n])*\2(?=\s*:)/m,lookbehind:!0,greedy:!0,alias:"property"}}),Prism.languages.insertBefore("javascript","operator",{"literal-property":{pattern:/((?:^|[,{])[ \t]*)(?!\s)[_$a-zA-Z\xA0-\uFFFF](?:(?!\s)[$\w\xA0-\uFFFF])*(?=\s*:)/m,lookbehind:!0,alias:"property"}}),Prism.languages.markup&&(Prism.languages.markup.tag.addInlined("script","javascript"),Prism.languages.markup.tag.addAttribute("on(?:abort|blur|change|click|composition(?:end|start|update)|dblclick|error|focus(?:in|out)?|key(?:down|up)|load|mouse(?:down|enter|leave|move|out|over|up)|reset|resize|scroll|select|slotchange|submit|unload|wheel)","javascript")),Prism.languages.js=Prism.languages.javascript;
+     !function(){if("undefined"!=typeof Prism&&"undefined"!=typeof document){var e=[],t={},n=function(){};Prism.plugins.toolbar={};var a=Prism.plugins.toolbar.registerButton=function(n,a){var r;r="function"==typeof a?a:function(e){var t;return"function"==typeof a.onClick?((t=document.createElement("button")).type="button",t.addEventListener("click",(function(){a.onClick.call(this,e)}))):"string"==typeof a.url?(t=document.createElement("a")).href=a.url:t=document.createElement("span"),a.className&&t.classList.add(a.className),t.textContent=a.text,t},n in t?console.warn('There is a button with the key "'+n+'" registered already.'):e.push(t[n]=r)},r=Prism.plugins.toolbar.hook=function(a){var r=a.element.parentNode;if(r&&/pre/i.test(r.nodeName)&&!r.parentNode.classList.contains("code-toolbar")){var o=document.createElement("div");o.classList.add("code-toolbar"),r.parentNode.insertBefore(o,r),o.appendChild(r);var i=document.createElement("div");i.classList.add("toolbar");var l=e,d=function(e){for(;e;){var t=e.getAttribute("data-toolbar-order");if(null!=t)return(t=t.trim()).length?t.split(/\s*,\s*/g):[];e=e.parentElement}}(a.element);d&&(l=d.map((function(e){return t[e]||n}))),l.forEach((function(e){var t=e(a);if(t){var n=document.createElement("div");n.classList.add("toolbar-item"),n.appendChild(t),i.appendChild(n)}})),o.appendChild(i)}};a("label",(function(e){var t=e.element.parentNode;if(t&&/pre/i.test(t.nodeName)&&t.hasAttribute("data-label")){var n,a,r=t.getAttribute("data-label");try{a=document.querySelector("template#"+r)}catch(e){}return a?n=a.content:(t.hasAttribute("data-url")?(n=document.createElement("a")).href=t.getAttribute("data-url"):n=document.createElement("span"),n.textContent=r),n}})),Prism.hooks.add("complete",r)}}();
+     !function(){function t(t){var e=document.createElement("textarea");e.value=t.getText(),e.style.top="0",e.style.left="0",e.style.position="fixed",document.body.appendChild(e),e.focus(),e.select();try{var o=document.execCommand("copy");setTimeout((function(){o?t.success():t.error()}),1)}catch(e){setTimeout((function(){t.error(e)}),1)}document.body.removeChild(e)}"undefined"!=typeof Prism&&"undefined"!=typeof document&&(Prism.plugins.toolbar?Prism.plugins.toolbar.registerButton("copy-to-clipboard",(function(e){var o=e.element,n=function(t){var e={copy:"Copy","copy-error":"Press Ctrl+C to copy","copy-success":"Copied!","copy-timeout":5e3};for(var o in e){for(var n="data-prismjs-"+o,c=t;c&&!c.hasAttribute(n);)c=c.parentElement;c&&(e[o]=c.getAttribute(n))}return e}(o),c=document.createElement("button");c.className="copy-to-clipboard-button",c.setAttribute("type","button");var r=document.createElement("span");return c.appendChild(r),u("copy"),function(e,o){e.addEventListener("click",(function(){!function(e){navigator.clipboard?navigator.clipboard.writeText(e.getText()).then(e.success,(function(){t(e)})):t(e)}(o)}))}(c,{getText:function(){return o.textContent},success:function(){u("copy-success"),i()},error:function(){u("copy-error"),setTimeout((function(){!function(t){window.getSelection().selectAllChildren(t)}(o)}),1),i()}}),c;function i(){setTimeout((function(){u("copy")}),n["copy-timeout"])}function u(t){r.textContent=n[t],c.setAttribute("data-copy-state",t)}})):console.warn("Copy to Clipboard plugin loaded before Toolbar plugin."))}();
+
+ </script>
+</body>
+</html>
