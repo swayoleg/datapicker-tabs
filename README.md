@@ -2,6 +2,9 @@
 
 A versatile date picker with day and month selection modes, multiple selection support, and various formatting options.
 
+![month-datepicker.png](month-datepicker.png)
+![datepicker-date-with-tabs-fro-month.png](datepicker-date-with-tabs-fro-month.png)
+
 ## Features
 
 - Day and Month selection modes
@@ -19,7 +22,8 @@ A versatile date picker with day and month selection modes, multiple selection s
 
 ## Installation
 
-Include the CSS and JavaScript files in your HTML:
+Clone or download the packege from GitHub.
+Include css and js from dist folder to your page:
 
 ```html
 <link rel="stylesheet" href="dist/css/custom-datepicker.min.css">
@@ -70,6 +74,9 @@ const picker = new DatepickerTabs('#date-input', {
     // Persistence
     cookieName: 'datepickerTabsMode',// Cookie name for mode storage
 
+    backwardsYearsOffset: 5, // How many year offset render backwards in years selectbox. If now 2025 it will render from 2020
+    forwardsYearsOffset: 5, // How many year offset render forwards in years selectbox. If now 2025 it will render till 2030
+
     // Callbacks
     onDateChange: function(date) {   // Date selection callback
         console.log('Selected date:', date);
@@ -80,26 +87,28 @@ const picker = new DatepickerTabs('#date-input', {
 
 ### Available Options
 
-| Option | Type | Default              | Description                                                                     |
-|--------|------|----------------------|---------------------------------------------------------------------------------|
-| `mode` | string | 'day'                | Mode of operation: 'day' or 'month'                                             |
-| `displayType` | string | 'tabs'               | Display type: 'tabs', 'day', or 'month'                                         |
-| `multipleDays` | boolean | false                | Allow multiple date selection                                                   |
-| `multipleMonths` | boolean | false                | Allow multiple month selection                                                  |
-| `maxMonthSelection` | number | null                 | Maximum number of months that can be selected (when multipleMonths is true)     |
-| `startDate` | Date | null                 | Initial selected date                                                           |
-| `minDate` | Date | null                 | Minimum selectable date                                                         |
-| `maxDate` | Date | null                 | Maximum selectable date                                                         |
-| `futureSaturdaysOnly` | boolean | false                | Option for day mode to only enable Saturdays in the future                      |
-| `monthNames` | array | ['January', ...]     | Array of month names                                                            |
-| `dayNames` | array | ['Sun', ...]         | Array of day names                                                              |
-| `cookieName` | string | 'datepickerTabsMode' | Cookie name for mode persistence                                                |
-| `dateFormat` | string | 'DD MMM YYYY'        | Format for displaying dates                                                     |
-| `monthFormat` | string | 'MMM YYYY'           | Format for displaying months                                                    |
-| `position` | string | 'bottom'             | Position of the picker: 'bottom' or 'top'                                       |
-| `zIndex` | number | 9999                 | z-index for the picker container                                                |
+| Option | Type     | Default              | Description                                                                     |
+|--------|----------|----------------------|---------------------------------------------------------------------------------|
+| `mode` | string   | 'day'                | Mode of operation: 'day' or 'month'                                             |
+| `displayType` | string   | 'tabs'               | Display type: 'tabs', 'day', or 'month'                                         |
+| `multipleDays` | boolean  | false                | Allow multiple date selection                                                   |
+| `multipleMonths` | boolean  | false                | Allow multiple month selection                                                  |
+| `maxMonthSelection` | number   | null                 | Maximum number of months that can be selected (when multipleMonths is true)     |
+| `startDate` | Date     | null                 | Initial selected date                                                           |
+| `minDate` | Date     | null                 | Minimum selectable date                                                         |
+| `maxDate` | Date     | null                 | Maximum selectable date                                                         |
+| `futureSaturdaysOnly` | boolean  | false                | Option for day mode to only enable Saturdays in the future                      |
+| `monthNames` | array    | ['January', ...]     | Array of month names                                                            |
+| `dayNames` | array    | ['Sun', ...]         | Array of day names                                                              |
+| `cookieName` | string   | 'datepickerTabsMode' | Cookie name for mode persistence                                                |
+| `backwardsYearsOffset` | number   | 5                    |  How many year offset render backwards in years selectbox. If now 2025 it will render from 2020                                             |
+| `forwardsYearsOffset` | number   | 5                    |  How many year offset render forwards in years selectbox. If now 2025 it will render till 2030                                             |
+| `dateFormat` | string   | 'DD MMM YYYY'        | Format for displaying dates                                                     |
+| `monthFormat` | string   | 'MMM YYYY'           | Format for displaying months                                                    |
+| `position` | string   | 'bottom'             | Position of the picker: 'bottom' or 'top'                                       |
+| `zIndex` | number   | 9999                 | z-index for the picker container                                                |
 | `onDateChange` | function | null                 | Callback function when date(s) change                                           |
-| `containerId` | string | ''                   | Custom container ID to render calendar (if not provided, one will be generated) |
+| `containerId` | string   | ''                   | Custom container ID to render calendar (if not provided, one will be generated) |
 
 ## Date Formatting
 
@@ -113,6 +122,14 @@ The date picker supports the following tokens for date formatting:
 - `M`: Month number without leading zero (1-12)
 - `YYYY`: Full year (2023)
 - `YY`: Short year (23)
+
+```
+DD MMM YYYY = 01 Jan 2025
+DD/MM/YYYY  = 01/01/2025
+MM/DD/YYYY  = 01/01/2025
+YYYY-MM-DD  = 2025-01-01
+```
+
 
 ## Methods
 
@@ -142,22 +159,43 @@ const selectedDate = picker.getDate();
 
 ### setMode(mode)
 
-Sets the picker mode ('day' or 'month').
+Sets the picker mode ('day' or 'month'). Basically which tab to show active.
 
 ```javascript
 picker.setMode('month');
+```
+
+
+### getMode()
+
+Get the current tab mode show (which tab is active). 
+
+```javascript
+picker.getMode();
+```
+
+### setDisplayType(type)
+
+Sets the display type ('tabs', 'day', or 'month'). When day or month - no tabs are shown. Only one of the two tabs mode.
+
+```javascript
+picker.setDisplayType('day');
 ```
 
 ### setMultipleDays(enable)
 
 Enables or disables multiple days selection.
 
+```javascript
+picker.setMultipleDays(true);
+```
+
 ### setMultipleMonths(enable)
 
 Enables or disables multiple months selection.
 
 ```javascript
-picker.setMultiple(true);
+picker.setMultipleMonths(true);
 ```
 
 ### setDateFormat(format)
@@ -200,13 +238,6 @@ Sets the maximum number of months that can be selected when multiple selection i
 picker.setMaxMonthSelection(3);
 ```
 
-### setDisplayType(type)
-
-Sets the display type ('tabs', 'day', or 'month').
-
-```javascript
-picker.setDisplayType('day');
-```
 
 ### show()
 
@@ -258,7 +289,7 @@ document.getElementById('date-input').addEventListener('datepickerApply', functi
 const datePicker = new DatepickerTabs('#date-input');
 ```
 
-### Month Picker with Multiple Selection and maximum 3 months
+### Month Picker with Multiple Selection and maximum 3 months, with tabs to date select as well.
 
 ```javascript
 const monthPicker = new DatepickerTabs('#month-input', {
@@ -275,6 +306,17 @@ const constrainedPicker = new DatepickerTabs('#date-input', {
   minDate: new Date(2023, 0, 1),
   maxDate: new Date(2023, 11, 31),
   dateFormat: 'YYYY-MM-DD'
+});
+```
+
+### Pick just one month
+
+```javascript
+const monthOnlyPicker = new DatepickerTabs('#month-only-picker', {
+    mode: 'month',
+    displayType: 'month',
+    multipleMonths: false,
+    monthFormat: 'MMM YYYY',
 });
 ```
 

@@ -1,5 +1,13 @@
+PLEASE REFER TO README.MD and index.html in the project root for the documentation.
+
+
+
+
+
   The user can now simply initialize with:
   const picker = new DatapickerTabs('#date-input', options);
 
   Or for multiple inputs with the same class:
   const pickers = new DatapickerTabs('.date-input-class', options);
+
+
