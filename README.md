@@ -1,7 +1,7 @@
 # DatepickerTabs
 
 A versatile date picker with day and month selection modes, multiple selection support, and various formatting options.
-
+<p>Great for booking systems! If users don't have a specific date in mind, they can easily pick a few different dates, a whole month, or even several months at once (with a maximum limit)</p>
 ![month-datepicker.png](month-datepicker.png)
 ![datepicker-date-with-tabs-fro-month.png](datepicker-date-with-tabs-fro-month.png)
 
@@ -329,6 +329,17 @@ const saturdayPicker = new DatepickerTabs('#event-date', {
 });
 ```
 
+### On change event to do something with dates
+
+```javascript
+const buttomDatePicker = new DatepickerTabs('#bottom-date-input', {
+    mode: 'both',
+    onDateChange: function(date) {
+        console.log('Selected date:', date);
+    }
+});
+```
+
 ## Browser Support
 
 The date picker works in all modern browsers (Chrome, Firefox, Safari, Edge).
@@ -341,7 +352,7 @@ The project uses SCSS for styling and Gulp to compile it to CSS. Here's how to r
 
 1. Make sure all dependencies are installed:
 ```bash
-npm install --save-dev gulp gulp-sass sass gulp-postcss autoprefixer cssnano gulp-sourcemaps gulp-rename
+  npm install --save-dev gulp gulp-sass sass gulp-postcss autoprefixer cssnano gulp-sourcemaps gulp-rename
 ```
 
 2. Ensure your SCSS files are in the correct location:
@@ -358,7 +369,7 @@ src/assets/scss/custom-datepicker.scss
 To compile your SCSS files to CSS once:
 
 ```bash
-npx gulp build
+  npx gulp build
 ```
 
 This will:
@@ -374,7 +385,7 @@ The compiled CSS files will be in `src/assets/css/`.
 To automatically rebuild styles whenever you make changes to your SCSS files:
 
 ```bash
-npx gulp
+  npx gulp
 ```
 
 Here's the text starting from "This starts the watch task that will:":
@@ -395,3 +406,15 @@ Common errors:
 - `'compileStyles' errored after X ms`: Look for syntax errors in your SCSS
 - `Cannot find module 'X'`: You need to install the missing dependency
 
+## Best practices
+
+Please note that all styles are inside the .custom-datepickertabs-container selector
+So best practice to override some style is to make selector inside the .custom-datepickertabs-container.
+For example you want to hide the clear and apply buttons, because you are using the single selection mode:
+
+```css
+.custom-datepickertabs-container .datepicker-footer {
+    visibility: hidden;
+    display: none;
+}
+```

@@ -3,8 +3,9 @@
  *
  * A versatile date picker with day and month selection modes,
  * multiple selection support, and various formatting options.
+ * Perfect for booking systems when users need to select multiple dates or months.
  *
- * @version 1.2.0
+ * @version 1.3.0
  *
  * FEATURES:
  * - Day and Month selection modes
@@ -13,12 +14,13 @@
  * - Min/Max date constraints
  * - Max month selection limit
  * - Display type options: 'tabs', 'day', or 'month'
- * - Saturday-only selection for fishing venues
+ * - Saturday-only selection for specific use cases
  * - Cookie-based mode persistence
  * - Tooltip overlay positioning
  * - Mobile-friendly design
  * - Automatic container creation
  * - Support for multiple instances with class selectors
+ * - Customizable year range
  *
  * USAGE:
  *
@@ -26,25 +28,53 @@
  * ```javascript
  * // Initialize on a single input with ID
  * const picker = new DatepickerTabs('#date-input');
- * 
+ *
  * // Initialize on multiple inputs with class
  * const pickers = new DatepickerTabs('.date-input-class');
  * ```
  *
  * 2. With options:
  * ```javascript
- * const picker = new DatepickerTabs('.date-input', {
- *   mode: 'month',
- *   multipleDays: false,  // Single day selection
- *   multipleMonths: true, // Multiple month selection
- *   dateFormat: 'DD/MM/YYYY',
- *   displayType: 'tabs', // 'tabs', 'day', or 'month'
- *   maxMonthSelection: 6, // Limit to select max 6 months
- *   maxDate: new Date(2026, 11, 31), // Max selectable date
- *   futureSaturdaysOnly: true,
- *   onDateChange: function(date) {
+ * const picker = new DatepickerTabs('#date-input', {
+ *   // Basic configuration
+ *   mode: 'month',                   // 'day' or 'month' mode
+ *   displayType: 'tabs',             // Display as 'tabs', 'day', or 'month'
+ *
+ *   // Selection options
+ *   multipleDays: false,             // Allow multiple day selection
+ *   multipleMonths: true,            // Allow multiple month selection
+ *   maxMonthSelection: 6,            // Max selectable months (when multipleMonths=true)
+ *
+ *   // Date range options
+ *   startDate: null,                 // Initial selected date
+ *   minDate: null,                   // Minimum selectable date
+ *   maxDate: new Date(2026, 11, 31), // Maximum selectable date
+ *   futureSaturdaysOnly: true,       // Only enable future Saturdays in day mode
+ *
+ *   // Localization
+ *   monthNames: ['January', 'February', '...'], // Custom month names
+ *   dayNames: ['Sun', 'Mon', '...'],           // Custom day names
+ *   dateFormat: 'DD/MM/YYYY',        // Date display format
+ *   monthFormat: 'MMM YYYY',         // Month display format
+ *
+ *   // UI settings
+ *   position: 'bottom',              // 'bottom' or 'top' position
+ *   zIndex: 9999,                    // Picker z-index
+ *
+ *   // Persistence
+ *   cookieName: 'datepickerTabsMode',// Cookie name for mode storage
+ *
+ *   // Year range configuration
+ *   backwardsYearsOffset: 5,         // Years to display before current year
+ *   forwardsYearsOffset: 5,          // Years to display after current year
+ *
+ *   // Callbacks
+ *   onDateChange: function(date) {   // Date selection callback
  *     console.log('Selected date:', date);
- *   }
+ *   },
+ *
+ *   // Custom container
+ *   containerId: ''                  // Custom container ID for rendering
  * });
  * ```
  *
@@ -52,21 +82,37 @@
  * ```javascript
  * // Set date programmatically
  * picker.setDate(new Date());
+ * picker.setDate([new Date(2025, 0, 1), new Date(2025, 1, 1)]); // Multiple dates
+ * picker.setDate(null); // Clear selection
  *
  * // Get currently selected date(s)
  * const date = picker.getDate();
  *
- * // Switch mode
- * picker.setMode('month');
+ * // Mode and display type
+ * picker.setMode('month'); // Switch mode ('day' or 'month')
+ * picker.getMode(); // Get current mode
+ * picker.setDisplayType('tabs'); // Change display type ('tabs', 'day', or 'month')
  *
- * // Enable/disable multiple day selection
- * picker.setMultipleDays(true);
- * 
- * // Enable/disable multiple month selection
- * picker.setMultipleMonths(true);
- * 
- * // Enable both multiple days and months
- * picker.setMultiple(true);
+ * // Selection options
+ * picker.setMultipleDays(true); // Enable/disable multiple day selection
+ * picker.setMultipleMonths(true); // Enable/disable multiple month selection
+ * picker.setMultiple(true); // Enable both multiple days and months selection
+ * picker.setMaxMonthSelection(3); // Set maximum number of selectable months
+ *
+ * // Format options
+ * picker.setDateFormat('YYYY-MM-DD'); // Set date format
+ * picker.setMonthFormat('MM/YYYY'); // Set month format
+ *
+ * // Date constraints
+ * picker.setMinDate(new Date(2025, 0, 1)); // Set minimum selectable date
+ * picker.setMaxDate(new Date(2025, 11, 31)); // Set maximum selectable date
+ *
+ * // Visibility
+ * picker.show(); // Show the date picker
+ * picker.hide(); // Hide the date picker
+ *
+ * // Cleanup
+ * picker.destroy(); // Remove datepicker and clean up resources
  * ```
  */
 
