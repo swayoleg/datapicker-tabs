@@ -3,7 +3,7 @@
 A versatile date picker with day and month selection modes, multiple selection support, and various formatting options.
 <p><strong>Great for booking systems!</strong> If users don't have a <strong>specific date</strong> in mind, they can easily pick a 
 <strong>few different dates</strong>, a <strong>whole month</strong>, or even 
-- ![#f03c15]<strong><span style="color:red">several months at once</span></strong>`#f03c15` (with a maximum limit)</p>
+<strong><span style="color:red">several months at once</span></strong> (with a maximum limit)</p>
 ![month-datepicker.png](month-datepicker.png)
 ![datepicker-date-with-tabs-fro-month.png](datepicker-date-with-tabs-fro-month.png)
 
@@ -502,4 +502,3 @@ function formatDate(date) {
 - Add language pre-built support with i18n
 - Add start of the week with monday option
 - Add disable dates array
-- 
