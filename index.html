@@ -269,6 +269,7 @@
     </div>
 
 
+    <div style="text-align: left">Navigation:</div>
     <nav class="datepicker-nav-menu">
         <ul>
             <li><a href="#tabs-demo">Few Months Selection or Certain Date Demo</a></li>
@@ -585,18 +586,21 @@ const dayPickerOnly = new DatepickerTabs('#day-mode-example', {
             padding: 0;
             margin: 0;
             display: flex;
+            flex-direction: column;
             flex-wrap: wrap;
+            justify-content: start;
+            text-align: left;
             gap: 10px 20px;
         }
 
         .datepicker-nav-menu li {
-            margin: 5px 0;
+            margin: 2px 0;
         }
 
         .datepicker-nav-menu a {
             color: #2196f3;
             text-decoration: none;
-            padding: 5px 0;
+            padding:   0;
             font-weight: 500;
             display: inline-block;
             position: relative;
@@ -653,44 +657,112 @@ const dayPickerOnly = new DatepickerTabs('#day-mode-example', {
     </div>
 
     <!-- Documentation Section -->
+    <!-- Documentation Section -->
     <div class="documentation" id="documentation">
         <h2>Custom Date Picker Documentation</h2>
         <p>
-            A versatile date picker with day and month selection modes, designed for use with form inputs.
-            It doesnt pretend to be a pest datepicker and main reason of creation was - there is no datepicker where you can select multiply month (with limit) in one tab and same time
+            A versatile date picker with day and month selection modes, multiple selection support, and various formatting options.
+            Ideal for booking systems where users might want to select specific dates, a whole month, or even several months at once.
         </p>
 
         <h3>Installation</h3>
-        <p>Include the CSS and JavaScript files in your HTML:</p>
-        <pre><code>&lt;link rel="stylesheet" href="css/custom-datepicker.css"&gt;
-&lt;script src="js/custom-datepicker.js"&gt;&lt;/script&gt;</code></pre>
+        <p>Clone or download the package from GitHub. Include the CSS and JavaScript files in your HTML:</p>
+        <pre><code  class="language-html">&lt;link rel="stylesheet" href="dist/css/custom-datepicker.min.css"&gt;
+&lt;script src="dist/js/custom-datepicker.min.js"&gt;&lt;/script&gt;</code></pre>
 
         <h3>Basic Usage</h3>
-        <p>Create a container element and an input field, then initialize the date picker:</p>
-        <pre><code>// HTML
-&lt;input type="text" id="date-input" placeholder="Select a date"&gt;
+        <p>Initialize the date picker on an input element:</p>
+        <pre><code  class="language-js">// Initialize on a single input with ID
+const picker = new DatepickerTabs('#date-input');
 
-// JavaScript
-const datePicker = new DatepickerTabs('#date-input', {
-  dateFormat: 'DD/MM/YYYY',
-  onDateChange: function(date) {
-    console.log('Selected date:', date);
-  }
-});</code></pre>
+// Initialize on multiple inputs with class
+const pickers = new DatepickerTabs('.date-input-class');</code></pre>
 
         <h3>Options</h3>
+        <p>You can customize the date picker by passing an options object:</p>
+        <pre><code  class="language-js">const picker = new DatepickerTabs('#date-input', {
+    // Basic configuration
+    mode: 'month',                   // 'day' or 'month' mode
+    displayType: 'tabs',             // Display as 'tabs', 'day', or 'month'
+
+    // Selection options
+    multipleDays: false,             // Allow multiple day selection
+    multipleMonths: true,            // Allow multiple month selection
+    maxMonthSelection: 6,            // Max selectable months (when multipleMonths=true)
+
+    // Date range options
+    startDate: null,                 // Initial selected date
+    minDate: null,                   // Minimum selectable date
+    maxDate: new Date(2026, 11, 31), // Maximum selectable date
+    futureSaturdaysOnly: true,       // Only enable future Saturdays in day mode
+
+    // Localization
+    monthNames: ['January', 'February'], // Custom month names (shorthand provided for example)
+    dayNames: ['Sun', 'Mon'],            // Custom day names (shorthand provided for example)
+    dateFormat: 'DD/MM/YYYY',            // Date display format
+    monthFormat: 'MMM YYYY',             // Month display format
+
+    // UI settings
+    position: 'bottom',              // 'bottom' or 'top' position
+    zIndex: 9999,                    // Picker z-index
+
+    // Persistence
+    cookieName: 'datepickerTabsMode',// Cookie name for mode storage
+
+    // Year offset settings
+    backwardsYearsOffset: 5,         // How many years to show before current year
+    forwardsYearsOffset: 5,          // How many years to show after current year
+
+    // Callbacks
+    onDateChange: function(date) {   // Date selection callback
+        console.log('Selected date:', date);
+    },
+
+    // Container customization
+    containerId: '', // Custom container ID to render calendar (if not provided, one will be generated)
+});</code></pre>
+
+        <h3>Available Options</h3>
         <ul>
-            <li><code>mode</code>: 'day' or 'month' (default: 'day')</li>
-            <li><code>multiple</code>: Allow multiple selection (default: false)</li>
-            <li><code>startDate</code>: Initial selected date (default: today)</li>
+            <li><code>mode</code>: Mode of operation: 'day' or 'month' (default: 'day')</li>
+            <li><code>displayType</code>: Display type: 'tabs', 'day', or 'month' (default: 'tabs')</li>
+            <li><code>multipleDays</code>: Allow multiple date selection (default: false)</li>
+            <li><code>multipleMonths</code>: Allow multiple month selection (default: false)</li>
+            <li><code>maxMonthSelection</code>: Maximum number of months that can be selected (default: null)</li>
+            <li><code>startDate</code>: Initial selected date (default: null)</li>
             <li><code>minDate</code>: Minimum selectable date (default: null)</li>
             <li><code>maxDate</code>: Maximum selectable date (default: null)</li>
-            <li><code>futureSaturdaysOnly</code>: Only enable future Saturdays (default: false)</li>
-            <li><code>dateFormat</code>: Format for day mode (default: 'DD MMM YYYY')</li>
-            <li><code>monthFormat</code>: Format for month mode (default: 'MMM YYYY')</li>
-
-            <li><code>onDateChange</code>: Callback function when date(s) are selected</li>
+            <li><code>futureSaturdaysOnly</code>: Option for day mode to only enable Saturdays in the future (default: false)</li>
+            <li><code>monthNames</code>: Array of month names (default: ['January', 'February', ...])</li>
+            <li><code>dayNames</code>: Array of day names (default: ['Sun', 'Mon', ...])</li>
+            <li><code>cookieName</code>: Cookie name for mode persistence (default: 'datepickerTabsMode')</li>
+            <li><code>backwardsYearsOffset</code>: How many years to show before current year (default: 5)</li>
+            <li><code>forwardsYearsOffset</code>: How many years to show after current year (default: 5)</li>
+            <li><code>dateFormat</code>: Format for displaying dates (default: 'DD MMM YYYY')</li>
+            <li><code>monthFormat</code>: Format for displaying months (default: 'MMM YYYY')</li>
+            <li><code>position</code>: Position of the picker: 'bottom' or 'top' (default: 'bottom')</li>
+            <li><code>zIndex</code>: z-index for the picker container (default: 9999)</li>
+            <li><code>onDateChange</code>: Callback function when date(s) change (default: null)</li>
+            <li><code>containerId</code>: Custom container ID to render calendar (default: '')</li>
         </ul>
+
+        <h3>Date Formatting</h3>
+        <p>The date picker supports the following tokens for date formatting:</p>
+        <ul>
+            <li><code>DD</code>: Day of month with leading zero (01-31)</li>
+            <li><code>D</code>: Day of month without leading zero (1-31)</li>
+            <li><code>MMM</code>: Month name short (Jan, Feb, etc.)</li>
+            <li><code>MMMM</code>: Month name full (January, February, etc.)</li>
+            <li><code>MM</code>: Month number with leading zero (01-12)</li>
+            <li><code>M</code>: Month number without leading zero (1-12)</li>
+            <li><code>YYYY</code>: Full year (2023)</li>
+            <li><code>YY</code>: Short year (23)</li>
+        </ul>
+        <p>Examples:</p>
+        <pre><code>DD MMM YYYY = 01 Jan 2025
+DD/MM/YYYY  = 01/01/2025
+MM/DD/YYYY  = 01/01/2025
+YYYY-MM-DD  = 2025-01-01</code></pre>
 
         <h3>Methods</h3>
 
@@ -699,14 +771,15 @@ const datePicker = new DatepickerTabs('#date-input', {
             <div class="method-description">Sets the selected date(s)</div>
             <div class="parameter">date: Date object, array of Date objects, or null</div>
             <div class="code-example">
-          <pre><code>// Set a single date
-datePicker.setDate(new Date());
+            <pre><code  class="language-js">// Set a single date
+picker.setDate(new Date());
 
 // Set multiple dates
-datePicker.setDate([new Date(2023, 0, 1), new Date(2023, 1, 1)]);
+picker.setMultipleDays(true);
+picker.setDate([new Date(2023, 0, 1), new Date(2023, 1, 1)]);
 
 // Clear selection
-datePicker.setDate(null);</code></pre>
+picker.setDate(null);</code></pre>
             </div>
         </div>
 
@@ -714,43 +787,96 @@ datePicker.setDate(null);</code></pre>
             <div class="method-name">getDate()</div>
             <div class="method-description">Gets the currently selected date(s)</div>
             <div class="code-example">
-                <pre><code>const selectedDate = datePicker.getDate();</code></pre>
+                <pre><code  class="language-js">const selectedDate = picker.getDate();</code></pre>
             </div>
         </div>
 
         <div class="method">
             <div class="method-name">setMode(mode)</div>
-            <div class="method-description">Sets the picker mode</div>
+            <div class="method-description">Sets the picker mode ('day' or 'month'). Basically which tab to show active.</div>
             <div class="parameter">mode: 'day' or 'month'</div>
             <div class="code-example">
-                <pre><code>datePicker.setMode('month');</code></pre>
+                <pre><code  class="language-js">picker.setMode('month');</code></pre>
             </div>
         </div>
 
         <div class="method">
-            <div class="method-name">setMultiple(enable)</div>
-            <div class="method-description">Enables or disables multiple selection</div>
+            <div class="method-name">getMode()</div>
+            <div class="method-description">Get the current tab mode show (which tab is active)</div>
+            <div class="code-example">
+                <pre><code  class="language-js">picker.getMode();</code></pre>
+            </div>
+        </div>
+
+        <div class="method">
+            <div class="method-name">setDisplayType(type)</div>
+            <div class="method-description">Sets the display type ('tabs', 'day', or 'month'). When day or month - no tabs are shown. Only one of the two tabs mode.</div>
+            <div class="parameter">type: 'tabs', 'day', or 'month'</div>
+            <div class="code-example">
+                <pre><code  class="language-js">picker.setDisplayType('day');</code></pre>
+            </div>
+        </div>
+
+        <div class="method">
+            <div class="method-name">setMultipleDays(enable)</div>
+            <div class="method-description">Enables or disables multiple days selection</div>
             <div class="parameter">enable: boolean</div>
             <div class="code-example">
-                <pre><code>datePicker.setMultiple(true);</code></pre>
+                <pre><code  class="language-js">picker.setMultipleDays(true);</code></pre>
+            </div>
+        </div>
+
+        <div class="method">
+            <div class="method-name">setMultipleMonths(enable)</div>
+            <div class="method-description">Enables or disables multiple months selection</div>
+            <div class="parameter">enable: boolean</div>
+            <div class="code-example">
+                <pre><code  class="language-js">picker.setMultipleMonths(true);</code></pre>
             </div>
         </div>
 
         <div class="method">
             <div class="method-name">setDateFormat(format)</div>
             <div class="method-description">Sets the date format for day mode</div>
-            <div class="parameter">format: string (e.g., 'DD/MM/YYYY')</div>
+            <div class="parameter">format: string (e.g., 'YYYY-MM-DD')</div>
             <div class="code-example">
-                <pre><code>datePicker.setDateFormat('YYYY-MM-DD');</code></pre>
+                <pre><code  class="language-js">picker.setDateFormat('YYYY-MM-DD');</code></pre>
             </div>
         </div>
 
         <div class="method">
             <div class="method-name">setMonthFormat(format)</div>
             <div class="method-description">Sets the date format for month mode</div>
-            <div class="parameter">format: string (e.g., 'MMM YYYY')</div>
+            <div class="parameter">format: string (e.g., 'MM/YYYY')</div>
             <div class="code-example">
-                <pre><code>datePicker.setMonthFormat('MM/YYYY');</code></pre>
+                <pre><code  class="language-js">picker.setMonthFormat('MM/YYYY');</code></pre>
+            </div>
+        </div>
+
+        <div class="method">
+            <div class="method-name">setMinDate(date)</div>
+            <div class="method-description">Sets the minimum selectable date</div>
+            <div class="parameter">date: Date object or null</div>
+            <div class="code-example">
+                <pre><code  class="language-js">picker.setMinDate(new Date(2023, 0, 1));</code></pre>
+            </div>
+        </div>
+
+        <div class="method">
+            <div class="method-name">setMaxDate(date)</div>
+            <div class="method-description">Sets the maximum selectable date</div>
+            <div class="parameter">date: Date object or null</div>
+            <div class="code-example">
+                <pre><code  class="language-js">picker.setMaxDate(new Date(2024, 11, 31));</code></pre>
+            </div>
+        </div>
+
+        <div class="method">
+            <div class="method-name">setMaxMonthSelection(limit)</div>
+            <div class="method-description">Sets the maximum number of months that can be selected when multiple selection is enabled</div>
+            <div class="parameter">limit: number</div>
+            <div class="code-example">
+                <pre><code  class="language-js">picker.setMaxMonthSelection(3);</code></pre>
             </div>
         </div>
 
@@ -758,7 +884,7 @@ datePicker.setDate(null);</code></pre>
             <div class="method-name">show()</div>
             <div class="method-description">Shows the date picker</div>
             <div class="code-example">
-                <pre><code>datePicker.show();</code></pre>
+                <pre><code  class="language-js">picker.show();</code></pre>
             </div>
         </div>
 
@@ -766,9 +892,64 @@ datePicker.setDate(null);</code></pre>
             <div class="method-name">hide()</div>
             <div class="method-description">Hides the date picker</div>
             <div class="code-example">
-                <pre><code>datePicker.hide();</code></pre>
+                <pre><code  class="language-js">picker.hide();</code></pre>
             </div>
         </div>
+
+        <div class="method">
+            <div class="method-name">destroy()</div>
+            <div class="method-description">Destroys the date picker instance and cleans up resources</div>
+            <div class="code-example">
+                <pre><code  class="language-js">picker.destroy();</code></pre>
+            </div>
+        </div>
+
+        <h3>Events</h3>
+        <p>The date picker fires the following custom events:</p>
+        <ul>
+            <li><code>datepickerShow</code>: Fired when the date picker is shown</li>
+            <li><code>datepickerHide</code>: Fired when the date picker is hidden</li>
+            <li><code>datepickerModeChange</code>: Fired when the mode is changed</li>
+            <li><code>datepickerApply</code>: Fired when dates are applied</li>
+            <li><code>datepickerClear</code>: Fired when dates are cleared</li>
+        </ul>
+        <p>You can listen for these events on the element where the date picker is initialized:</p>
+        <pre><code  class="language-js">document.getElementById('date-input').addEventListener('datepickerApply', function(e) {
+  console.log('Applied date(s):', e.detail);
+});</code></pre>
+
+        <h3>Examples</h3>
+
+        <h4>Basic Date Picker</h4>
+        <pre><code  class="language-js">const datePicker = new DatepickerTabs('#date-input');</code></pre>
+
+        <h4>Month Picker with Multiple Selection and maximum 3 months, with tabs to date select as well</h4>
+        <pre><code  class="language-js">const monthPicker = new DatepickerTabs('#month-input', {
+  mode: 'month',
+  multipleMonths: true,
+  maxMonthSelection: 3
+});</code></pre>
+
+        <h4>Date Picker with Constraints</h4>
+        <pre><code  class="language-js">const constrainedPicker = new DatepickerTabs('#date-input', {
+  minDate: new Date(2023, 0, 1),
+  maxDate: new Date(2023, 11, 31),
+  dateFormat: 'YYYY-MM-DD'
+});</code></pre>
+
+        <h4>Pick just one month</h4>
+        <pre><code  class="language-js">const monthOnlyPicker = new DatepickerTabs('#month-only-picker', {
+  mode: 'month',
+  displayType: 'month',
+  multipleMonths: false,
+  monthFormat: 'MMM YYYY',
+});</code></pre>
+
+        <h4>Saturday-Only Picker for Events</h4>
+        <pre><code class="language-js">const saturdayPicker = new DatepickerTabs('#event-date', {
+  futureSaturdaysOnly: true,
+  dateFormat: 'DD/MM/YYYY'
+});</code></pre>
     </div>
 </div>
 
