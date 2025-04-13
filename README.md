@@ -1,9 +1,61 @@
 # DatepickerTabs
 
 A versatile date picker with day and month selection modes, multiple selection support, and various formatting options.
-<p>Great for booking systems! If users don't have a specific date in mind, they can easily pick a few different dates, a whole month, or even several months at once (with a maximum limit)</p>
+<p><strong>Great for booking systems!</strong> If users don't have a <strong>specific date</strong> in mind, they can easily pick a 
+<strong>few different dates</strong>, a <strong>whole month</strong>, or even 
+- ![#f03c15]<strong><span style="color:red">several months at once</span></strong>`#f03c15` (with a maximum limit)</p>
 ![month-datepicker.png](month-datepicker.png)
 ![datepicker-date-with-tabs-fro-month.png](datepicker-date-with-tabs-fro-month.png)
+
+<p>
+<a href="https://swayoleg.github.io/datepicker-tabs/">
+  <img src="https://img.shields.io/badge/Live%20Demo-Click%20Here-brightgreen" alt="Live Demo">
+</a>
+</p>
+
+### Table of Contents
+
+<!-- Table of Contents -->
+- [DatepickerTabs](#datepickertabs)
+- [Features](#features)
+- [Installation](#installation)
+- [Basic Usage](#basic-usage)
+- [Options](#options)
+    - [Available Options](#available-options)
+- [Date Formatting](#date-formatting)
+- [Methods](#methods)
+    - [setDate()](#setdate)
+    - [getDate()](#getdate)
+    - [setMode()](#setmode)
+    - [getMode()](#getmode)
+    - [setDisplayType()](#setdisplaytype)
+    - [setMultipleDays()](#setmultipledays)
+    - [setMultipleMonths()](#setmultiplemonths)
+    - [setDateFormat()](#setdateformat)
+    - [setMonthFormat()](#setmonthformat)
+    - [setMinDate()](#setmindate)
+    - [setMaxDate()](#setmaxdate)
+    - [setMaxMonthSelection()](#setmaxmonthselection)
+    - [show()](#show)
+    - [hide()](#hide)
+    - [destroy()](#destroy)
+- [Events](#events)
+- [Examples](#examples)
+    - [Basic Date Picker](#basic-date-picker)
+    - [Month Picker with Multiple Selection](#month-picker-with-multiple-selection)
+    - [Date Picker with Constraints](#date-picker-with-constraints)
+    - [Pick Just One Month](#pick-just-one-month)
+    - [Saturday-Only Picker for Events](#saturday-only-picker-for-events)
+    - [On Change Event](#on-change-event)
+- [Browser Support](#browser-support)
+- [How to Rebuild Styles](#how-to-rebuild-styles)
+    - [Initial Setup](#initial-setup)
+    - [Rebuilding Styles](#rebuilding-styles)
+    - [Troubleshooting](#troubleshooting)
+- [Best Practices](#best-practices)
+
+
+
 
 ## Features
 
@@ -418,3 +470,32 @@ For example you want to hide the clear and apply buttons, because you are using 
     display: none;
 }
 ```
+
+### Using onDateChange for Dynamic UI Updates
+
+To ensure your application responds immediately to user interactions, use the onDateChange callback. This function is executed every time a new date is selected or the selection changes. A common best practice is to update other parts of your user interface or trigger backend operations based on the new date. For example:
+
+```javascript
+const picker = new DatepickerTabs('#date-input', {
+    onDateChange: function(date) {
+        console.log('User selected:', date);
+        // Update the UI with the new date
+        document.getElementById('date-display').textContent = formatDate(date);
+    }
+});
+
+function formatDate(date) {
+    const d = new Date(date);
+    // Return date in a simple DD/MM/YYYY format; adjust as needed
+    return `${d.getDate()}/${d.getMonth() + 1}/${d.getFullYear()}`;
+}
+
+```
+
+
+## Future work
+
+- Add language pre-built support with i18n
+- Add start of the week with monday option
+- Add disable dates array
+- 
