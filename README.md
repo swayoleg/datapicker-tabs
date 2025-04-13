@@ -4,6 +4,7 @@ A versatile date picker with day and month selection modes, multiple selection s
 <p><strong>Great for booking systems!</strong> If users don't have a <strong>specific date</strong> in mind, they can easily pick a 
 <strong>few different dates</strong>, a <strong>whole month</strong>, or even 
 <strong><span style="color:red">several months at once</span></strong> (with a maximum limit)</p>
+
 ![month-datepicker.png](month-datepicker.png)
 ![datepicker-date-with-tabs-fro-month.png](datepicker-date-with-tabs-fro-month.png)
 
