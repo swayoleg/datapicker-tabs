@@ -82,6 +82,10 @@ Include css and js from dist folder to your page:
 <script src="dist/js/custom-datepicker.min.js"></script>
 ```
 
+### Examples
+
+Examples can be found in index.html file or at [Live Demo Page](https://swayoleg.github.io/datepicker-tabs/)
+
 ## Basic Usage
 
 ```javascript
