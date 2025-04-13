@@ -259,14 +259,19 @@
 <body>
 <header>
     <h1>DatepickerTabs</h1>
-    <p>A versatile date picker with day and month selection modes</p>
-    <p>Great for booking systems! If users don't have a specific date in mind, they can easily pick a few different dates, a whole month, or even several months at once (with a maximum limit)</p>
+    <p>A versatile date picker with day and month selection modes, multiple selection support, and various formatting options.</p>
+    <p>
+        <strong>Great for booking systems!</strong> If users don't have a <strong>specific date</strong> in mind, they can easily pick a
+        <strong>few different dates</strong>, a <strong>whole month</strong>, or even  <strong><span style="color:red;">several months at once</span></strong>
+        <p>
+                First demo (click it): <input type="text" style="width:50%" value="May 2025, Jun 2025, Jul 2025" id="first-month-input" class="demo-input" placeholder="Click to select month(s)">
+        </p>
+    </p>
+
+
     <a href="https://github.com/swayoleg/datepicker-tabs" class="github-link">View on GitHub</a>
 
-    <div style="margin-top: 10px;">
-        <img src="datepicker-date-with-tabs-fro-month.png" alt="DatepickerTabs Screenshot" class="screenshot"  />
-        <img src="month-datepicker.png" alt="DatepickerTabs Screenshot" class="screenshot" />
-    </div>
+
 
 
     <div style="text-align: left">Navigation:</div>
@@ -280,6 +285,11 @@
             <li><a href="#documentation">Custom Date Picker Documentation</a></li>
         </ul>
     </nav>
+
+    <div style="margin-top: 10px;">
+        <img src="datepicker-date-with-tabs-fro-month.png" alt="DatepickerTabs Screenshot" class="screenshot"  />
+        <img src="month-datepicker.png" alt="DatepickerTabs Screenshot" class="screenshot" />
+    </div>
 
 
 </header>
@@ -951,6 +961,35 @@ picker.setDate(null);</code></pre>
   dateFormat: 'DD/MM/YYYY'
 });</code></pre>
     </div>
+
+
+    <div class="documentation" id="best-practices">
+        <h3>Best Practices</h3>
+        <p>
+            To ensure smooth integration and optimal user experience, follow these best practices:
+        </p>
+        <ul>
+
+            <li>
+                Leverage the <code>onDateChange</code> callback to update the UI dynamically. For example:
+                <pre><code class="language-js">
+// Example usage of onDateChange
+const picker = new DatepickerTabs('#date-input', {
+  onDateChange: function(date) {
+    console.log('Selected date:', date);
+    // Add your UI update logic here.
+  }
+});
+      </code></pre>
+            </li>
+            <li>Override styles by targeting the <code>.custom-datepickertabs-container</code> to prevent conflicts with global styles.</li>
+
+        </ul>
+    </div>
+
+
+
+
 </div>
 
 
@@ -972,6 +1011,16 @@ picker.setDate(null);</code></pre>
     });
 
     // Month picker initialization
+    const monthPickerFirstDemo = new DatepickerTabs('#first-month-input', {
+        mode: 'month',
+        multipleMonths: true,
+        maxMonthSelection: 3,
+        monthFormat: 'MMM YYYY',
+        onDateChange: function(dates) {
+
+        }
+    });
+
     const monthPicker = new DatepickerTabs('#month-input', {
         mode: 'month',
         multipleMonths: true,
