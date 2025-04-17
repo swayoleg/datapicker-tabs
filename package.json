@@ -1,16 +1,60 @@
 {
+  "name": "datepicker-tabs",
+  "version": "1.0.1",
+  "description": "A versatile date picker. Great for booking systems! If users don't have a specific date in mind, they can easily pick a few different dates, a  whole month, or even  several months at once (with a maximum limit)",
+  "main": "dist/js/datepicker-tabs.min.js",
+  "style": "dist/css/datepicker-tabs.min.css",
+  "scripts": {
+    "build": "gulp build",
+    "dev": "gulp",
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "prepare": "npm run build"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/swayoleg/datepicker-tabs.git"
+  },
+  "keywords": [
+    "datepicker",
+    "date-picker",
+    "date",
+    "month",
+    "picker",
+    "calendar",
+    "booking",
+    "multiple",
+    "selection"
+  ],
+  "author": "swayoleg",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/swayoleg/datepicker-tabs/issues"
+  },
+  "homepage": "https://swayoleg.github.io/datepicker-tabs/",
   "devDependencies": {
     "@babel/core": "^7.26.10",
     "@babel/preset-env": "^7.26.9",
-    "gulp": "^5.0.0",
-    "gulp-autoprefixer": "^9.0.0",
+    "autoprefixer": "^10.4.21",
+    "cssnano": "^6.1.2",
+    "gulp": "^4.0.2",
     "gulp-babel": "^8.0.0",
-    "gulp-cssnano": "^2.1.3",
-    "gulp-postcss": "^10.0.0",
+    "gulp-header": "^2.0.9",
+    "gulp-postcss": "^9.0.1",
     "gulp-rename": "^2.0.0",
-    "gulp-sass": "^6.0.1",
+    "gulp-sass": "^5.1.0",
     "gulp-sourcemaps": "^3.0.0",
     "gulp-uglify": "^3.0.2",
     "sass": "^1.86.3"
-  }
+  },
+  "browserslist": [
+    "> 1%",
+    "last 2 versions",
+    "not dead"
+  ],
+  "files": [
+    "dist/",
+    "src/",
+    "LICENSE",
+    "README.md"
+  ]
 }
