@@ -79,8 +79,8 @@ Clone or download the packege from GitHub.
 Include css and js from dist folder to your page:
 
 ```html
-<link rel="stylesheet" href="dist/css/custom-datepicker.min.css">
-<script src="dist/js/custom-datepicker.min.js"></script>
+<link rel="stylesheet" href="dist/css/datepicker-tabs.min.css">
+<script src="dist/js/datepicker-tabs.min.js"></script>
 ```
 
 ### Examples
@@ -415,7 +415,7 @@ The project uses SCSS for styling and Gulp to compile it to CSS. Here's how to r
 2. Ensure your SCSS files are in the correct location:
 
 ```angular2html
-src/assets/scss/custom-datepicker.scss
+src/assets/scss/datepicker-tabs.scss
 ```
 
 
