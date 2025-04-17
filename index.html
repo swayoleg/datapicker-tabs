@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>DatepickerTabs Demo</title>
-    <link rel="stylesheet" href="./dist/css/custom-datepicker.min.css">
+    <link rel="stylesheet" href="./dist/css/datepicker-tabs.min.css">
     <style>
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
@@ -282,7 +282,7 @@
             <li><a href="#day-mode">Day Only Mode</a></li>
             <li><a href="#configurator">Configurator</a></li>
             <li><a href="#bottom-test">Bottom of Page Test</a></li>
-            <li><a href="#documentation">Custom Date Picker Documentation</a></li>
+            <li><a href="#documentation">DatePickerTabs Documentation</a></li>
             <li><a href="#best-practices">Best practicies</a></li>
             <li><a href="#future-work">Future work</a></li>
         </ul>
@@ -671,7 +671,7 @@ const dayPickerOnly = new DatepickerTabs('#day-mode-example', {
     <!-- Documentation Section -->
     <!-- Documentation Section -->
     <div class="documentation" id="documentation">
-        <h2>Custom Date Picker Documentation</h2>
+        <h2>DatePickerTabs Documentation</h2>
         <p>
             A versatile date picker with day and month selection modes, multiple selection support, and various formatting options.
             Ideal for booking systems where users might want to select specific dates, a whole month, or even several months at once.
@@ -679,8 +679,8 @@ const dayPickerOnly = new DatepickerTabs('#day-mode-example', {
 
         <h3>Installation</h3>
         <p>Clone or download the package from GitHub. Include the CSS and JavaScript files in your HTML:</p>
-        <pre><code  class="language-html">&lt;link rel="stylesheet" href="dist/css/custom-datepicker.min.css"&gt;
-&lt;script src="dist/js/custom-datepicker.min.js"&gt;&lt;/script&gt;</code></pre>
+        <pre><code  class="language-html">&lt;link rel="stylesheet" href="dist/css/datepicker-tabs.min.css"&gt;
+&lt;script src="dist/js/datepicker-tabs.min.js"&gt;&lt;/script&gt;</code></pre>
 
         <h3>Basic Usage</h3>
         <p>Initialize the date picker on an input element:</p>
@@ -965,6 +965,56 @@ picker.setDate(null);</code></pre>
     </div>
 
 
+    <div class="documentation" id="rebuild-styles">
+        <h2>Rebuilding Styles</h2>
+        <p>
+            The project uses SCSS for styling and Gulp to compile it to CSS. Here's how to rebuild the styles when you make changes:
+        </p>
+
+        <h3>Initial Setup</h3>
+        <p>Make sure all dependencies are installed:</p>
+        <pre><code class="language-bash">npm install --save-dev gulp gulp-sass sass gulp-postcss autoprefixer cssnano gulp-sourcemaps gulp-rename</code></pre>
+
+        <h3>One-time Build</h3>
+        <p>To compile your SCSS files to CSS once:</p>
+        <pre><code class="language-bash">npx gulp build</code></pre>
+
+        <p>This will:</p>
+        <ul>
+            <li>Compile your SCSS to CSS</li>
+            <li>Add vendor prefixes with Autoprefixer</li>
+            <li>Create a minified version (custom-datepicker.min.css)</li>
+            <li>Generate sourcemaps for debugging</li>
+        </ul>
+        <p>The compiled CSS files will be in <code>src/assets/css/</code>.</p>
+
+        <h3>Development Mode (Watch)</h3>
+        <p>To automatically rebuild styles whenever you make changes to your SCSS files:</p>
+        <pre><code class="language-bash">npx gulp</code></pre>
+
+        <p>This starts the watch task that will:</p>
+        <ul>
+            <li>Monitor your SCSS files for changes</li>
+            <li>Automatically recompile when changes are detected</li>
+            <li>Generate both regular and minified CSS files</li>
+        </ul>
+
+        <h3>Troubleshooting</h3>
+        <p>If you encounter build errors:</p>
+        <ol>
+            <li>Check for SCSS syntax errors in your files</li>
+            <li>Ensure all required dependencies are installed</li>
+            <li>Verify the paths in gulpfile.js match your project structure</li>
+        </ol>
+
+        <p>Common errors:</p>
+        <ul>
+            <li><code>'compileStyles' errored after X ms</code>: Look for syntax errors in your SCSS</li>
+            <li><code>Cannot find module 'X'</code>: You need to install the missing dependency</li>
+        </ul>
+    </div>
+
+
     <div class="documentation" id="best-practices">
         <h3>Best Practices</h3>
         <p>
@@ -1011,7 +1061,7 @@ const picker = new DatepickerTabs('#date-input', {
     <p>&copy; 2025 <a href="https://github.com/swayoleg/datepicker-tabs">swayoleg/datepicker-tabs</a></p>
 </footer>
 
-<script src="./src/assets/js/custom-datepicker.js"></script>
+<script src="./src/assets/js/datepicker-tabs.js"></script>
 <script>
 
 
