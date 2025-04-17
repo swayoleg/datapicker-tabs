@@ -282,7 +282,7 @@
             <li><a href="#day-mode">Day Only Mode</a></li>
             <li><a href="#configurator">Configurator</a></li>
             <li><a href="#bottom-test">Bottom of Page Test</a></li>
-            <li><a href="#documentation">DatePickerTabs Documentation</a></li>
+            <li><a href="#documentation">DatepickerTabs Documentation</a></li>
             <li><a href="#best-practices">Best practicies</a></li>
             <li><a href="#future-work">Future work</a></li>
         </ul>
@@ -671,16 +671,39 @@ const dayPickerOnly = new DatepickerTabs('#day-mode-example', {
     <!-- Documentation Section -->
     <!-- Documentation Section -->
     <div class="documentation" id="documentation">
-        <h2>DatePickerTabs Documentation</h2>
+        <h2>DatepickerTabs Documentation</h2>
         <p>
             A versatile date picker with day and month selection modes, multiple selection support, and various formatting options.
             Ideal for booking systems where users might want to select specific dates, a whole month, or even several months at once.
         </p>
 
+        <!-- Installation Section -->
         <h3>Installation</h3>
-        <p>Clone or download the package from GitHub. Include the CSS and JavaScript files in your HTML:</p>
-        <pre><code  class="language-html">&lt;link rel="stylesheet" href="dist/css/datepicker-tabs.min.css"&gt;
+
+        <h4>Clone or download option</h4>
+        <p>Clone or download the package from GitHub. Include CSS and JavaScript files in your HTML:</p>
+        <pre><code class="language-bash">git clone https://github.com/swayoleg/datepicker-tabs.git</code></pre>
+
+        <pre><code class="language-html">&lt;link rel="stylesheet" href="dist/css/datepicker-tabs.min.css"&gt;
 &lt;script src="dist/js/datepicker-tabs.min.js"&gt;&lt;/script&gt;</code></pre>
+
+        <h4>JSDelivr option</h4>
+        <p>Alternatively, you can use JSDelivr</p>
+
+        <p>With a specific version (1.0.0 in this example):</p>
+        <pre><code class="language-html">&lt;link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/swayoleg/datepicker-tabs@1.0.0/dist/css/datepicker-tabs.min.css"&gt;
+&lt;script src="https://cdn.jsdelivr.net/gh/swayoleg/datepicker-tabs@1.0.0/dist/js/datepicker-tabs.min.js"&gt;&lt;/script&gt;</code></pre>
+
+        <p>Or with the latest develop version:</p>
+        <pre><code class="language-html">&lt;link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/swayoleg/datepicker-tabs@develop/dist/css/datepicker-tabs.min.css"&gt;
+&lt;script src="https://cdn.jsdelivr.net/gh/swayoleg/datepicker-tabs@develop/dist/js/datepicker-tabs.min.js"&gt;&lt;/script&gt;</code></pre>
+
+        <h4>UNPKG option</h4>
+        <pre><code class="language-html">&lt;link rel="stylesheet" href="https://unpkg.com/datepicker-tabs@latest/dist/css/datepicker-tabs.min.css"&gt;
+&lt;script src="https://unpkg.com/datepicker-tabs@latest/dist/js/datepicker-tabs.min.js"&gt;&lt;/script&gt;</code></pre>
+
+        <h4>Via NPM</h4>
+        <pre><code class="language-bash">npm install datepicker-tabs</code></pre>
 
         <h3>Basic Usage</h3>
         <p>Initialize the date picker on an input element:</p>

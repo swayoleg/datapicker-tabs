@@ -14,12 +14,18 @@ A versatile date picker with day and month selection modes, multiple selection s
 </a>
 </p>
 
+[![npm version](https://img.shields.io/npm/v/datepicker-tabs.svg)](https://www.npmjs.com/package/datepicker-tabs)
+[![npm downloads](https://img.shields.io/npm/dm/datepicker-tabs.svg)](https://www.npmjs.com/package/datepicker-tabs)
+[![GitHub stars](https://img.shields.io/github/stars/swayoleg/datepicker-tabs.svg)](https://github.com/swayoleg/datepicker-tabs/stargazers)
+[![GitHub license](https://img.shields.io/github/license/swayoleg/datepicker-tabs.svg)](https://github.com/swayoleg/datepicker-tabs/blob/main/LICENSE)
+
 ### Table of Contents
 
 <!-- Table of Contents -->
 - [DatepickerTabs](#datepickertabs)
 - [Features](#features)
 - [Installation](#installation)
+  - 
 - [Basic Usage](#basic-usage)
 - [Options](#options)
     - [Available Options](#available-options)
@@ -75,6 +81,13 @@ A versatile date picker with day and month selection modes, multiple selection s
 
 ## Installation
 
+### Clone or download option
+
+
+```bash
+ git clone https://github.com/swayoleg/datepicker-tabs.git 
+```
+
 Clone or download the packege from GitHub.
 Include css and js from dist folder to your page:
 
@@ -82,6 +95,41 @@ Include css and js from dist folder to your page:
 <link rel="stylesheet" href="dist/css/datepicker-tabs.min.css">
 <script src="dist/js/datepicker-tabs.min.js"></script>
 ```
+
+### JSDeliver option 
+
+Alternatevly you can use JSDeliver
+
+with certain version (1.0.0 in example): 
+
+```html
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/swayoleg/datepicker-tabs@1.0.0/dist/css/datepicker-tabs.min.css">
+<script src="https://cdn.jsdelivr.net/gh/swayoleg/datepicker-tabs@1.0.0/dist/js/datepicker-tabs.min.js"></script>
+```
+
+or with latest develop:
+
+```html
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/swayoleg/datepicker-tabs@develop/dist/css/datepicker-tabs.min.css">
+<script src="https://cdn.jsdelivr.net/gh/swayoleg/datepicker-tabs@develop/dist/js/datepicker-tabs.min.js"></script>
+```
+
+
+### UNPKG option
+
+```html
+<link rel="stylesheet" href="https://unpkg.com/datepicker-tabs@latest/dist/css/datepicker-tabs.min.css">
+<script src="https://unpkg.com/datepicker-tabs@latest/dist/js/datepicker-tabs.min.js"></script>
+```
+
+### Via NPM
+
+```bash
+ npm install datepicker-tabs
+```
+
+
+
 
 ### Examples
 
@@ -427,6 +475,12 @@ To compile your SCSS files to CSS once:
 
 ```bash
   npx gulp build
+```
+
+OR:
+
+```bash
+  npm run build
 ```
 
 This will:
