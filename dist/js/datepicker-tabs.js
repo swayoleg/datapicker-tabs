@@ -1,6 +1,6 @@
 /**
  * datepicker-tabs - A versatile date picker. Great for booking systems! If users don't have a specific date in mind, they can easily pick a few different dates, a  whole month, or even  several months at once (with a maximum limit)
- * @version v1.0.1
+ * @version v1.0.3
  * @link https://swayoleg.github.io/datepicker-tabs/
  * @license MIT
  */
@@ -13,7 +13,7 @@
  * multiple selection support, and various formatting options.
  * Perfect for booking systems when users need to select multiple dates or months.
  *
- * @version 1.0.1
+ * @version 1.0.3
  *
  * FEATURES:
  * - Day and Month selection modes
@@ -1439,10 +1439,47 @@ class DatepickerTabs {
     // Apply button
     const applyBtn = this.element.querySelector('.datepicker-btn.apply');
     if (applyBtn) {
-      applyBtn.addEventListener('click', e => {
+      // First, remove any existing event listeners to prevent duplicates
+      // (this is crucial to prevent multiple calls)
+      const newApplyBtn = applyBtn.cloneNode(true);
+      applyBtn.parentNode.replaceChild(newApplyBtn, applyBtn);
+
+      // Add the event listener to the new button
+      newApplyBtn.addEventListener('click', e => {
         e.stopPropagation(); // Prevent event bubbling
 
-        // Create an event to notify that dates have been applied
+        // For debugging
+        //console.log('apply clicked with values:', this.inputElement ? this.inputElement.value : 'no input');
+
+        // Update input value if available
+        this.updateInputValue();
+
+        // Hide the picker
+        this.hide();
+
+        // Call callback if provided - ONLY ONCE
+        if (this.options.onDateChange) {
+          // In month mode with multiple selections
+          if (this.options.mode === 'month' && this.options.multipleMonths) {
+            if (this.selectedMonths.length > 0) {
+              const dates = this.selectedMonths.map(m => new Date(m.year, m.month, 1));
+              // Direct call to callback with all dates
+              this.options.onDateChange(dates);
+            } else {
+              this.options.onDateChange(null);
+            }
+          }
+          // Day mode or single month selection
+          else if (this.options.mode === 'day') {
+            if (this.selectedDates.length > 0) {
+              this.options.onDateChange(this.options.multipleDays ? this.selectedDates : this.selectedDates[0]);
+            } else {
+              this.options.onDateChange(null);
+            }
+          }
+        }
+
+        // Fire the custom event AFTER the callback (not before)
         const event = new CustomEvent('datepickerApply', {
           detail: {
             mode: this.options.mode,
@@ -1451,32 +1488,6 @@ class DatepickerTabs {
           }
         });
         this.element.dispatchEvent(event);
-
-        // Update input value if available
-        this.updateInputValue();
-
-        // Hide the picker
-        this.hide();
-
-        // Call callback if provided
-        if (this.options.onDateChange) {
-          if (this.options.mode === 'day') {
-            // In day mode, only call if we have selections
-            if (this.selectedDates.length > 0) {
-              this.options.onDateChange(this.options.multipleDays ? this.selectedDates : this.selectedDates[0]);
-            } else {
-              this.options.onDateChange(null);
-            }
-          } else {
-            // In month mode, convert month selections to dates (1st of each month)
-            if (this.selectedMonths.length > 0) {
-              const dates = this.selectedMonths.map(m => new Date(m.year, m.month, 1));
-              this.options.onDateChange(this.options.multipleMonths ? dates : dates[0]);
-            } else {
-              this.options.onDateChange(null);
-            }
-          }
-        }
       });
     }
   }

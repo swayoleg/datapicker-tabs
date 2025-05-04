@@ -100,11 +100,11 @@ Include css and js from dist folder to your page:
 
 Alternatevly you can use JSDeliver
 
-with certain version (1.0.0 in example): 
+with certain version (1.0.3 in example): 
 
 ```html
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/swayoleg/datepicker-tabs@1.0.0/dist/css/datepicker-tabs.min.css">
-<script src="https://cdn.jsdelivr.net/gh/swayoleg/datepicker-tabs@1.0.0/dist/js/datepicker-tabs.min.js"></script>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/swayoleg/datepicker-tabs@1.0.3/dist/css/datepicker-tabs.min.css">
+<script src="https://cdn.jsdelivr.net/gh/swayoleg/datepicker-tabs@1.0.3/dist/js/datepicker-tabs.min.js"></script>
 ```
 
 or with latest develop:
