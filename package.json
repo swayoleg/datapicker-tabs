@@ -1,13 +1,13 @@
 {
   "name": "datepicker-tabs",
-  "version": "1.0.3",
+  "version": "1.0.4",
   "description": "A versatile date picker. Great for booking systems! If users don't have a specific date in mind, they can easily pick a few different dates, a  whole month, or even  several months at once (with a maximum limit)",
   "main": "dist/js/datepicker-tabs.min.js",
   "style": "dist/css/datepicker-tabs.min.css",
   "scripts": {
     "build": "gulp build",
     "dev": "gulp",
-    "test": "echo \"Error: no test specified\" && exit 1",
+    "test": "jest",
     "prepare": "npm run build"
   },
   "repository": {
@@ -41,9 +41,12 @@
     "gulp-header": "^2.0.9",
     "gulp-postcss": "^9.0.1",
     "gulp-rename": "^2.0.0",
+    "gulp-replace": "^1.1.4",
     "gulp-sass": "^5.1.0",
     "gulp-sourcemaps": "^3.0.0",
     "gulp-uglify": "^3.0.2",
+    "jest": "^29.7.0",
+    "jest-environment-jsdom": "^29.7.0",
     "sass": "^1.86.3"
   },
   "browserslist": [
@@ -56,5 +59,14 @@
     "src/",
     "LICENSE",
     "README.md"
-  ]
+  ],
+  "jest": {
+    "testEnvironment": "jsdom",
+    "setupFiles": [
+      "./jest.setup.js"
+    ],
+    "testMatch": [
+      "**/__tests__/**/*.test.js"
+    ]
+  }
 }
