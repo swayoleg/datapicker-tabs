@@ -18,7 +18,9 @@ A versatile date picker with day and month selection modes, multiple selection s
 [![npm downloads](https://img.shields.io/npm/dm/datepicker-tabs.svg)](https://www.npmjs.com/package/datepicker-tabs)
 [![GitHub stars](https://img.shields.io/github/stars/swayoleg/datepicker-tabs.svg)](https://github.com/swayoleg/datepicker-tabs/stargazers)
 [![GitHub license](https://img.shields.io/github/license/swayoleg/datepicker-tabs.svg)](https://github.com/swayoleg/datepicker-tabs/blob/main/LICENSE)
-
+![Jest Coverage](https://img.shields.io/badge/coverage-80%25-brightgreen)
+![Tests](https://img.shields.io/badge/tests-passing-brightgreen)
+![Tests](https://github.com/swayoleg/datepicker-tabs/actions/workflows/tests.yml/badge.svg)
 ### Table of Contents
 
 <!-- Table of Contents -->
