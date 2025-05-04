@@ -1,6 +1,6 @@
 {
   "name": "datepicker-tabs",
-  "version": "1.0.5",
+  "version": "1.0.6",
   "description": "A versatile date picker. Great for booking systems! If users don't have a specific date in mind, they can easily pick a few different dates, a  whole month, or even  several months at once (with a maximum limit)",
   "main": "dist/js/datepicker-tabs.min.js",
   "style": "dist/css/datepicker-tabs.min.css",
