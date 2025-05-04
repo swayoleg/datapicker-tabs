@@ -175,6 +175,24 @@ interface DatepickerTabsOptions {
     futureSaturdaysOnly?: boolean;
 
     /**
+     * Array of days of week to disable (0-6, where 0 is Sunday)
+     * @default []
+     */
+    disabledDaysOfWeek?: number[];
+
+    /**
+     * Array of specific dates to disable (Date objects or date strings in various formats)
+     * @default []
+     */
+    disabledDates?: (Date | string)[];
+
+    /**
+     * Option to start the week on Monday instead of Sunday
+     * @default false
+     */
+    startWeekOnMonday?: boolean;
+
+    /**
      * Callback when date(s) change
      * @default null
      */
