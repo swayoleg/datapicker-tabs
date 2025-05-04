@@ -1,6 +1,6 @@
 /**
  * datepicker-tabs - A versatile date picker. Great for booking systems! If users don't have a specific date in mind, they can easily pick a few different dates, a  whole month, or even  several months at once (with a maximum limit)
- * @version v1.0.4
+ * @version v1.0.6
  * @link https://swayoleg.github.io/datepicker-tabs/
  * @license MIT
  */
@@ -13,7 +13,7 @@
  * multiple selection support, and various formatting options.
  * Perfect for booking systems when users need to select multiple dates or months.
  *
- * @version 1.0.4
+ * @version 1.0.6
  *
  * FEATURES:
  * - Day and Month selection modes
