@@ -31,7 +31,7 @@ A versatile date picker with day and month selection modes, multiple selection s
     - [Available Options](#available-options)
 - [Date Formatting](#date-formatting)
 - [Methods](#methods)
-    - [setDate()](#setdate)
+    - [setDate()](#setdate-date)
     - [getDate()](#getdate)
     - [setMode()](#setmode)
     - [getMode()](#getmode)
@@ -54,12 +54,20 @@ A versatile date picker with day and month selection modes, multiple selection s
     - [Pick Just One Month](#pick-just-one-month)
     - [Saturday-Only Picker for Events](#saturday-only-picker-for-events)
     - [On Change Event](#on-change-event)
+    - [Disable Days of Week](#disable-days-of-week)
+    - [Disable Specific Dates](#disable-specific-dates)
+    - [Start Week on Monday](#start-week-on-monday)
+    - [Example: Business Day Picker](#example-business-day-picker)
 - [Browser Support](#browser-support)
 - [How to Rebuild Styles](#how-to-rebuild-styles)
     - [Initial Setup](#initial-setup)
     - [Rebuilding Styles](#rebuilding-styles)
     - [Troubleshooting](#troubleshooting)
 - [Best Practices](#best-practices)
+- [Testing](#testing)
+    - [File parsedate-test-html.html](#file-parsedate-test-htmlhtml)
+    - [Testing DatepickerTabs Directly](#testing-datepickertabs-directly)
+- [Future Work](#future-work)
 
 
 
@@ -100,11 +108,11 @@ Include css and js from dist folder to your page:
 
 Alternatevly you can use JSDeliver
 
-with certain version (1.0.3 in example): 
+with certain version (1.0.4 in example): 
 
 ```html
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/swayoleg/datepicker-tabs@1.0.3/dist/css/datepicker-tabs.min.css">
-<script src="https://cdn.jsdelivr.net/gh/swayoleg/datepicker-tabs@1.0.3/dist/js/datepicker-tabs.min.js"></script>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/swayoleg/datepicker-tabs@1.0.4/dist/css/datepicker-tabs.min.css">
+<script src="https://cdn.jsdelivr.net/gh/swayoleg/datepicker-tabs@1.0.4/dist/js/datepicker-tabs.min.js"></script>
 ```
 
 or with latest develop:
@@ -165,6 +173,9 @@ const picker = new DatepickerTabs('#date-input', {
     minDate: null,                   // Minimum selectable date
     maxDate: new Date(2026, 11, 31), // Maximum selectable date
     futureSaturdaysOnly: true,       // Only enable future Saturdays in day mode
+    disabledDaysOfWeek: [], // Array of days of week to disable (0-6, where 0 is Sunday)
+    disabledDates: [], //Array of specific dates to disable (Date objects or date strings in various formats)
+    startWeekOnMonday: false, // Option to start the week on Monday instead of Sunday
 
     // Localization
     monthNames: ['January', 'February'],    // Custom month names
@@ -203,6 +214,9 @@ const picker = new DatepickerTabs('#date-input', {
 | `minDate` | Date     | null                 | Minimum selectable date                                                         |
 | `maxDate` | Date     | null                 | Maximum selectable date                                                         |
 | `futureSaturdaysOnly` | boolean  | false                | Option for day mode to only enable Saturdays in the future                      |
+| `disabledDaysOfWeek` | array | [] | Array of days of week to disable (0-6, where 0 is Sunday, 6 is Saturday) |
+| `disabledDates` | array | [] | Array of specific dates to disable (Date objects or date strings in various formats) |
+| `startWeekOnMonday` | boolean | false | Option to start the week on Monday instead of Sunday |
 | `monthNames` | array    | ['January', ...]     | Array of month names                                                            |
 | `dayNames` | array    | ['Sun', ...]         | Array of day names                                                              |
 | `cookieName` | string   | 'datepickerTabsMode' | Cookie name for mode persistence                                                |
@@ -445,6 +459,68 @@ const buttomDatePicker = new DatepickerTabs('#bottom-date-input', {
 });
 ```
 
+
+### Disable Days of Week
+
+You can now disable specific days of the week (e.g., disable weekends):
+
+```javascript
+const picker = new DatepickerTabs('#date-input', {
+  disabledDaysOfWeek: [0, 6]  // Disable Sunday (0) and Saturday (6)
+});
+```
+
+### Disable Specific Dates
+
+Disable holidays, special events, or any other specific dates using either Date objects or date strings:
+
+```javascript
+const picker = new DatepickerTabs('#date-input', {
+  disabledDates: [
+    // Using Date objects
+    new Date(2025, 11, 25),  // Christmas 2025
+    
+    // Using date strings (supports multiple formats)
+    '01/01/2025',           // New Year's Day (DD/MM/YYYY)
+    '2025-07-04',           // Independence Day (YYYY-MM-DD)
+    '11/27/2025'            // Thanksgiving (MM/DD/YYYY)
+  ],
+  dateFormat: 'DD/MM/YYYY'  // Format for display and primary string parsing
+});
+```
+
+The plugin will try to parse string dates using:
+1. The specified `dateFormat` option first
+2. Common formats as fallback (DD/MM/YYYY, MM/DD/YYYY, YYYY-MM-DD, DD-MM-YYYY)
+
+### Start Week on Monday
+
+Change the calendar to start weeks on Monday instead of Sunday:
+
+```javascript
+const picker = new DatepickerTabs('#date-input', {
+  startWeekOnMonday: true
+});
+```
+
+### Example: Business Day Picker
+
+Create a business day picker that only allows weekdays and excludes holidays:
+
+```javascript
+const businessPicker = new DatepickerTabs('#business-date', {
+  startWeekOnMonday: true,
+  disabledDaysOfWeek: [0, 6],  // Disable weekends
+  disabledDates: [
+    '2025-12-25',              // Christmas (YYYY-MM-DD format)
+    '2025-12-26',              // Boxing Day
+    '2025-01-01'               // New Year's Day
+  ],
+  minDate: new Date(),         // Disable past dates
+  dateFormat: 'YYYY-MM-DD'
+});
+```
+
 ## Browser Support
 
 The date picker works in all modern browsers (Chrome, Firefox, Safari, Edge).
@@ -551,9 +627,179 @@ function formatDate(date) {
 
 ```
 
+# Testing
+
+## File parsedate-test-html.html
+
+You can test function of parsing of date with prepared test-cases directly if you open html file.
+in Textarea the fiunction body code - so you can play with or replace with yours. It tests the different format parsing. You can add/edit/replace test cases directly in html code.
+
+
+## Testing DatepickerTabs Directly
+
+This guide explains how to set up Jest to test your DatepickerTabs component directly, without using a stub implementation.
+
+
+## Setup Steps
+
+1. First, install the necessary dependencies:
+
+```bash
+npm install --save-dev jest jest-environment-jsdom babel-jest @babel/core @babel/preset-env
+```
+
+2. Create the required configuration files or rewrite them if needed:
+
+- `babel.config.js` - For transpiling modern JavaScript
+- `jest.setup.js` - For setting up the test environment
+- `__tests__/direct-import.test.js` - The actual tests
+
+3. Update your `package.json` with test scripts if not updated:
+
+```json
+"scripts": {
+    "build": "gulp build",
+    "dev": "gulp",
+    "test": "jest",
+    "prepare": "npm run build"
+  },
+"jest": {
+  "testEnvironment": "jsdom",
+  "setupFiles": ["./jest.setup.js"],
+  "testMatch": [
+    "**/__tests__/**/*.test.js"
+  ]
+}
+```
+
+## File Structure
+
+```
+datepicker-tabs/
+├── __tests__/
+│   ├── direct-import.test.js
+├── babel.config.js
+├── jest.setup.js
+└── package.json
+```
+
+## How It Works
+
+1. **direct-import.test.js**: This file reads and loads your original DatepickerTabs code, and run test cases.
+
+2. **jest.setup.js**: This file sets up the browser-like environment needed by DatepickerTabs, including mocking DOM APIs and global objects.
+
+
+#### Running Tests
+
+To run the test suite:
+
+```bash
+npm test
+```
+
+### Test Structure
+
+The test suite is organized as follows:
+
+- `__tests__/` - Contains all test files
+  - `direct-import.test.js` - Tests directly importing the DatepickerTabs class
+
+### Testing Specific Functionality
+
+#### Date Parsing
+
+The library includes comprehensive tests for the date parsing functionality, covering various formats and edge cases:
+
+```javascript
+// Example test for date parsing
+test('should parse a date in DD/MM/YYYY format', () => {
+    const date = datepicker.parseDate('25/05/2025', 'DD/MM/YYYY');
+    expect(date instanceof Date).toBe(true);
+    expect(date.getDate()).toBe(25);
+    expect(date.getMonth()).toBe(4); // May is month 4 (zero-based)
+    expect(date.getFullYear()).toBe(2025);
+});
+```
+
+We test multiple date formats:
+- DD/MM/YYYY
+- MM/DD/YYYY
+- YYYY-MM-DD
+- DD MMM YYYY
+- DD MMMM YYYY
+- MMM YYYY
+- MMMM YYYY
+
+And various edge cases like:
+- Empty strings
+- Invalid dates
+- Invalid formats
+- Custom separators
+
+### Adding New Tests
+
+When adding new functionality, please include corresponding tests. Follow these guidelines:
+
+1. Create test files in the `__tests__` directory
+2. Use descriptive test names that clearly explain what's being tested
+3. Test both success cases and edge/failure cases
+4. Use parametrized tests where appropriate for multiple similar test cases
+
+Example of adding a parametrized test:
+
+```javascript
+const testCases = [
+    {
+        name: "DD/MM/YYYY - standard date",
+        input: "04/07/2025",
+        format: "DD/MM/YYYY",
+        expected: new Date(2025, 6, 4) // July 4th, 2025
+    },
+    // Add more test cases...
+];
+
+test.each(testCases)('$name', ({ input, format, expected }) => {
+    const result = datepicker.parseDate(input, format);
+    
+    if (expected === null) {
+        expect(result).toBeNull();
+    } else {
+        expect(result instanceof Date).toBe(true);
+        expect(result.getDate()).toBe(expected.getDate());
+        expect(result.getMonth()).toBe(expected.getMonth());
+        expect(result.getFullYear()).toBe(expected.getFullYear());
+    }
+});
+```
+
+### Adding single tests
+
+To extend the test suite, simply add more test cases in `direct-import.test.js`. For example:
+
+```javascript
+test('should handle special case X', () => {
+  const picker = new DatepickerTabs('#date-input');
+  // Your test logic
+  expect(result).toEqual(expectedValue);
+});
+```
+
+## Troubleshooting
+
+1. **"Cannot find module" errors**: Ensure your file paths are correct.
+
+2. **DOM-related errors**: Check `jest.setup.js` to make sure necessary DOM APIs are properly mocked.
+
+3. **TypeError: X is not a function**: The DatepickerTabs class might be using browser APIs that need to be mocked.
+
+4. **"DatepickerTabs is not a constructor"**: Verify that `setup-datepicker.js` is correctly loading and exporting the class.
+
 
 ## Future work
 
 - Add language pre-built support with i18n
-- Add start of the week with monday option
-- Add disable dates array
+- ~~Add start of the week with monday option~~ Done
+- ~~Add disable dates array~~ Done
+- ~~Test with jest~~ Done
+

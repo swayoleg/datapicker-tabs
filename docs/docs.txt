@@ -4,10 +4,44 @@ PLEASE REFER TO README.MD and index.html in the project root for the documentati
 
 
 
-  The user can now simply initialize with:
-  const picker = new DatapickerTabs('#date-input', options);
+The user can now simply initialize with:
+const picker = new DatapickerTabs('#date-input', options);
 
-  Or for multiple inputs with the same class:
-  const pickers = new DatapickerTabs('.date-input-class', options);
+Or for multiple inputs with the same class:
+const pickers = new DatapickerTabs('.date-input-class', options);
 
 
+
+
+// Example 1: Start week on Monday, disable weekends
+const picker1 = new DatepickerTabs('#date-input', {
+  startWeekOnMonday: true,           // Week starts on Monday
+  disabledDaysOfWeek: [0, 6],        // Disable Sunday (0) and Saturday (6)
+  dateFormat: 'DD/MM/YYYY'
+});
+
+// Example 2: Disable specific dates (holidays) using string dates
+const picker2 = new DatepickerTabs('#holiday-input', {
+  disabledDates: [
+    '25/12/2025',            // Christmas 2025 (DD/MM/YYYY format)
+    '01/01/2025',            // New Year's Day 2025
+    '2025-07-04',            // Independence Day 2025 (YYYY-MM-DD format)
+    new Date(2025, 10, 27)   // Thanksgiving 2025 (still works with Date objects)
+  ],
+  dateFormat: 'DD/MM/YYYY',  // The format used for displayed dates
+  onDateChange: function(date) {
+    console.log('Selected date:', date);
+  }
+});
+
+// Example 3: Combining multiple options
+const picker3 = new DatepickerTabs('#business-dates', {
+  startWeekOnMonday: true,
+  disabledDaysOfWeek: [0, 6],        // Disable weekends
+  disabledDates: [
+    new Date(2025, 4, 26),           // Memorial Day 2025
+    new Date(2025, 8, 1)             // Labor Day 2025
+  ],
+  minDate: new Date(),               // Disable past dates
+  dateFormat: 'YYYY-MM-DD'
+});

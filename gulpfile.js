@@ -8,6 +8,7 @@ const rename = require('gulp-rename');
 const uglify = require('gulp-uglify');
 const babel = require('gulp-babel');
 const header = require('gulp-header');
+const replace = require('gulp-replace');
 const fs = require('fs');
 
 // Read package info
@@ -78,6 +79,8 @@ function processScripts() {
         .pipe(babel({
             presets: ['@babel/preset-env']
         }))
+        // Remove Node.js module exports code
+        .pipe(replace(/\/\/ Make the DatepickerTabs class available in Node\.js environments \(for testing\)\s*if \(typeof module !== 'undefined' && module\.exports\) {\s*module\.exports = DatepickerTabs;\s*}/g, ''))
         .pipe(header(banner, { pkg }))
         .pipe(dest(paths.js.distDest)) // Output unminified version to dist
         .pipe(uglify())

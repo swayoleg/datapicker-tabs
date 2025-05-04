@@ -1,6 +1,6 @@
 /**
  * datepicker-tabs - A versatile date picker. Great for booking systems! If users don't have a specific date in mind, they can easily pick a few different dates, a  whole month, or even  several months at once (with a maximum limit)
- * @version v1.0.3
+ * @version v1.0.4
  * @link https://swayoleg.github.io/datepicker-tabs/
  * @license MIT
  */
@@ -13,7 +13,7 @@
  * multiple selection support, and various formatting options.
  * Perfect for booking systems when users need to select multiple dates or months.
  *
- * @version 1.0.3
+ * @version 1.0.4
  *
  * FEATURES:
  * - Day and Month selection modes
@@ -58,6 +58,9 @@
  *   minDate: null,                   // Minimum selectable date
  *   maxDate: new Date(2026, 11, 31), // Maximum selectable date
  *   futureSaturdaysOnly: true,       // Only enable future Saturdays in day mode
+ *   disabledDaysOfWeek: [], // Array of days of week to disable (0-6, where 0 is Sunday)
+ *   disabledDates: [], //Array of specific dates to disable (Date objects or date strings in various formats)
+ *   startWeekOnMonday: false, // Option to start the week on Monday instead of Sunday
  *
  *   // Localization
  *   monthNames: ['January', 'February', '...'], // Custom month names
@@ -143,6 +146,12 @@ class DatepickerTabs {
       maxDate: null,
       futureSaturdaysOnly: false,
       // Option for day mode to only enable Saturdays in the future
+      disabledDaysOfWeek: [],
+      // Array of days of week to disable (0-6, where 0 is Sunday)
+      disabledDates: [],
+      //Array of specific dates to disable (Date objects or date strings in various formats)
+      startWeekOnMonday: false,
+      // Option to start the week on Monday instead of Sunday
       onDateChange: null,
       // Callback when date(s) change
       monthNames: ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'],
@@ -274,98 +283,166 @@ class DatepickerTabs {
   }
 
   /**
+   * Check if a date is disabled based on disabledDates array
+   * @param {Date} date - The date to check
+   * @returns {boolean} - Whether the date is disabled
+   */
+  isDateDisabled(date) {
+    if (!date) return false;
+
+    // Check if the day of week is disabled
+    if (this.options.disabledDaysOfWeek && this.options.disabledDaysOfWeek.length > 0) {
+      let dayOfWeek = date.getDay();
+      if (this.options.disabledDaysOfWeek.includes(dayOfWeek)) {
+        return true;
+      }
+    }
+
+    // Check if the exact date is disabled
+    if (this.options.disabledDates && this.options.disabledDates.length > 0) {
+      return this.options.disabledDates.some(disabledDate => {
+        let normalizedDisabled;
+
+        // Handle string dates using the parseDate method
+        if (typeof disabledDate === 'string') {
+          normalizedDisabled = this.parseDate(disabledDate, this.options.dateFormat);
+          // If parsing failed, try alternative formats
+          if (!normalizedDisabled) {
+            // Try common formats if the specified format fails
+            const formats = ['DD/MM/YYYY', 'MM/DD/YYYY', 'YYYY-MM-DD', 'DD-MM-YYYY'];
+            for (const format of formats) {
+              if (format !== this.options.dateFormat) {
+                normalizedDisabled = this.parseDate(disabledDate, format);
+                if (normalizedDisabled) break;
+              }
+            }
+          }
+          // If all parsing attempts failed, skip this date
+          if (!normalizedDisabled) return false;
+        } else {
+          // Handle Date objects
+          normalizedDisabled = new Date(disabledDate);
+        }
+
+        // Normalize both dates to midnight for comparison
+        normalizedDisabled.setHours(0, 0, 0, 0);
+        const normalizedDate = new Date(date);
+        normalizedDate.setHours(0, 0, 0, 0);
+        return normalizedDisabled.getTime() === normalizedDate.getTime();
+      });
+    }
+    return false;
+  }
+
+  /**
    * Returns a Date object if parsing is successful, null otherwise
    */
   parseDate(dateStr, format) {
     if (!dateStr || !format) return null;
 
-    // Create mapping objects for format tokens
-    const formatTokens = {
-      'DD': /(\d{2})/,
-      // Day with leading zero
-      'D': /(\d{1,2})/,
-      // Day without leading zero
-      'MMM': /([A-Za-z]{3})/,
-      // Short month name
-      'MMMM': /([A-Za-z]+)/,
-      // Full month name
-      'MM': /(\d{2})/,
-      // Month with leading zero
-      'M': /(\d{1,2})/,
-      // Month without leading zero
-      'YYYY': /(\d{4})/,
-      // Four digit year
-      'YY': /(\d{2})/ // Two digit year
-    };
+    // Trim the input string
+    dateStr = dateStr.trim();
 
-    // Escape special regex characters in format
-    let regexFormat = format.replace(/[-\/\\^$*+?.()|[\]{}]/g, '\\$&');
+    // Special handling for numeric formats - make them more flexible
+    // If format has DD but input has D (single digit), or format has MM but input has M (single digit)
+    let flexibleFormat = format;
+    let flexibleDateStr = dateStr;
 
-    // Replace format tokens with regex capture groups
-    Object.keys(formatTokens).forEach(token => {
-      regexFormat = regexFormat.replace(new RegExp(token, 'g'), formatTokens[token].source);
-    });
+    // Handle common separators for date formats
+    const separators = ['/', '-', ' ', '.'];
+    let separator = null;
 
-    // Create final regex with anchors
-    const regex = new RegExp(`^${regexFormat}$`);
-    const match = dateStr.match(regex);
-    if (!match) return null;
-
-    // Extract date parts with a more robust approach
-    let day = 1,
-      month = 0,
-      year = new Date().getFullYear();
-    try {
-      // Process all capturing groups from the regex match
-      let groupCount = 1; // Skip first group which is the whole match
-
-      while (groupCount < match.length) {
-        const val = match[groupCount];
-
-        // Try to find which part of the date this group represents
-        // based on its format and value
-        if (/^\d{4}$/.test(val)) {
-          // Likely a 4-digit year
-          year = parseInt(val, 10);
-        } else if (/^\d{2}$/.test(val) && parseInt(val, 10) > 31) {
-          // Likely a 2-digit year
-          const twoDigitYear = parseInt(val, 10);
-          const currentYear = new Date().getFullYear();
-          const century = Math.floor(currentYear / 100) * 100;
-          if (twoDigitYear + century > currentYear + 50) {
-            year = twoDigitYear + (century - 100);
-          } else {
-            year = twoDigitYear + century;
-          }
-        } else if (/^\d{1,2}$/.test(val) && parseInt(val, 10) >= 1 && parseInt(val, 10) <= 12) {
-          // Could be month or day
-          // If we already have a month value and it's in the format where we'd expect a day, treat as day
-          if (format.indexOf('DD') !== -1 || format.indexOf('D') !== -1) {
-            day = parseInt(val, 10);
-          } else {
-            month = parseInt(val, 10) - 1; // 0-based month
-          }
-        } else if (/^\d{1,2}$/.test(val) && parseInt(val, 10) > 12 && parseInt(val, 10) <= 31) {
-          // Definitely a day
-          day = parseInt(val, 10);
-        } else if (/^[A-Za-z]{3,}$/.test(val)) {
-          // Likely a month name
-          const monthIndex = this.options.monthNames.findIndex(m => m.toLowerCase().startsWith(val.toLowerCase()));
-          if (monthIndex !== -1) {
-            month = monthIndex;
-          }
-        }
-        groupCount++;
+    // Find which separator is used in the format
+    for (const sep of separators) {
+      if (format.includes(sep)) {
+        separator = sep;
+        break;
       }
-
-      // Create and validate the date
-      const parsedDate = new Date(year, month, day);
-      if (isNaN(parsedDate.getTime())) return null;
-      return parsedDate;
-    } catch (error) {
-      console.error('Error parsing date:', error);
+    }
+    if (!separator) {
+      // No recognized separator
       return null;
     }
+
+    // Split date string and format by separator
+    const dateParts = flexibleDateStr.split(separator);
+    const formatParts = flexibleFormat.split(separator);
+
+    // Must have same number of parts
+    if (dateParts.length !== formatParts.length) {
+      return null;
+    }
+
+    // Extract values based on format
+    let day = 1;
+    let month = 0;
+    let year = new Date().getFullYear();
+    for (let i = 0; i < formatParts.length; i++) {
+      const formatPart = formatParts[i];
+      const valuePart = dateParts[i];
+
+      // Handle different format parts
+      if (formatPart === 'DD' || formatPart === 'D') {
+        day = parseInt(valuePart, 10);
+        if (isNaN(day)) return null;
+      } else if (formatPart === 'MM' || formatPart === 'M') {
+        month = parseInt(valuePart, 10) - 1; // Convert to 0-based month
+        if (isNaN(month)) return null;
+      } else if (formatPart === 'YYYY') {
+        year = parseInt(valuePart, 10);
+        if (isNaN(year)) return null;
+      } else if (formatPart === 'YY') {
+        let shortYear = parseInt(valuePart, 10);
+        if (isNaN(shortYear)) return null;
+
+        // Convert 2-digit year to 4-digit
+        const currentYear = new Date().getFullYear();
+        const century = Math.floor(currentYear / 100) * 100;
+        if (shortYear + century > currentYear + 50) {
+          year = shortYear + (century - 100);
+        } else {
+          year = shortYear + century;
+        }
+      } else if (formatPart === 'MMM') {
+        const monthStr = valuePart.toLowerCase();
+        month = -1;
+
+        // Check for month name
+        for (let j = 0; j < this.options.monthNames.length; j++) {
+          if (this.options.monthNames[j].toLowerCase().substring(0, 3) === monthStr) {
+            month = j;
+            break;
+          }
+        }
+        if (month === -1) return null;
+      } else if (formatPart === 'MMMM') {
+        const monthStr = valuePart.toLowerCase();
+        month = -1;
+
+        // Check for month name
+        for (let j = 0; j < this.options.monthNames.length; j++) {
+          if (this.options.monthNames[j].toLowerCase() === monthStr) {
+            month = j;
+            break;
+          }
+        }
+        if (month === -1) return null;
+      }
+    }
+
+    // Validate basic ranges
+    if (day < 1 || day > 31 || month < 0 || month > 11 || year < 0) {
+      return null;
+    }
+
+    // Create date and validate (check for dates like Feb 31)
+    const date = new Date(year, month, day);
+
+    // Verify the date is valid (checking against month overflow, e.g., Feb 31)
+    if (date.getFullYear() !== year || date.getMonth() !== month || date.getDate() !== day) {
+      return null;
+    }
+    return date;
   }
 
   /**
@@ -467,12 +544,11 @@ class DatepickerTabs {
   }
 
   /**
-   * DatepickerTabs Format Date Fix
-   *
-   * This is a corrected formatDate method that properly handles month name formatting
-   * without issues like replacing the 'D' in 'Dec' with the day number.
+   * Format a date according to the specified format
+   * @param date
+   * @param format
+   * @returns {*|string}
    */
-
   formatDate(date, format) {
     if (!date || !(date instanceof Date) || isNaN(date.getTime())) return '';
 
@@ -926,7 +1002,11 @@ class DatepickerTabs {
     const daysInMonth = new Date(year, month + 1, 0).getDate();
 
     // Get the day of the week of the first day of the month
-    const firstDayOfMonth = new Date(year, month, 1).getDay();
+    let firstDayOfMonth = new Date(year, month, 1).getDay();
+    if (this.options.startWeekOnMonday) {
+      // If Sunday (0) becomes 6, otherwise day - 1
+      firstDayOfMonth = firstDayOfMonth === 0 ? 6 : firstDayOfMonth - 1;
+    }
 
     // Calculate days from previous month to display
     const prevMonthDays = firstDayOfMonth;
@@ -945,8 +1025,16 @@ class DatepickerTabs {
 
     // Create day names header
     let daysHeaderHtml = '<div class="datepicker-days-container">';
+    let adjustedDayNames = [...this.options.dayNames];
+
+    // If startWeekOnMonday is true, move Sunday to the end
+    if (this.options.startWeekOnMonday) {
+      adjustedDayNames = [...this.options.dayNames.slice(1), this.options.dayNames[0]];
+    }
+
+    // Add day names
     for (let i = 0; i < 7; i++) {
-      daysHeaderHtml += `<div class="day-name">${this.options.dayNames[i]}</div>`;
+      daysHeaderHtml += `<div class="day-name">${adjustedDayNames[i]}</div>`;
     }
 
     // Create days grid
@@ -997,6 +1085,15 @@ class DatepickerTabs {
         const maxDate = new Date(this.options.maxDate);
         maxDate.setHours(0, 0, 0, 0);
         if (compareDate > maxDate) isDisabled = true;
+      }
+
+      // Check if this date is specifically disabled
+      if (i == 4) {
+        console.log(date);
+        console.log(this.isDateDisabled(date));
+      }
+      if (this.isDateDisabled(date)) {
+        isDisabled = true;
       }
       const classes = ['day-item', isToday ? 'today' : '', isSelected ? 'selected' : '', isDisabled ? 'disabled' : '', isSaturday ? 'saturday' : ''].filter(Boolean).join(' ');
 
@@ -1394,6 +1491,9 @@ class DatepickerTabs {
         this.render();
         this.attachEvents();
 
+        // Update input value
+        this.updateInputValue();
+
         // Call callback if provided
         if (this.options.onDateChange) {
           if (this.options.mode === 'day') {
@@ -1734,3 +1834,4 @@ class DatepickerTabs {
 
 // Create global reference
 window.DatepickerTabs = DatepickerTabs;
+

@@ -237,22 +237,71 @@
             padding-top: 20px;
         }
 
-
-
         .screenshot {
             vertical-align: top;
             margin: 10px;
         }
 
+        .checkbox-group {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin: 10px 0;
+        }
 
+        .checkbox-group label {
+            display: flex;
+            align-items: center;
+            font-weight: normal;
+            width: auto;
+            margin-right: 10px;
+        }
 
+        .checkbox-group input[type="checkbox"] {
+            margin-right: 5px;
+        }
 
+        .date-input-group {
+            margin: 10px 0;
+        }
+
+        .date-input-group input {
+            margin-top: 5px;
+            padding: 6px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            width: 100%;
+        }
+
+        .date-input-list {
+            margin-top: 10px;
+            padding: 10px;
+            border: 1px solid #eee;
+            border-radius: 4px;
+            min-height: 30px;
+            background-color: #f9f9f9;
+        }
+
+        .date-tag {
+            display: inline-block;
+            background-color: #e1f5fe;
+            color: #0288d1;
+            padding: 4px 8px;
+            border-radius: 4px;
+            margin: 4px;
+            font-size: 12px;
+        }
+
+        .date-tag .remove {
+            cursor: pointer;
+            margin-left: 6px;
+            font-weight: bold;
+        }
 
         /* PrismJS 1.30.0
- https://prismjs.com/download.html#themes=prism&languages=css+clike+javascript&plugins=toolbar+copy-to-clipboard */
+https://prismjs.com/download.html#themes=prism&languages=css+clike+javascript&plugins=toolbar+copy-to-clipboard */
         code[class*=language-],pre[class*=language-]{color:#000;background:0 0;text-shadow:0 1px #fff;font-family:Consolas,Monaco,'Andale Mono','Ubuntu Mono',monospace;font-size:1em;text-align:left;white-space:pre;word-spacing:normal;word-break:normal;word-wrap:normal;line-height:1.5;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-hyphens:none;-moz-hyphens:none;-ms-hyphens:none;hyphens:none}code[class*=language-] ::-moz-selection,code[class*=language-]::-moz-selection,pre[class*=language-] ::-moz-selection,pre[class*=language-]::-moz-selection{text-shadow:none;background:#b3d4fc}code[class*=language-] ::selection,code[class*=language-]::selection,pre[class*=language-] ::selection,pre[class*=language-]::selection{text-shadow:none;background:#b3d4fc}@media print{code[class*=language-],pre[class*=language-]{text-shadow:none}}pre[class*=language-]{padding:1em;margin:.5em 0;overflow:auto}:not(pre)>code[class*=language-],pre[class*=language-]{background:#f5f2f0}:not(pre)>code[class*=language-]{padding:.1em;border-radius:.3em;white-space:normal}.token.cdata,.token.comment,.token.doctype,.token.prolog{color:#708090}.token.punctuation{color:#999}.token.namespace{opacity:.7}.token.boolean,.token.constant,.token.deleted,.token.number,.token.property,.token.symbol,.token.tag{color:#905}.token.attr-name,.token.builtin,.token.char,.token.inserted,.token.selector,.token.string{color:#690}.language-css .token.string,.style .token.string,.token.entity,.token.operator,.token.url{color:#9a6e3a;background:hsla(0,0%,100%,.5)}.token.atrule,.token.attr-value,.token.keyword{color:#07a}.token.class-name,.token.function{color:#dd4a68}.token.important,.token.regex,.token.variable{color:#e90}.token.bold,.token.important{font-weight:700}.token.italic{font-style:italic}.token.entity{cursor:help}
         div.code-toolbar{position:relative}div.code-toolbar>.toolbar{position:absolute;z-index:10;top:.3em;right:.2em;transition:opacity .3s ease-in-out;opacity:0}div.code-toolbar:hover>.toolbar{opacity:1}div.code-toolbar:focus-within>.toolbar{opacity:1}div.code-toolbar>.toolbar>.toolbar-item{display:inline-block}div.code-toolbar>.toolbar>.toolbar-item>a{cursor:pointer}div.code-toolbar>.toolbar>.toolbar-item>button{background:0 0;border:0;color:inherit;font:inherit;line-height:normal;overflow:visible;padding:0;-webkit-user-select:none;-moz-user-select:none;-ms-user-select:none}div.code-toolbar>.toolbar>.toolbar-item>a,div.code-toolbar>.toolbar>.toolbar-item>button,div.code-toolbar>.toolbar>.toolbar-item>span{color:#bbb;font-size:.8em;padding:0 .5em;background:#f5f2f0;background:rgba(224,224,224,.2);box-shadow:0 2px 0 0 rgba(0,0,0,.2);border-radius:.5em}div.code-toolbar>.toolbar>.toolbar-item>a:focus,div.code-toolbar>.toolbar>.toolbar-item>a:hover,div.code-toolbar>.toolbar>.toolbar-item>button:focus,div.code-toolbar>.toolbar>.toolbar-item>button:hover,div.code-toolbar>.toolbar>.toolbar-item>span:focus,div.code-toolbar>.toolbar>.toolbar-item>span:hover{color:inherit;text-decoration:none}
-
     </style>
 
 </head>
@@ -263,9 +312,9 @@
     <p>
         <strong>Great for booking systems!</strong> If users don't have a <strong>specific date</strong> in mind, they can easily pick a
         <strong>few different dates</strong>, a <strong>whole month</strong>, or even  <strong><span style="color:red;">several months at once</span></strong>
-        <p>
-                First demo (click it): <input type="text" style="width:50%" value="May 2025, Jun 2025, Jul 2025" id="first-month-input" class="demo-input" placeholder="Click to select month(s)">
-        </p>
+    <p>
+        First demo (click it): <input type="text" style="width:50%" value="May 2025, Jun 2025, Jul 2025" id="first-month-input" class="demo-input" placeholder="Click to select month(s)">
+    </p>
     </p>
 
 
@@ -280,11 +329,13 @@
             <li><a href="#tabs-demo">Few Months Selection or Certain Date Demo</a></li>
             <li><a href="#month-mode">Month Only Mode</a></li>
             <li><a href="#day-mode">Day Only Mode</a></li>
+            <li><a href="#disabled-days">Disabled Days demo</a></li>
             <li><a href="#configurator">Configurator</a></li>
             <li><a href="#bottom-test">Bottom of Page Test</a></li>
             <li><a href="#documentation">DatepickerTabs Documentation</a></li>
-            <li><a href="#best-practices">Best practicies</a></li>
+            <li><a href="#best-practices">Best practices</a></li>
             <li><a href="#future-work">Future work</a></li>
+            <li><a href="#testing">Tests</a></li>
         </ul>
     </nav>
 
@@ -371,15 +422,15 @@ const monthPickerOnly = new DatepickerTabs('#month-mode-example', {
 
     <div class="demo-section" id="day-mode">
         <h2>Day only Mode</h2>
-        <p>This example demonstrates the one month selection mode with NO date selection.</p>
+        <p>This example demonstrates the day selection mode with single date selection.</p>
 
         <div class="demo-row">
             <div class="demo-column">
-                <h3>Single Month Picker Only</h3>
-                <input type="text"  value="25 Apr 2025"  id="day-mode-example" class="demo-input" placeholder="Click to select month(s)">
+                <h3>Single Day Picker Only</h3>
+                <input type="text"  value="25 Apr 2025"  id="day-mode-example" class="demo-input" placeholder="Click to select date">
 
                 <div class="result-panel">
-                    <h4>Selected Month:</h4>
+                    <h4>Selected Date:</h4>
                     <div id="day-mode-example-result"></div>
                 </div>
             </div>
@@ -389,13 +440,46 @@ const monthPickerOnly = new DatepickerTabs('#month-mode-example', {
                 <pre><code class="language-js" data-prismjs-copy="Copy code!">//Single day mode picker only
 const dayPickerOnly = new DatepickerTabs('#day-mode-example', {
     displayType: 'day',
-    dayFormat: 'DD MMM YYYY',
+    dateFormat: 'DD MMM YYYY',
     multipleMonths: false,
 });</code></pre>
             </div>
         </div>
     </div>
 
+    <!-- New Features Demo -->
+    <div class="demo-section" id="disabled-days">
+        <h2>Disabled Days Demo</h2>
+        <p>Check out the latest features: Week starting on Monday, disabled days of week, and disabled specific dates.</p>
+
+        <div class="demo-row">
+            <div class="demo-column">
+                <h3>Business Day Picker</h3>
+                <p>This example has weeks starting on Monday, weekends disabled, and holidays disabled.</p>
+                <input type="text" id="business-day-input" class="demo-input" placeholder="Click to select a business day">
+
+                <div class="result-panel">
+                    <h4>Selected Business Day:</h4>
+                    <div id="business-day-result"></div>
+                </div>
+            </div>
+
+            <div class="demo-column">
+                <h3>Code Example</h3>
+                <pre><code class="language-js" data-prismjs-copy="Copy code!">//Business Day Picker
+const businessDayPicker = new DatepickerTabs('#business-day-input', {
+    startWeekOnMonday: true,         // Week starts on Monday
+    disabledDaysOfWeek: [0, 6],      // Disable Sunday (0) and Saturday (6)
+    disabledDates: [
+        '25/12/2025',                // Christmas Day
+        '01/01/2025',                // New Year's Day
+        '04/07/2025'                 // Independence Day
+    ],
+    dateFormat: 'DD/MM/YYYY'
+});</code></pre>
+            </div>
+        </div>
+    </div>
 
     <div class="demo-section" id="configurator">
         <h2>Configurator</h2>
@@ -459,6 +543,42 @@ const dayPickerOnly = new DatepickerTabs('#day-mode-example', {
                         </div>
                     </div>
 
+                    <!-- New Options: Disabled Days and Dates -->
+                    <h4>Disable Options</h4>
+                    <div class="option-group">
+                        <!-- Disabled Days of Week -->
+                        <div class="option-item" style="width: 100%;">
+                            <label>Disabled Days:</label>
+                            <div class="checkbox-group">
+                                <label><input type="checkbox" name="disabled-days" value="0"> Sunday</label>
+                                <label><input type="checkbox" name="disabled-days" value="1"> Monday</label>
+                                <label><input type="checkbox" name="disabled-days" value="2"> Tuesday</label>
+                                <label><input type="checkbox" name="disabled-days" value="3"> Wednesday</label>
+                                <label><input type="checkbox" name="disabled-days" value="4"> Thursday</label>
+                                <label><input type="checkbox" name="disabled-days" value="5"> Friday</label>
+                                <label><input type="checkbox" name="disabled-days" value="6"> Saturday</label>
+                            </div>
+                        </div>
+
+                        <!-- Start Week on Monday -->
+                        <div class="option-item">
+                            <label for="config-start-monday">Start Week Monday:</label>
+                            <input type="checkbox" id="config-start-monday">
+                        </div>
+
+                        <!-- Disabled Dates -->
+                        <div class="option-item" style="width: 100%;">
+                            <label for="config-disabled-date">Disabled Dates:</label>
+                            <div class="date-input-group">
+                                <input type="text" id="config-disabled-date" placeholder="Enter date (e.g., 25/12/2025)">
+                                <button id="add-disabled-date" class="btn btn-secondary" style="margin-top: 5px;">Add Date</button>
+                            </div>
+                            <div class="date-input-list" id="disabled-dates-list">
+                                <!-- Disabled dates will be shown here -->
+                            </div>
+                        </div>
+                    </div>
+
                     <!-- Format Options -->
                     <h4>Format Options</h4>
                     <div class="option-group">
@@ -485,7 +605,6 @@ const dayPickerOnly = new DatepickerTabs('#day-mode-example', {
                     <!-- UI Settings -->
                     <h4>UI Settings</h4>
                     <div class="option-group">
-
                         <div class="option-item">
                             <label for="config-zindex">z-index:</label>
                             <input type="number" id="config-zindex" value="9999" style="width:80px">
@@ -690,9 +809,9 @@ const dayPickerOnly = new DatepickerTabs('#day-mode-example', {
         <h4>JSDelivr option</h4>
         <p>Alternatively, you can use JSDelivr</p>
 
-        <p>With a specific version (1.0.0 in this example):</p>
-        <pre><code class="language-html">&lt;link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/swayoleg/datepicker-tabs@1.0.0/dist/css/datepicker-tabs.min.css"&gt;
-&lt;script src="https://cdn.jsdelivr.net/gh/swayoleg/datepicker-tabs@1.0.0/dist/js/datepicker-tabs.min.js"&gt;&lt;/script&gt;</code></pre>
+        <p>With a specific version (1.0.4 in this example):</p>
+        <pre><code class="language-html">&lt;link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/swayoleg/datepicker-tabs@1.0.4/dist/css/datepicker-tabs.min.css"&gt;
+&lt;script src="https://cdn.jsdelivr.net/gh/swayoleg/datepicker-tabs@1.0.4/dist/js/datepicker-tabs.min.js"&gt;&lt;/script&gt;</code></pre>
 
         <p>Or with the latest develop version:</p>
         <pre><code class="language-html">&lt;link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/swayoleg/datepicker-tabs@develop/dist/css/datepicker-tabs.min.css"&gt;
@@ -731,6 +850,13 @@ const pickers = new DatepickerTabs('.date-input-class');</code></pre>
     maxDate: new Date(2026, 11, 31), // Maximum selectable date
     futureSaturdaysOnly: true,       // Only enable future Saturdays in day mode
 
+    startWeekOnMonday: false,         // Start weeks on Monday instead of Sunday
+    disabledDaysOfWeek: [0, 6],      // Disable days of week (0=Sunday, 6=Saturday)
+    disabledDates: [                 // Disable specific dates
+        '25/12/2025',                // Christmas Day
+        new Date(2025, 0, 1)         // New Year's Day (also accepts Date objects)
+    ],
+
     // Localization
     monthNames: ['January', 'February'], // Custom month names (shorthand provided for example)
     dayNames: ['Sun', 'Mon'],            // Custom day names (shorthand provided for example)
@@ -768,6 +894,9 @@ const pickers = new DatepickerTabs('.date-input-class');</code></pre>
             <li><code>minDate</code>: Minimum selectable date (default: null)</li>
             <li><code>maxDate</code>: Maximum selectable date (default: null)</li>
             <li><code>futureSaturdaysOnly</code>: Option for day mode to only enable Saturdays in the future (default: false)</li>
+            <li><code>startWeekOnMonday</code>: Start weeks on Monday instead of Sunday (default: false)</li>
+            <li><code>disabledDaysOfWeek</code>: Array of days of week to disable, where 0 is Sunday and 6 is Saturday (default: [])</li>
+            <li><code>disabledDates</code>: Array of specific dates to disable - accepts Date objects or date strings (default: [])</li>
             <li><code>monthNames</code>: Array of month names (default: ['January', 'February', ...])</li>
             <li><code>dayNames</code>: Array of day names (default: ['Sun', 'Mon', ...])</li>
             <li><code>cookieName</code>: Cookie name for mode persistence (default: 'datepickerTabsMode')</li>
@@ -985,58 +1114,19 @@ picker.setDate(null);</code></pre>
   futureSaturdaysOnly: true,
   dateFormat: 'DD/MM/YYYY'
 });</code></pre>
+
+        <h4>Business Day Picker (Weekdays Only)</h4>
+        <pre><code class="language-js">const businessDayPicker = new DatepickerTabs('#business-date', {
+  startWeekOnMonday: true,         // Week starts on Monday
+  disabledDaysOfWeek: [0, 6],      // Disable Sunday (0) and Saturday (6)
+  disabledDates: [
+    '2025-12-25',                  // Christmas (in YYYY-MM-DD format)
+    '2025-01-01',                  // New Year's Day
+    new Date(2025, 6, 4)           // Independence Day (also works with Date objects)
+  ],
+  dateFormat: 'YYYY-MM-DD'
+});</code></pre>
     </div>
-
-
-    <div class="documentation" id="rebuild-styles">
-        <h2>Rebuilding Styles</h2>
-        <p>
-            The project uses SCSS for styling and Gulp to compile it to CSS. Here's how to rebuild the styles when you make changes:
-        </p>
-
-        <h3>Initial Setup</h3>
-        <p>Make sure all dependencies are installed:</p>
-        <pre><code class="language-bash">npm install --save-dev gulp gulp-sass sass gulp-postcss autoprefixer cssnano gulp-sourcemaps gulp-rename</code></pre>
-
-        <h3>One-time Build</h3>
-        <p>To compile your SCSS files to CSS once:</p>
-        <pre><code class="language-bash">npx gulp build</code></pre>
-
-        <p>This will:</p>
-        <ul>
-            <li>Compile your SCSS to CSS</li>
-            <li>Add vendor prefixes with Autoprefixer</li>
-            <li>Create a minified version (custom-datepicker.min.css)</li>
-            <li>Generate sourcemaps for debugging</li>
-        </ul>
-        <p>The compiled CSS files will be in <code>src/assets/css/</code>.</p>
-
-        <h3>Development Mode (Watch)</h3>
-        <p>To automatically rebuild styles whenever you make changes to your SCSS files:</p>
-        <pre><code class="language-bash">npx gulp</code></pre>
-
-        <p>This starts the watch task that will:</p>
-        <ul>
-            <li>Monitor your SCSS files for changes</li>
-            <li>Automatically recompile when changes are detected</li>
-            <li>Generate both regular and minified CSS files</li>
-        </ul>
-
-        <h3>Troubleshooting</h3>
-        <p>If you encounter build errors:</p>
-        <ol>
-            <li>Check for SCSS syntax errors in your files</li>
-            <li>Ensure all required dependencies are installed</li>
-            <li>Verify the paths in gulpfile.js match your project structure</li>
-        </ol>
-
-        <p>Common errors:</p>
-        <ul>
-            <li><code>'compileStyles' errored after X ms</code>: Look for syntax errors in your SCSS</li>
-            <li><code>Cannot find module 'X'</code>: You need to install the missing dependency</li>
-        </ul>
-    </div>
-
 
     <div class="documentation" id="best-practices">
         <h3>Best Practices</h3>
@@ -1044,7 +1134,6 @@ picker.setDate(null);</code></pre>
             To ensure smooth integration and optimal user experience, follow these best practices:
         </p>
         <ul>
-
             <li>
                 Leverage the <code>onDateChange</code> callback to update the UI dynamically. For example:
                 <pre><code class="language-js">
@@ -1058,7 +1147,12 @@ const picker = new DatepickerTabs('#date-input', {
       </code></pre>
             </li>
             <li>Override styles by targeting the <code>.custom-datepickertabs-container</code> to prevent conflicts with global styles.</li>
-
+            <li>
+                For business day calendars, combine <code>startWeekOnMonday</code> with <code>disabledDaysOfWeek</code> to create a more intuitive experience.
+            </li>
+            <li>
+                When disabling specific dates, you can use both Date objects and string formats for maximum flexibility.
+            </li>
         </ul>
 
 
@@ -1066,18 +1160,185 @@ const picker = new DatepickerTabs('#date-input', {
             <h3>Future work</h3>
             <ul>
                 <li>Add language pre-built support with i18n</li>
-                <li>Add start of the week with Monday option</li>
-                <li>Add disable dates array</li>
+                <li><s>Add start of the week with Monday option</s> ✅ Added</li>
+                <li><s>Add disable dates array</s> ✅ Added</li>
+                <li><s>Add disable days of week</s> ✅ Added</li>
+                <li><s>Add tests with jest</s> ✅ Added</li>
             </ul>
         </div>
 
+
+
     </div>
+    <!-- Testing Documentation Section -->
+    <div class="documentation" id="testing">
+        <h2>Testing</h2>
+        <p>
+            DatepickerTabs includes a comprehensive test suite to ensure functionality works as expected.
+            There are multiple ways to test the library components.
+        </p>
 
+        <h3>Testing in Browser</h3>
+        <p>
+            You can test the date parsing function with prepared test-cases directly in your browser:
+        </p>
+        <div class="method">
+            <div class="method-name">File: parsedate-test-html.html</div>
+            <div class="method-description">
+                Open this HTML file to test the date parsing function. The file contains a textarea with the
+                function body code - so you can play with or replace it with yours.
+                It tests different format parsing patterns. You can add/edit/replace test cases directly in the HTML code.
+            </div>
+        </div>
 
+        <h3>Testing DatepickerTabs Directly</h3>
+        <p>This guide explains how to set up Jest to test your DatepickerTabs component directly, without using a stub implementation.</p>
 
+        <h4>Setup Steps</h4>
+        <ol>
+            <li>
+                <p>First, install the necessary dependencies:</p>
+                <pre><code class="language-bash">npm install --save-dev jest jest-environment-jsdom babel-jest @babel/core @babel/preset-env</code></pre>
+            </li>
+            <li>
+                <p>Create the required configuration files or rewrite them if needed:</p>
+                <ul>
+                    <li><code>babel.config.js</code> - For transpiling modern JavaScript</li>
+                    <li><code>jest.setup.js</code> - For setting up the test environment</li>
+                    <li><code>__tests__/direct-import.test.js</code> - The actual tests</li>
+                </ul>
+            </li>
+            <li>
+                <p>Update your <code>package.json</code> with test scripts if not updated:</p>
+                <pre><code class="language-json">"scripts": {
+    "build": "gulp build",
+    "dev": "gulp",
+    "test": "jest",
+    "prepare": "npm run build"
+},
+"jest": {
+    "testEnvironment": "jsdom",
+    "setupFiles": ["./jest.setup.js"],
+    "testMatch": [
+        "**/__tests__/**/*.test.js"
+    ]
+}</code></pre>
+            </li>
+        </ol>
+
+        <h4>File Structure</h4>
+        <pre><code>datepicker-tabs/
+├── __tests__/
+│   ├── direct-import.test.js
+├── babel.config.js
+├── jest.setup.js
+└── package.json</code></pre>
+
+        <h4>How It Works</h4>
+        <ol>
+            <li><strong>direct-import.test.js</strong>: This file reads and loads your original DatepickerTabs code, and runs test cases.</li>
+            <li><strong>jest.setup.js</strong>: This file sets up the browser-like environment needed by DatepickerTabs, including mocking DOM APIs and global objects.</li>
+        </ol>
+
+        <h4>Running Tests</h4>
+        <p>To run the test suite:</p>
+        <pre><code class="language-bash">npm test</code></pre>
+
+        <h4>Test Structure</h4>
+        <p>The test suite is organized as follows:</p>
+        <ul>
+            <li><code>__tests__/</code> - Contains all test files
+                <ul>
+                    <li><code>direct-import.test.js</code> - Tests directly importing the DatepickerTabs class</li>
+                </ul>
+            </li>
+        </ul>
+
+        <h4>Testing Specific Functionality</h4>
+        <div class="method">
+            <div class="method-name">Date Parsing</div>
+            <div class="method-description">
+                <p>The library includes comprehensive tests for the date parsing functionality, covering various formats and edge cases:</p>
+                <pre><code class="language-js">// Example test for date parsing
+test('should parse a date in DD/MM/YYYY format', () => {
+    const date = datepicker.parseDate('25/05/2025', 'DD/MM/YYYY');
+    expect(date instanceof Date).toBe(true);
+    expect(date.getDate()).toBe(25);
+    expect(date.getMonth()).toBe(4); // May is month 4 (zero-based)
+    expect(date.getFullYear()).toBe(2025);
+});</code></pre>
+
+                <p>We test multiple date formats:</p>
+                <ul>
+                    <li>DD/MM/YYYY</li>
+                    <li>MM/DD/YYYY</li>
+                    <li>YYYY-MM-DD</li>
+                    <li>DD MMM YYYY</li>
+                    <li>DD MMMM YYYY</li>
+                    <li>MMM YYYY</li>
+                    <li>MMMM YYYY</li>
+                </ul>
+
+                <p>And various edge cases like:</p>
+                <ul>
+                    <li>Empty strings</li>
+                    <li>Invalid dates</li>
+                    <li>Invalid formats</li>
+                    <li>Custom separators</li>
+                </ul>
+            </div>
+        </div>
+
+        <h4>Adding New Tests</h4>
+        <p>When adding new functionality, please include corresponding tests. Follow these guidelines:</p>
+        <ol>
+            <li>Create test files in the <code>__tests__</code> directory</li>
+            <li>Use descriptive test names that clearly explain what's being tested</li>
+            <li>Test both success cases and edge/failure cases</li>
+            <li>Use parametrized tests where appropriate for multiple similar test cases</li>
+        </ol>
+
+        <p>Example of adding a parametrized test:</p>
+        <pre><code class="language-js">const testCases = [
+    {
+        name: "DD/MM/YYYY - standard date",
+        input: "04/07/2025",
+        format: "DD/MM/YYYY",
+        expected: new Date(2025, 6, 4) // July 4th, 2025
+    },
+    // Add more test cases...
+];
+
+test.each(testCases)('$name', ({ input, format, expected }) => {
+    const result = datepicker.parseDate(input, format);
+
+    if (expected === null) {
+        expect(result).toBeNull();
+    } else {
+        expect(result instanceof Date).toBe(true);
+        expect(result.getDate()).toBe(expected.getDate());
+        expect(result.getMonth()).toBe(expected.getMonth());
+        expect(result.getFullYear()).toBe(expected.getFullYear());
+    }
+});</code></pre>
+
+        <h4>Adding Single Tests</h4>
+        <p>To extend the test suite, simply add more test cases in <code>direct-import.test.js</code>. For example:</p>
+        <pre><code class="language-js">test('should handle special case X', () => {
+  const picker = new DatepickerTabs('#date-input');
+  // Your test logic
+  expect(result).toEqual(expectedValue);
+});</code></pre>
+
+        <h4>Troubleshooting</h4>
+        <ul>
+            <li><strong>"Cannot find module" errors</strong>: Ensure your file paths are correct.</li>
+            <li><strong>DOM-related errors</strong>: Check <code>jest.setup.js</code> to make sure necessary DOM APIs are properly mocked.</li>
+            <li><strong>TypeError: X is not a function</strong>: The DatepickerTabs class might be using browser APIs that need to be mocked.</li>
+            <li><strong>"DatepickerTabs is not a constructor"</strong>: Verify that the file is correctly loading and exporting the class.</li>
+        </ul>
+    </div>
 </div>
-
-
 
 <footer>
     <p>DatepickerTabs is released under the MIT License.</p>
@@ -1086,8 +1347,28 @@ const picker = new DatepickerTabs('#date-input', {
 
 <script src="./src/assets/js/datepicker-tabs.js"></script>
 <script>
+    // Store disabled dates for the configurator
+    const disabledDates = [];
 
-
+    // Add a business day picker example
+    const businessDayPicker = new DatepickerTabs('#business-day-input', {
+        startWeekOnMonday: true,         // Week starts on Monday
+        disabledDaysOfWeek: [0, 6],      // Disable Sunday (0) and Saturday (6)
+        disabledDates: [
+            '25/12/2025',                // Christmas Day
+            '01/01/2025',                // New Year's Day
+            '04/07/2025'                 // Independence Day
+        ],
+        dateFormat: 'DD/MM/YYYY',
+        onDateChange: function(date) {
+            const resultElement = document.getElementById('business-day-result');
+            if (date) {
+                resultElement.textContent = date.toLocaleDateString();
+            } else {
+                resultElement.textContent = 'No date selected';
+            }
+        }
+    });
 
     const ButtomDatePicker = new DatepickerTabs('#bottom-date-input', {
         onDateChange: function(date) {
@@ -1139,14 +1420,14 @@ const picker = new DatepickerTabs('#date-input', {
 
     const dayPickerOnly = new DatepickerTabs('#day-mode-example', {
         displayType: 'day',
-        dayFormat: 'DD MMM YYYY',
+        dateFormat: 'DD MMM YYYY',
         multipleMonths: false,
         onDateChange: function(dates) {
             const monthResultSingleMode = document.getElementById('day-mode-example-result');
             if (dates) {
                 monthResultSingleMode.textContent = dayPickerOnly.getDatesAsString(dates)
             } else {
-                monthResultSingleMode.textContent = 'No months selected';
+                monthResultSingleMode.textContent = 'No date selected';
             }
         }
     });
@@ -1171,11 +1452,56 @@ const picker = new DatepickerTabs('#date-input', {
         const configSaturdays = document.getElementById('config-saturdays');
         const configDateFormat = document.getElementById('config-date-format');
         const configMonthFormat = document.getElementById('config-month-format');
-
+        const configStartMonday = document.getElementById('config-start-monday');
         const configZIndex = document.getElementById('config-zindex');
+        const disabledDaysCheckboxes = document.querySelectorAll('input[name="disabled-days"]');
+        const configDisabledDate = document.getElementById('config-disabled-date');
+        const addDisabledDateBtn = document.getElementById('add-disabled-date');
+        const disabledDatesList = document.getElementById('disabled-dates-list');
 
         // Datepicker instance
         let configPicker = null;
+
+        // Add a disabled date
+        addDisabledDateBtn.addEventListener('click', function() {
+            const dateValue = configDisabledDate.value.trim();
+            if (dateValue) {
+                // Add to the array if not already present
+                if (!disabledDates.includes(dateValue)) {
+                    disabledDates.push(dateValue);
+                    updateDisabledDatesList();
+                    configDisabledDate.value = '';
+
+                    // If picker already exists, update it
+                    if (configPicker) {
+                        applyOptions();
+                    }
+                }
+            }
+        });
+
+        // Update the list of disabled dates in UI
+        function updateDisabledDatesList() {
+            disabledDatesList.innerHTML = '';
+            disabledDates.forEach((date, index) => {
+                const dateTag = document.createElement('span');
+                dateTag.className = 'date-tag';
+                dateTag.innerHTML = date + '<span class="remove" data-index="' + index + '">×</span>';
+                disabledDatesList.appendChild(dateTag);
+
+                // Add event listener to remove button
+                dateTag.querySelector('.remove').addEventListener('click', function() {
+                    const idx = parseInt(this.getAttribute('data-index'));
+                    disabledDates.splice(idx, 1);
+                    updateDisabledDatesList();
+
+                    // If picker already exists, update it
+                    if (configPicker) {
+                        applyOptions();
+                    }
+                });
+            });
+        }
 
         // Get current options from form, only including non-default values
         function getOptionsFromForm() {
@@ -1229,7 +1555,27 @@ const picker = new DatepickerTabs('#date-input', {
                 options.monthFormat = configMonthFormat.value;
             }
 
+            // New options
+            if (configStartMonday.checked) {
+                options.startWeekOnMonday = true;
+            }
 
+            // Get disabled days of week
+            const disabledDays = [];
+            disabledDaysCheckboxes.forEach(checkbox => {
+                if (checkbox.checked) {
+                    disabledDays.push(parseInt(checkbox.value, 10));
+                }
+            });
+
+            if (disabledDays.length > 0) {
+                options.disabledDaysOfWeek = disabledDays;
+            }
+
+            // Add disabled dates if any
+            if (disabledDates.length > 0) {
+                options.disabledDates = [...disabledDates];
+            }
 
             const zIndex = parseInt(configZIndex.value, 10);
             if (zIndex !== 9999) {
@@ -1252,10 +1598,14 @@ const picker = new DatepickerTabs('#date-input', {
             let hasOptions = false;
             for (const [key, value] of Object.entries(options)) {
                 hasOptions = true;
-                if (typeof value === 'string') {
-                    codeString += `    ${key}: '${value}',\n`;
+
+                if (key === 'disabledDaysOfWeek' || key === 'disabledDates') {
+                    // Format arrays
+                    codeString += `    ${key}: ${JSON.stringify(value)},\n`;
                 } else if (value instanceof Date) {
                     codeString += `    ${key}: new Date(${value.getFullYear()}, ${value.getMonth()}, ${value.getDate()}),\n`;
+                } else if (typeof value === 'string') {
+                    codeString += `    ${key}: '${value}',\n`;
                 } else {
                     codeString += `    ${key}: ${value},\n`;
                 }
@@ -1272,8 +1622,10 @@ const picker = new DatepickerTabs('#date-input', {
 
             configCode.textContent = codeString;
 
-
-            Prism.highlightElement(configCode);
+            // Highlight the code if Prism is available
+            if (typeof Prism !== 'undefined') {
+                Prism.highlightElement(configCode);
+            }
         }
 
         // Initialize with default options or specific options
@@ -1294,7 +1646,6 @@ const picker = new DatepickerTabs('#date-input', {
 
         // Update result display
         function updateResult(date) {
-
             if (!date) {
                 configResult.textContent = 'No date selected';
             } else if (Array.isArray(date)) {
@@ -1325,8 +1676,17 @@ const picker = new DatepickerTabs('#date-input', {
             configSaturdays.checked = false;
             configDateFormat.value = 'DD MMM YYYY';
             configMonthFormat.value = 'MMM YYYY';
-
+            configStartMonday.checked = false;
             configZIndex.value = 9999;
+
+            // Reset disabled days of week
+            disabledDaysCheckboxes.forEach(checkbox => {
+                checkbox.checked = false;
+            });
+
+            // Reset disabled dates
+            disabledDates.length = 0;
+            updateDisabledDatesList();
 
             // Reinitialize with default options
             initPicker();
@@ -1359,6 +1719,9 @@ const picker = new DatepickerTabs('#date-input', {
 
         // Initialize on page load with default options
         initPicker();
+
+        // Initialize the disabled dates list (in case there are pre-set dates)
+        updateDisabledDatesList();
     });
 </script>
 
