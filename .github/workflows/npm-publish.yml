@@ -35,13 +35,6 @@ jobs:
       - run: npm test
       # Build the project
       - run: npm run build
-
-      # Copy the .npmrc file to ensure proper authentication
-      - run: |
-          echo "//registry.npmjs.org/:_authToken=\${NODE_AUTH_TOKEN}" > .npmrc
-          echo "registry=https://registry.npmjs.org/" >> .npmrc
-          echo "always-auth=true" >> .npmrc
-
       # Publish to npm
       - run: npm publish --access public
         env:
