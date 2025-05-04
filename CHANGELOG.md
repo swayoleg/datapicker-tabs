@@ -1,5 +1,9 @@
 # Changelog
 
+## [1.0.5] - 2025-05-04
+
+- Just npm publish fixing
+
 ## [1.0.4] - 2025-05-04
 
 - Fixed bug when click to remove-btn but need to wait apply click. Now on remove btn click it calls the
