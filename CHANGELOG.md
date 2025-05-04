@@ -1,5 +1,9 @@
 # Changelog
 
+## [1.0.7] - 2025-05-04
+
+- Npm publish fixing
+
 ## [1.0.6] - 2025-05-04
 
 - Fixed test pipeline

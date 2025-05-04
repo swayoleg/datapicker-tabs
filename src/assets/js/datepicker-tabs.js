@@ -5,7 +5,7 @@
  * multiple selection support, and various formatting options.
  * Perfect for booking systems when users need to select multiple dates or months.
  *
- * @version 1.0.6
+ * @version 1.0.7
  *
  * FEATURES:
  * - Day and Month selection modes
